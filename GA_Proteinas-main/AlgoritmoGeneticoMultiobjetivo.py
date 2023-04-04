@@ -8,6 +8,7 @@ import os
 import numpy
 import copy
 
+
 from deap import algorithms
 from deap import base
 from deap import creator
