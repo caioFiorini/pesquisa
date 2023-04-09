@@ -108,7 +108,7 @@ def Melhor(pop):
     fitness = 0
     for p in pop:
         if(fitness < p.fitness.values):
-            melhor = p;
+            melhor = p
             fitness = p.fitness.values
     melhor = RetornaCaracteristica(melhor)
     return melhor

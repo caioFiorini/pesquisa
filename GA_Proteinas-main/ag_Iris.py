@@ -5,6 +5,7 @@ import numpy
 import csv
 import os
 
+from deap import algorithms
 from deap import base
 from deap import creator
 from deap import tools
@@ -16,23 +17,24 @@ NUMERO_AMOSTRAS = 151
 TAMANHO_TRANSFORMADA = 2
 
 LISTACLASSES = ["Iris-virginica", "Iris-setosa", "Iris-versicolor"]
-PATH_BASE = "BaseSting"
-NOME_ARQUIVO_EXTERNO = "BaseExterna_reduzida.csv"
+PATH_BASE = "BaseIris"
+#NOME_ARQUIVO_EXTERNO = "BaseExterna_reduzida.csv"
 PAHT_CLASSIFICADOR = "Individuos/"
 
-nomeArquivo = 'TESTE'
+nomeArquivo = 'TESTE2'
 NOME_ARQUIVO_CLASSIFICADOR = nomeArquivo + ".csv"
 MATRIZ_FLORES = []
-MATRIZ_FLORES_EXTERNAS = []
+#MATRIZ_FLORES_EXTERNAS = []
 
 def evaluate(individual):
-    listaCaracteristicas = Retornacaracteristica(individual)
-    listaCaracteristicasExternas = RetornaCaracteristicaExternas(individual)
-    MontarArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas)
+    listaCaracteristicas = RetornaCaracteristica(individual)
+    #listaCaracteristicasExternas = RetornaCaracteristicaExternas(individual)
+    MontarArquivoSVM(listaCaracteristicas)
     fitness = ClassificadorCaracteristica(listaCaracteristicas)
 
-    tamanho = litaCaracteristicas._len_() + listaCaracteristicasExternas._len_()
+    tamanho = listaCaracteristicas._len_()
     return fitness, tamanho,
+
 def RetornaCaracteristica(ind1):
     caracteristicas = []
     x = 0
@@ -44,20 +46,20 @@ def RetornaCaracteristica(ind1):
         x = x + 1
     return caracteristicas
 
-def RetornaCaracteristicaExternas(ind1):
-    caracteristicas = []
-    x = 0
-    for i in ind1: 
-        if(x >= 51 and i == 1):
-            valor = x - 51
-            caracteristicas.append(valor)
-        x = x + 1
-    return caracteristicas
+# def RetornaCaracteristicaExternas(ind1):
+#     caracteristicas = []
+#     x = 0
+#     for i in ind1: 
+#         if(x >= 51 and i == 1):
+#             valor = x - 51
+#             caracteristicas.append(valor)
+#         x = x + 1
+#     return caracteristicas
 
-def MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas):
-    ARQUIVO = open("Individuos/" + NOME_ARQUIVO_CLASSIFICADOR, "W")
-    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTACLASSES, TAMANHO_TRANSFORMADA);
-    leitor.BuildCSV(PATH_BASE, ARQUIVO, listaCaracteristicas, listaCaracteristicasExternas, MATRIZ_PROTEINAS, MATRIZ_PROTEINAS_EXTERNAS)
+def MontarArquivoSVM(listaCaracteristicas):
+    ARQUIVO = open("Individuos/" + NOME_ARQUIVO_CLASSIFICADOR, "w")
+    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTACLASSES, TAMANHO_TRANSFORMADA)
+    leitor.BuildCSV(PATH_BASE, ARQUIVO, listaCaracteristicas, MATRIZ_FLORES)
     ARQUIVO.close()
     return
 
@@ -66,23 +68,27 @@ def openTxt(path_Base, classe):
     arq = open(caminho, 'r')
     return arq
 
-def CarregaFlor(path_Base):
-    contador = 0
-    for numeroclasse, classe in enumerate(LISTACLASSES):
-        listaFlores = openTxt(path_Base, classe)
+# def CarregaFlor(path_Base):
+#     contador = 0
+#     for numeroclasse, classe in enumerate(LISTACLASSES):
+#         listaFlores = openTxt(path_Base, classe)
 
-        for flores in listaFlores: 
-            with open(os.path.join(path_Base, classe, flores.rstrip('\n').rstrip('\r')), 'r') as csvfile:
-                reader = csv.reader(csvfile, delimiter=';')
-                x = list(reader)
-                MATRIZ_FLORES.insert(contador, x)
-                contador = contador + 1
+#         for flores in listaFlores: 
+#             with open(os.path.join(path_Base, classe, flores.rstrip('\n').rstrip('\r')), 'r') as csvfile:
+#                 reader = csv.reader(csvfile, delimiter=';')
+#                 x = list(reader)
+#                 MATRIZ_FLORES.insert(contador, x)
+#                 contador = contador + 1
 
-def carregaFloresExternas (path_Base):
-    with open(os.path.join(path_Base, NOME_ARQUIVO_EXTERNO.rstrip('\n').rstrip('\n')), 'r') as csvfile:
-        reader = csv.reader(csvfile, delimiter = ';')
+def CarregaFlor (path_Base):
+    with open(os.path.join(path_Base, "iris.csv"), 'r') as csvfile:
+        reader = csv.reader(csvfile, delimiter = ',')
+        #print(reader)
         x = list(reader)
-        MATRIZ_FLORES_EXTERNAS.insert(0, x)
+        MATRIZ_FLORES.insert(0, x)
+
+def selElitistAndTournamente(individuals, k, frac_elitist, tournsize):
+    return tools.selBest(individuals, int(k*frac_elitist)) + tools.selTournament(individuals, int(k*(1-frac_elitist)), tournsize=tournsize)
 
 def ClassificadorCaracteristica(listaCaracteristicas):
     if(listaCaracteristicas.__len__() == 0):
@@ -103,7 +109,7 @@ def Melhor(pop):
     return melhor
 
 def mate_decorator(func):
-    def wraper(ind1, ind2, *arg, **kerhs):
+    def wraper(ind1, ind2, *args, **kargs):
         pais = []
         for p in (ind1, ind2):
             pais.append(p.fitness.values)
@@ -180,11 +186,11 @@ def ImprimeSaida(ngen, populacao, record):
 
 def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats = None, halloffame = None, verbose = __debug__):
     logbook = tools.Logbook()
-    logbook.header = ['gen', 'nevals'] + (Stats.fields if stats else [])
+    logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
     #Evaluate the individuals with on invalid fitness
     invalid_ind = [ind for ind in population if not ind.fitness.valid]
-    fitnesses = toolox.map(toolbox.evaluate, invalid_ind)
+    fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
     
@@ -202,8 +208,8 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats = N
 
     #Inpicio da geração populacional
     for gen in range(1, ngen + 1):
-        #Seleciona a proxima geração de indiv´duos
-        offspring = varAnd(offspring, toolbox, cxp, mutpb)
+        #Seleciona a proxima geração de indivíduos
+        offspring = varAnd(offspring, toolbox, cxpb, mutpb)
 
         LOG_GERACOES = open("log/Geracao_" + nomeArquivo + '.txt', "ta+")
         LOG_GERACOES.write('Classificando geracao: ' +  gen.__str__() + 'Hora: ' + datetime.datetime.now().__str__() + '\n')
@@ -214,7 +220,6 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats = N
         for ind, fit in zip (invalid_ind, fitnesses):
             ind.fitness.values = fit
 
-        #Seleciona a próxima geração de populações
         offspring = RemoveReponhe(offspring, TAMANHO_POPULACAO)
 
         #Update the Hall of fame with the generated individuals
@@ -228,7 +233,7 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats = N
         logbook.record(gen= gen, nevals=len(invalid_ind), **record)
         ImprimeSaida(gen, population, record)
 
-        return population, logbook
+    return population, logbook
 
 def varAnd(population, toolbox, cxpb, mutpb):
     offspring = [toolbox.clone(ind) for ind in population]
@@ -236,9 +241,8 @@ def varAnd(population, toolbox, cxpb, mutpb):
     #Apply crossover and mutation on the offspring
     for i in range(1, len(offspring), 2):
         if random.random() < cxpb:
-            offspring[i - 1], offspring[i] = toolbox.mate(offspring[i - 1], offpring[i])
-
-            del offspring[i-1].fitness.values, offspring[i].fitness.values
+            offspring[i - 1], offspring[i] = toolbox.mate(offspring[i - 1], offspring[i])
+            del offspring[i - 1].fitness.values, offspring[i].fitness.values
     
     for i in range(len(offspring)):
         if random.random() < mutpb:
@@ -250,3 +254,80 @@ def varAnd(population, toolbox, cxpb, mutpb):
 #Individuo and Operator genetic
 IND_SIZE = 104
 POPULACAO = 1
+TORNEIO = 2
+CROSSOVER = 0.9
+TAXA_MUTACAO = 0.001
+GERACOES = 2
+HALL_OF_FAME = 10
+ELITISMO = 1
+
+#Function Max
+creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0))
+creator.create("Individual", array.array, typecode='i', fitness=creator.FitnessMulti)
+
+#Atributo gerador
+toolbox = base.Toolbox()
+toolbox.register("indices", random.randint, 0, 1)
+toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.indices, IND_SIZE)
+toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+
+#Operadores genéticos
+toolbox.register("select", tools.selNSGA2)
+toolbox.register("mate", tools.cxTwoPoint)
+toolbox.register("mutate", tools.mutShuffleIndexes, indpb=TAXA_MUTACAO)
+toolbox.register("evaluate", evaluate)
+toolbox.decorate("mate", mate_decorator)
+hof = tools.HallOfFame(HALL_OF_FAME)
+
+def main():
+    a = datetime.datetime.now()
+    #random.seed(sys.argv[1])
+    random.seed(1)
+
+    CarregaFlor(PATH_BASE)
+    # CarregaFloresExternas(PATH_BASE_EXTERNA)
+
+    pop = toolbox.population(n=POPULACAO)
+    for p in pop:
+        p.pais = []
+
+    for p in pop:
+        for i in range(0, IND_SIZE):
+            if(i == 0 or i == 1 or i == 50 or
+               i == 51 or i == 52 or i == 103):
+                p[i] = 1
+            else:
+                p[i] = 0
+
+    stats1 = tools.Statistics(lambda ind: ind.fitness.values)
+    stats1.register("1) Media   ", numpy.mean,axis=0)
+    stats1.register("2) Desvio Padrao   ", numpy.std,axis=0)
+    stats1.register("3) Minimo  ", numpy.min,axis=0)
+    stats1.register("4) Maximo  ", numpy.max,axis=0)
+
+    stats2 = tools.Statistics(lambda ind: ind)
+    stats2.register("Piores / Melhores  ", contaFilhos)
+    stats2.register("Ind. Repetidos	 ", contaIndividuosIguais)
+
+    stats = tools.MultiStatistics(Fitness=stats1, Filhos=stats2)
+
+    eaMulti(pop, toolbox, CROSSOVER, 1, GERACOES, POPULACAO, stats=stats, halloffame=hof)
+    
+    MELHORES = open("melhores/" + nomeArquivo + '.txt', "a+")
+    MELHORES.write('\nHALL OF FAME:')
+    for elem in hof:
+        MELHORES.write(elem.__str__() + elem.fitness.values.__str__() + '\n')
+
+    #print('\nHALL OF FAME:')
+    #for elem in hof:
+    #    print (elem, elem.fitness.values)
+
+    #b = datetime.datetime.now()
+    #c = b - a
+
+    #print '\n\nInicio : ', a.strftime("%A, %d %b %Y %H:%M:%S")
+    #print 'Termino: ', b.strftime("%A, %d %b %Y %H:%M:%S")
+    #print 'Duracao: ', divmod(c.days * 86400 + c.seconds, 60)
+
+if __name__ == "__main__":
+    main()
