@@ -31,16 +31,16 @@ NOMEARQUIVO_CLASSIFICADOR = nomeArquivo + ".csv"
 MATRIZ_PROTEINAS = []
 MATRIZ_PROTEINAS_EXTERNAS = []
 
-#Recebe um individuo. O individuo é um o cromossomo, onde tem vários 0s e 1s, que representam as caracterísitcas.
+# Recebe um individuo. 
+# O individuo é um o cromossomo, onde tem vários 0s e 1s, que representam as caracterísitcas.
 def evaluate(individual):
     listaCaracteristicas = RetornaCaracteristica(individual)
-    print("tamanho",listaCaracteristicas.__len__())
+    # print("tamanho",listaCaracteristicas.__len__())
     listaCaracteristicasExternas = RetornaCaracteristicaExternas(individual)
     MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas)    
     fitness = ClassificadorCaracteristica(listaCaracteristicas)
     #Pega o Fitness através do erro médio do SVM
     fitness = 1 - fitness
-     
     tamanho = listaCaracteristicas.__len__() + listaCaracteristicasExternas.__len__()
     return fitness, tamanho
 
@@ -73,7 +73,6 @@ def MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas):
     return
 
 
-# Abre o arquivo txt
 def openTxt(path_Base, classe):
     caminho = os.path.join(path_Base, classe, classe + ".txt")
     arq = open(caminho, 'r')
@@ -83,8 +82,7 @@ def CarregaProteinas(path_Base):
     contador = 0
     for numeroclasse, classe in enumerate(LISTACLASSES):
         listaProteinas = openTxt(path_Base, classe)
-
-        # Verificar
+        
         for proteina in listaProteinas:
             with open(os.path.join(path_Base, classe, proteina.rstrip('\n').rstrip('\r')), 'r') as csvfile:
                 reader = csv.reader(csvfile, delimiter=';')
@@ -128,16 +126,19 @@ def Melhor(pop):
     return melhor
 
 def mate_decorator(func):
-    def wraper(ind1, ind2, *args, **kargs):
+    def wrapper(ind1, ind2, *args, **kargs):
+        # É uma lista que conterá os valores do fitness do ind1 e do ind2.
         pais = []
         for p in (ind1, ind2):
+            # Adiciona os elementos do fitness a Lista 
             pais.append(p.fitness.values)
         filhos = func(ind1, ind2, *args, **kargs)
         ret = filhos
         for f in filhos:
             f.pais = pais
+        # Retorna os filhos.
         return ret
-    return wraper
+    return wrapper
 
 def contaFilhos(pop):
     numPiores = 0
@@ -150,7 +151,9 @@ def contaFilhos(pop):
             count += 1
             tot0 += p[0]
             tot1 += p[1]
-            # print p
+            # print("tot0",tot0)
+            # print("tot1",tot1)
+            # print("p",p)
         if count > 0:
             media0 = tot0 / count
             media1 = tot1 / count
@@ -225,8 +228,6 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
     record = stats.compile(population) if stats else {}
     logbook.record(gen=0, nevals=len(invalid_ind), **record)
     ImprimeSaida(0, population, record)
-    #if verbose:
-    #    print logbook.stream
 
     # Avalia a populacao para ser utilizado no crownDistance
     population = toolbox.select(population, TAMANHO_POPULACAO)
@@ -326,12 +327,12 @@ IND_SIZE = 104
 #HALL_OF_FAME = 10
 #ELITISMO = int(sys.argv[7])
 # 500
-POPULACAO = 10
+POPULACAO = 100
 TORNEIO = 2
 CROSSOVER = 0.70
 TAXA_MUTACAO = 0.01
 # 100
-GERACOES = 2
+GERACOES = 5
 HALL_OF_FAME = 10
 ELITISMO = 1
 
