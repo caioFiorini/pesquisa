@@ -8,7 +8,6 @@ import os
 import numpy
 import copy
 
-
 from deap import algorithms
 from deap import base
 from deap import creator
@@ -32,14 +31,18 @@ NOMEARQUIVO_CLASSIFICADOR = nomeArquivo + ".csv"
 MATRIZ_PROTEINAS = []
 MATRIZ_PROTEINAS_EXTERNAS = []
 
+#Recebe um individuo. O individuo é um o cromossomo, onde tem vários 0s e 1s, que representam as caracterísitcas.
 def evaluate(individual):
     listaCaracteristicas = RetornaCaracteristica(individual)
+    print("tamanho",listaCaracteristicas.__len__())
     listaCaracteristicasExternas = RetornaCaracteristicaExternas(individual)
-    MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas)
+    MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas)    
     fitness = ClassificadorCaracteristica(listaCaracteristicas)
-    #fitness = 1 - fitness
+    #Pega o Fitness através do erro médio do SVM
+    fitness = 1 - fitness
+     
     tamanho = listaCaracteristicas.__len__() + listaCaracteristicasExternas.__len__()
-    return fitness, tamanho,
+    return fitness, tamanho
 
 def RetornaCaracteristica(ind1):
     caracteristicas = []
@@ -64,11 +67,13 @@ def RetornaCaracteristicaExternas(ind1):
 
 def MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas):
     ARQUIVO = open("Individuos/" + NOMEARQUIVO_CLASSIFICADOR, "w")
-    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTACLASSES, TAMANHO_TRANSFORMADA);
+    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTACLASSES, TAMANHO_TRANSFORMADA)
     leitor.BuildCSV(PATH_BASE, ARQUIVO, listaCaracteristicas, listaCaracteristicasExternas, MATRIZ_PROTEINAS, MATRIZ_PROTEINAS_EXTERNAS)
     ARQUIVO.close()
     return
 
+
+# Abre o arquivo txt
 def openTxt(path_Base, classe):
     caminho = os.path.join(path_Base, classe, classe + ".txt")
     arq = open(caminho, 'r')
@@ -79,6 +84,7 @@ def CarregaProteinas(path_Base):
     for numeroclasse, classe in enumerate(LISTACLASSES):
         listaProteinas = openTxt(path_Base, classe)
 
+        # Verificar
         for proteina in listaProteinas:
             with open(os.path.join(path_Base, classe, proteina.rstrip('\n').rstrip('\r')), 'r') as csvfile:
                 reader = csv.reader(csvfile, delimiter=';')
@@ -92,24 +98,32 @@ def CarregaProteinasExternas(path_Base):
         x = list(reader)
         MATRIZ_PROTEINAS_EXTERNAS.insert(0, x)
 
+# Seleciona Elitismo e Torneio
+# selTournament 
+# Selecione o melhor indivíduo entre os indivíduos escolhidos aleatoriamente, k vezes. A lista retornada contém referências aos indivíduos de entrada 
+
+# selBest
+# Selecione os k melhores indivíduos entre os indivíduos de entrada . A lista retornada contém referências aos indivíduos de entrada .
 def selElitistAndTournament(individuals, k, frac_elitist, tournsize):
     return tools.selBest(individuals, int(k*frac_elitist)) + tools.selTournament(individuals, int(k*(1-frac_elitist)), tournsize=tournsize)
 
+#Classificador de Características
 def ClassificadorCaracteristica(listaCaracteristicas):
     if(listaCaracteristicas.__len__() == 0):
         return 0
     svm = Classificador(PATH_CLASSIFICADOR, NOMEARQUIVO_CLASSIFICADOR)
-    resultPrecision = svm.fitness()
+    #resultPrecision = svm.fitness()
     resultFMeasure = svm.fitness1()
+    # podemos analisar isso e ver se retornar o Fitness.
     return resultFMeasure
 
+#Retorna a melhor característica.
 def Melhor(pop):
     melhor = []
     fitness = 0
     for p in pop:
         if(fitness < p.fitness.values):
             melhor = p
-            fitness = p.fitness.values
     melhor = RetornaCaracteristica(melhor)
     return melhor
 
@@ -193,6 +207,8 @@ def ImprimeSaida(ngen, populacao, record):
 
 def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=None, halloffame=None, verbose=__debug__):
     logbook = tools.Logbook()
+    #gen
+    #nevals
     logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
     # Evaluate the individuals with an invalid fitness
@@ -252,40 +268,39 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
     return population, logbook
 
 def varAnd(population, toolbox, cxpb, mutpb):
-    """Part of an evolutionary algorithm applying only the variation part
-    (crossover **and** mutation). The modified individuals have their
-    fitness invalidated. The individuals are cloned so returned population is
-    independent of the input population.
+    """Parte de um algoritmo evolutivo aplicando apenas a parte da variação
+     (crossover **e** mutação). Os indivíduos modificados têm seus
+     aptidão invalidada. Os indivíduos são clonados, então a população retornada é
+     independente da população de entrada.
 
-    :param population: A list of individuals to vary.
-    :param toolbox: A :class:`~deap.base.Toolbox` that contains the evolution
-                    operators.
-    :param cxpb: The probability of mating two individuals.
-    :param mutpb: The probability of mutating an individual.
-    :returns: A list of varied individuals that are independent of their
-              parents.
+     :parampopulation: Uma lista de indivíduos para variar.
+     :param toolbox: Uma :class:`~deap.base.Toolbox` que contém a evoluçãooperadores.
+     :param cxpb: A probabilidade de acasalar dois indivíduos.
+     :param mutpb: A probabilidade de mutação de um indivíduo.
+     :returns: Uma lista de indivíduos variados que são independentes de seuspais.
 
-    The variation goes as follow. First, the parental population
-    :math:`P_\mathrm{p}` is duplicated using the :meth:`toolbox.clone` method
-    and the result is put into the offspring population :math:`P_\mathrm{o}`.
-    A first loop over :math:`P_\mathrm{o}` is executed to mate pairs of consecutive
-    individuals. According to the crossover probability *cxpb*, the
-    individuals :math:`\mathbf{x}_i` and :math:`\mathbf{x}_{i+1}` are mated
-    using the :meth:`toolbox.mate` method. The resulting children
-    :math:`\mathbf{y}_i` and :math:`\mathbf{y}_{i+1}` replace their respective
-    parents in :math:`P_\mathrm{o}`. A second loop over the resulting
-    :math:`P_\mathrm{o}` is executed to mutate every individual with a
-    probability *mutpb*. When an individual is mutated it replaces its not
-    mutated version in :math:`P_\mathrm{o}`. The resulting
-    :math:`P_\mathrm{o}` is returned.
+     A variação é a seguinte. 
+     Em primeiro lugar, a população parental
+     :math:`P_\mathrm{p}` é duplicado usando o método :meth:`toolbox.clone`
+     e o resultado é colocado na população descendente :math:`P_\mathrm{o}`.
+     Um primeiro loop sobre :math:`P_\mathrm{o}` é executado para combinar pares de
+     indivíduos. De acordo com a probabilidade de cruzamento *cxpb*, o
+     indivíduos :math:`\mathbf{x}_i` e :math:`\mathbf{x}_{i+1}` são cruzados
+     usando o método :meth:`toolbox.mate`. Os filhos resultantes
+     :math:`\mathbf{y}_i` e :math:`\mathbf{y}_{i+1}` substituem seus respectivos
+     pais em :math:`P_\mathrm{o}`. Um segundo loop sobre o resultado
+     :math:`P_\mathrm{o}` é executado para transformar cada indivíduo com um
+     probabilidade *mutpb*. Quando um indivíduo sofre mutação, ele substitui seu não
+     versão modificada em :math:`P_\mathrm{o}`. O resultado
+     :math:`P_\mathrm{o}` é retornado.
 
-    This variation is named *And* beceause of its propention to apply both
-    crossover and mutation on the individuals. Note that both operators are
-    not applied systematicaly, the resulting individuals can be generated from
-    crossover only, mutation only, crossover and mutation, and reproduction
-    according to the given probabilities. Both probabilities should be in
-    :math:`[0, 1]`.
-    """
+     Esta variação é nomeada *E* por causa de sua propensão a aplicar ambos
+     cruzamento e mutação nos indivíduos. Note que ambos os operadores são
+     não aplicados sistematicamente, os indivíduos resultantes podem ser gerados a partir
+     apenas cruzamento, apenas mutação, cruzamento e mutação e reprodução
+     de acordo com as probabilidades dadas. Ambas as probabilidades devem estar em
+     :math:`[0, 1]`.
+     """
     offspring = [toolbox.clone(ind) for ind in population]
 
     # Apply crossover and mutation on the offspring
@@ -310,11 +325,12 @@ IND_SIZE = 104
 #TORNEIO=int(sys.argv[5])
 #HALL_OF_FAME = 10
 #ELITISMO = int(sys.argv[7])
-
-POPULACAO = 1
+# 500
+POPULACAO = 10
 TORNEIO = 2
-CROSSOVER = 0.9
-TAXA_MUTACAO = 0.001
+CROSSOVER = 0.70
+TAXA_MUTACAO = 0.01
+# 100
 GERACOES = 2
 HALL_OF_FAME = 10
 ELITISMO = 1
@@ -370,7 +386,7 @@ def main():
 
     stats = tools.MultiStatistics(Fitness=stats1, Filhos=stats2)
 
-    eaMulti(pop, toolbox, CROSSOVER, 1, GERACOES, POPULACAO, stats=stats, halloffame=hof)
+    eaMulti(pop, toolbox, CROSSOVER, TAXA_MUTACAO, GERACOES, POPULACAO, stats=stats, halloffame=hof)
     
     MELHORES = open("melhores/" + nomeArquivo + '.txt', "a+")
     MELHORES.write('\nHALL OF FAME:')
