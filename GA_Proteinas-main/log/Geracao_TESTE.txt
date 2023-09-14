@@ -1669,3 +1669,8 @@ Classificando geracao: 97 Hora: 2023-09-12 20:33:32.822014
 Classificando geracao: 98 Hora: 2023-09-12 20:33:42.405087
 Classificando geracao: 99 Hora: 2023-09-12 20:33:58.527448
 Classificando geracao: 100 Hora: 2023-09-12 20:34:08.514988
+Classificando geracao: 1 Hora: 2023-09-14 09:06:20.292113
+Tempo gasto: 0 hora(s), 1 minuto(s), 5 segundo(s)
+Classificando geracao: 2 Hora: 2023-09-14 09:07:25.665695
+Tempo gasto: 0 hora(s), 1 minuto(s), 4 segundo(s)
+Classificando geracao: 3 Hora: 2023-09-14 09:08:30.147346
