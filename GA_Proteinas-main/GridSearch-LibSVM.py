@@ -40,9 +40,13 @@ grid.build_classifier(trainData)
 best = Classifier(jobject=javabridge.call(grid.jobject, "getBestClassifier", "()Lweka/classifiers/Classifier;"))
 best.build_classifier(trainData)
 
+print(grid)
+print(best)
 
 # Evaluation on train dataset just to simplify this example
 evaluation = Evaluation(trainData)
 evaluation.test_model(best, trainData)
+print(best.to_commandline())
+print(evaluation.matrix())
 
 jvm.stop()

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from sklearn import svm
+from sklearn import datasets, svm
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 import csv
@@ -81,9 +81,6 @@ class Classificador:
                      DESCR='Proteinas - Cada Classe representa uma determinada funcao',
                      feature_names=['Hidrolases', 'Isomerases', 'Liases', 'Ligases', 'Oxidoredutases', 'Transferases'])
 
-    
-    # para o nosso problema proposto, o nosso fitness, deve ser baseado no erro médio de precisão do 
-    # classificador SVM  
     def fitness(self):
         arquivo = self.load_proteina()
         #parameters = {'kernel': ['rbf'], 'C': [1, 10, 100, 1000]}
@@ -92,7 +89,6 @@ class Classificador:
 
         clf = GridSearchCV(svr, parameters, cv=10, scoring="accuracy")
         clf.fit(arquivo.data, arquivo.target)
-        # pegando o melhor indivíduo gerado
         return clf.best_score_
         #return 45.01
 
@@ -102,5 +98,4 @@ class Classificador:
         clf = svm.SVC(kernel='rbf', C=1000)
         scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='accuracy')
         #scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='f1_macro')
-        #print(scores)
         return scores.mean()
