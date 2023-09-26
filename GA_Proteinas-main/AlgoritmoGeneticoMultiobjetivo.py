@@ -108,16 +108,21 @@ def Melhor(pop):
     fitness = 0
     for p in pop:
         if(fitness < p.fitness.values):
-            melhor = p;
+            melhor = p
             fitness = p.fitness.values
     melhor = RetornaCaracteristica(melhor)
     return melhor
+
+# Em termos simples, o decorador mate_decorator() permite que você armazene os pais dos filhos gerados 
+# por um cruzamento. Isso pode ser útil para fins de depuração ou para rastrear a evolução de uma 
+# população ao longo do tempo.
 
 def mate_decorator(func):
     def wraper(ind1, ind2, *args, **kargs):
         pais = []
         for p in (ind1, ind2):
             pais.append(p.fitness.values)
+        # Esta linha chama a função de cruzamento original para gerar os filhos.
         filhos = func(ind1, ind2, *args, **kargs)
         ret = filhos
         for f in filhos:
@@ -318,38 +323,70 @@ def varAnd(population, toolbox, cxpb, mutpb):
 
 #Individuo and #Operator genetic
 IND_SIZE = 104
-POPULACAO = int(sys.argv[2])
-CROSSOVER=float(sys.argv[4])
-GERACOES=int(sys.argv[3])
-TAXA_MUTACAO = float(sys.argv[6])
-TORNEIO=int(sys.argv[5])
-HALL_OF_FAME = 10
-ELITISMO = int(sys.argv[7])
-
-# POPULACAO = 500
-# TORNEIO = 2
-# CROSSOVER = 0.7
-# TAXA_MUTACAO = 0.01
-# GERACOES = 100
+# POPULACAO = int(sys.argv[2])
+# CROSSOVER=float(sys.argv[4])
+# GERACOES=int(sys.argv[3])
+# TAXA_MUTACAO = float(sys.argv[6])
+# TORNEIO=int(sys.argv[5])
 # HALL_OF_FAME = 10
-# ELITISMO = 1
+# ELITISMO = int(sys.argv[7])
+
+POPULACAO = 500
+TORNEIO = 2
+CROSSOVER = 0.7
+TAXA_MUTACAO = 0.01
+GERACOES = 100
+HALL_OF_FAME = 10
+ELITISMO = 1
 
 # Function Max
+
+
+# O creator cria uma nova classe com o nome passado no parâmetro
+# Em termos mais simples, essa linha de código cria uma nova classe de aptidão chamada FitnessMulti que tem dois componentes. 
+# O primeiro componente é positivo e o segundo componente é negativo. A biblioteca Deap irá minimizar o segundo componente 
+# da aptidão, o que significa maximizar o primeiro componente da aptidão.
 creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0))
+
+# array.array -> é usado para criar um arranjo de tipos específicos.
+# no caso o Type code é i, logo ele cria um arranjo de inteiros
+# Ele cria um arranjo com os elementos do fitnes.
 creator.create("Individual", array.array, typecode='i', fitness=creator.FitnessMulti)
 
 # Attribute generator
 toolbox = base.Toolbox()
+
+# O método register registra uma função na biblioteca Deap com o nome passado e você pode fornecer argumentos padrão que serão passados ​​automaticamente 
+# ao chamar a função registrada. Argumentos fixos podem então ser substituídos no momento da chamada da função.
+
+# Em específico essa função gera uma função que quando chamada ela gera números aleatórios entre 1 e 0;
 toolbox.register("indices", random.randint, 0, 1)
+
+# A função tools.initRepeat repete um procedimento uma quantidade específica de vezes, no caso abaixo
+# seria a quantidade de vezes do IND_SIZE.
+# Essa função registra um indivíduo e inicializa ele com 0s - 1s aleatórios e repete IND_SIZE vezes.
 toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.indices, IND_SIZE)
+
+# Essa função registra uma função de colocar indivíduos em uma lista e repete toolbox.individual vezes 
+# (quantidade de indivíduos).
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 # Operadores genetic
+# registra uma função de seleção de indivíduo do NSGA2 
 toolbox.register("select", tools.selNSGA2)
+
+# registra uma função que executa um cruzamento de dois pontos nos indivíduos da sequência de entrada
 toolbox.register("mate", tools.cxTwoPoint)
+
+# registra uma função que embaralhe os atributos do indivíduo de entrada e retorne o mutante. 
 toolbox.register("mutate", tools.mutShuffleIndexes, indpb=TAXA_MUTACAO)
+
+# registra a função criada evaluate na biblioteca Deap
 toolbox.register("evaluate", evaluate)
+
+# faz o cruzemento entre pais, gera os filhos e armazena pai e filho juntos
 toolbox.decorate("mate", mate_decorator)
+
 hof = tools.HallOfFame(HALL_OF_FAME)
 #toolbox.register("map", dtm.map)
 
