@@ -20,12 +20,12 @@ if [ ! -d "$current_out_folder" ]; then
 	mkdir -p $current_out_folder
 	for sd in "${seed[@]}"; do
 
-		python AlgoritmoGeneticoMultiobjetivo.py $sd $1 $2 $3 $4 $5 $6 > "$current_out_folder$sd.lol" &
+		python3 AlgoritmoGeneticoMultiobjetivo.py $sd $1 $2 $3 $4 $5 $6 > "$current_out_folder$sd.lol" 
 
 	done
 	wait
-	./delete_blank_space.sh $current_out_folder
-	python agAnalisys.py $current_out_folder $direc
+	#./delete_blank_space.sh $current_out_folder
+	python3 agAnalisys.py $current_out_folder $direc
 fi
 
 

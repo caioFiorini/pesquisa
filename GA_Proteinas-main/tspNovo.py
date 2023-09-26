@@ -123,7 +123,7 @@ def main():
     #print pop[0], evalTSP(pop[0])
 	
     # Create the population and populate the history
-    history = tools.History();
+    history = tools.History()
     toolbox.decorate("mate", history.decorator)
     #toolbox.decorate("mutate", history.decorator)
 
@@ -175,9 +175,9 @@ def main():
     b = datetime.datetime.now()
     c = b - a
 
-    print '\n\nInicio : ', a.strftime("%A, %d %b %Y %H:%M:%S")
-    print 'Termino: ', b.strftime("%A, %d %b %Y %H:%M:%S")
-    print 'Duracao: ',divmod(c.days * 86400 + c.seconds, 60)
+    print('\n\nInicio : ', a.strftime("%A, %d %b %Y %H:%M:%S"))
+    print('Termino: ', b.strftime("%A, %d %b %Y %H:%M:%S"))
+    print('Duracao: ',divmod(c.days * 86400 + c.seconds, 60))
     return pop, stats, hof
 
 if __name__ == "__main__":
