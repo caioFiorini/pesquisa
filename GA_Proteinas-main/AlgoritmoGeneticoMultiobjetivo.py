@@ -75,8 +75,12 @@ def openTxt(path_Base, classe):
 
 def CarregaProteinas(path_Base):
     contador = 0
-    for numeroclasse, classe in enumerate(LISTACLASSES):
+    for numeroclasse, classe in enumerate(LISTACLASSES): 
+
+        # Dentro de cada pasta de classe, tem um arquivo .txt com o nome da classe
+        # e os arquivos .csv que devem ser lidos
         listaProteinas = openTxt(path_Base, classe)
+        # print(listaProteinas)
 
         for proteina in listaProteinas:
             with open(os.path.join(path_Base, classe, proteina.rstrip('\n').rstrip('\r')), 'r') as csvfile:
@@ -84,6 +88,9 @@ def CarregaProteinas(path_Base):
                 x = list(reader)
                 MATRIZ_PROTEINAS.insert(contador, x)
                 contador = contador + 1
+        
+        # print(MATRIZ_PROTEINAS)
+
 
 def CarregaProteinasExternas(path_Base):
     with open(os.path.join(path_Base, NOME_ARQUIVO_EXTERNO.rstrip('\n').rstrip('\r')), 'r') as csvfile:
@@ -377,20 +384,28 @@ hof = tools.HallOfFame(HALL_OF_FAME)
 
 def main():
     a = datetime.datetime.now()
-    random.seed(sys.argv[1])
-    #random.seed(1)
+
+    # gera uma semente aleatória
+    # random.seed(sys.argv[1])
+    random.seed(1)
 
     CarregaProteinas(PATH_BASE)
     CarregaProteinasExternas(PATH_BASE_EXTERNA)
 
+    # inicializa uma lista com os indivíduos da população
     pop = toolbox.population(n=POPULACAO)
+    # print(pop)
+    # print(type(pop))
+
     for p in pop:
+        # Inicializa uma lista vazia para os pais dos indivíduos.
         p.pais = []
+        # print(p.pais)
+
 
     for p in pop:
         for i in range(0, IND_SIZE):
-            if(i == 0 or i == 1 or i == 50 or
-               i == 51 or i == 52 or i == 103):
+            if(i == 0 or i == 1 or i == 50 or i == 51 or i == 52 or i == 103):
                 p[i] = 1
             else:
                 p[i] = 0
