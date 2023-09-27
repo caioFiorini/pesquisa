@@ -182,12 +182,19 @@ def RemoveReponhe(pop, tamanhoOriginal):
     return pop
 
 def ImprimeSaida(ngen, populacao, record):
+    print(populacao)
+    print("\n\n")
     saida = ngen.__str__() + '\t' + len(populacao).__str__() + \
-            '\t' + record['Filhos']['Ind. Repetidos\t '].__str__() + '\t' + record['Filhos']['Piores / Melhores  '].__str__() + \
-            '\t' + record['Fitness']['2) Desvio Padrao   '][0].__str__() + '\t' +  record['Fitness']['2) Desvio Padrao   '][1].__str__() + \
-            '\t' + record['Fitness']['4) Maximo  '][0].__str__() + '\t' + record['Fitness']['4) Maximo  '][1].__str__() + \
-            '\t' + record['Fitness']['1) Media   '][0].__str__() + '\t' + record['Fitness']['1) Media   '][1].__str__() + \
-            '\t' + record['Fitness']['3) Minimo  '][0].__str__() + '\t' +  record['Fitness']['3) Minimo  '][1].__str__()
+    '\t' + record['Filhos']['Ind. Repetidos\t '].__str__() + \
+    '\n' + 'Piores / Melhores ' + record['Filhos']['Piores / Melhores  '].__str__() + \
+    '\n' + '1) Media  ' + record['Fitness']['1) Media   '][0].__str__() + \
+    '\n' + '1) Media  ' + record['Fitness']['1) Media   '][1].__str__() + \
+    '\n' + '2) Desvio Padrao ' + record['Fitness']['2) Desvio Padrao   '][0].__str__() + \
+    '\n' + '2) Desvio Padrao ' + record['Fitness']['2) Desvio Padrao   '][1].__str__() + \
+    '\n' + '3) Minimo ' + record['Fitness']['3) Minimo  '][0].__str__() + \
+    '\n' + '3) Minimo ' + record['Fitness']['3) Minimo  '][1].__str__() + \
+    '\n' + '4) Maximo ' + record['Fitness']['4) Maximo  '][0].__str__() + \
+    '\n' + '4) Maximo ' + record['Fitness']['4) Maximo  '][1].__str__()
             
     print (saida)
 
@@ -248,9 +255,11 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
         logbook.record(gen=gen, nevals=len(invalid_ind), **record)
         ImprimeSaida(gen, population, record)
 
+        # Log time
         time_arrow = arrow.get((datetime.datetime.now() - current_time).__str__(), "H:m:s.SSSSSS")
         LOG_GERACOES.write('Tempo gasto: ' + time_arrow.format("H [hora(s)], m [minuto(s)], s [segundo(s)]") + '\n')
         current_time = datetime.datetime.now()
+
         #if verbose:
         #    print logbook.stream
 
@@ -319,8 +328,8 @@ IND_SIZE = 104
 
 POPULACAO = 500
 TORNEIO = 2
-CROSSOVER = 0.9
-TAXA_MUTACAO = 0.001
+CROSSOVER = 0.7
+TAXA_MUTACAO = 0.01
 GERACOES = 100
 HALL_OF_FAME = 10
 ELITISMO = 1
