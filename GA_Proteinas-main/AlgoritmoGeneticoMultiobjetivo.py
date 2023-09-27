@@ -318,21 +318,21 @@ def varAnd(population, toolbox, cxpb, mutpb):
 
 #Individuo and #Operator genetic
 IND_SIZE = 104
-# POPULACAO = int(sys.argv[2])
-# CROSSOVER=float(sys.argv[4])
-# GERACOES=int(sys.argv[3])
-# TAXA_MUTACAO = float(sys.argv[6])
-# TORNEIO=int(sys.argv[5])
-# HALL_OF_FAME = 10
-# ELITISMO = int(sys.argv[7])
-
-POPULACAO = 500
-TORNEIO = 2
-CROSSOVER = 0.7
-TAXA_MUTACAO = 0.01
-GERACOES = 100
+POPULACAO = int(sys.argv[2])
+CROSSOVER=float(sys.argv[4])
+GERACOES=int(sys.argv[3])
+TAXA_MUTACAO = float(sys.argv[6])
+TORNEIO=int(sys.argv[5])
 HALL_OF_FAME = 10
-ELITISMO = 1
+ELITISMO = int(sys.argv[7])
+
+# POPULACAO = 500
+# TORNEIO = 2
+# CROSSOVER = 0.7
+# TAXA_MUTACAO = 0.01
+# GERACOES = 100
+# HALL_OF_FAME = 10
+# ELITISMO = 1
 
 # Function Max
 creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0))
@@ -355,8 +355,8 @@ hof = tools.HallOfFame(HALL_OF_FAME)
 
 def main():
     a = datetime.datetime.now()
-    # random.seed(sys.argv[1])
-    random.seed(1)
+    random.seed(sys.argv[1])
+    # random.seed(1)
 
     CarregaProteinas(PATH_BASE)
     CarregaProteinasExternas(PATH_BASE_EXTERNA)
