@@ -7,6 +7,7 @@ import csv
 import os
 import numpy
 import copy
+import arrow
 
 from deap import algorithms
 from deap import base
@@ -228,12 +229,19 @@ def RemoveReponhe(pop, tamanhoOriginal):
     return pop
 
 def ImprimeSaida(ngen, populacao, record):
+    print(populacao)
+    print("\n\n")
     saida = ngen.__str__() + '\t' + len(populacao).__str__() + \
-            '\t' + record['Filhos']['Ind. Repetidos\t '].__str__() + '\t' + record['Filhos']['Piores / Melhores  '].__str__() + \
-            '\t' + record['Fitness']['2) Desvio Padrao   '][0].__str__() + '\t' +  record['Fitness']['2) Desvio Padrao   '][1].__str__() + \
-            '\t' + record['Fitness']['4) Maximo  '][0].__str__() + '\t' + record['Fitness']['4) Maximo  '][1].__str__() + \
-            '\t' + record['Fitness']['1) Media   '][0].__str__() + '\t' + record['Fitness']['1) Media   '][1].__str__() + \
-            '\t' + record['Fitness']['3) Minimo  '][0].__str__() + '\t' +  record['Fitness']['3) Minimo  '][1].__str__()
+    '\t' + record['Filhos']['Ind. Repetidos\t '].__str__() + \
+    '\n' + 'Piores / Melhores ' + record['Filhos']['Piores / Melhores  '].__str__() + \
+    '\n' + '1) Media  ' + record['Fitness']['1) Media   '][0].__str__() + \
+    '\n' + '1) Media  ' + record['Fitness']['1) Media   '][1].__str__() + \
+    '\n' + '2) Desvio Padrao ' + record['Fitness']['2) Desvio Padrao   '][0].__str__() + \
+    '\n' + '2) Desvio Padrao ' + record['Fitness']['2) Desvio Padrao   '][1].__str__() + \
+    '\n' + '3) Minimo ' + record['Fitness']['3) Minimo  '][0].__str__() + \
+    '\n' + '3) Minimo ' + record['Fitness']['3) Minimo  '][1].__str__() + \
+    '\n' + '4) Maximo ' + record['Fitness']['4) Maximo  '][0].__str__() + \
+    '\n' + '4) Maximo ' + record['Fitness']['4) Maximo  '][1].__str__()
             
     print (saida)
 
