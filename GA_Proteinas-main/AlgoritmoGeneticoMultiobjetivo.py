@@ -33,6 +33,17 @@ MATRIZ_PROTEINAS = []
 MATRIZ_PROTEINAS_EXTERNAS = []
 
 def evaluate(individual):
+    """ Essa função retorna o fitness do indivíduo.
+
+    Args:
+        individual : indivíduos da população.
+
+    Returns:
+        o fitness para o indivíduo e a quantidade de características.
+    """
+
+    # dentro do cromosso temos as características presentes no indivíduos [0,1,0,1,0,1]
+    # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
     listaCaracteristicas = RetornaCaracteristica(individual)
     listaCaracteristicasExternas = RetornaCaracteristicaExternas(individual)
     MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas)
@@ -42,6 +53,14 @@ def evaluate(individual):
     return fitness, tamanho,
 
 def RetornaCaracteristica(ind1):
+    """Lista as características (atributos) de um indivíduo.
+
+    Args:
+        ind1: o indivíduo. (cromossomo [0,0,1,0,...]).
+
+    Returns:
+        List : retorna uma lista com as caracterísitcas.
+    """
     caracteristicas = []
     x = 0
     for i in ind1:
@@ -53,6 +72,14 @@ def RetornaCaracteristica(ind1):
     return caracteristicas
 
 def RetornaCaracteristicaExternas(ind1):
+    """Lista as características das bases externas de enriquecimento da base principal.
+
+    Args:
+        ind1 (_type_): O individuos (cromossomo [0,0,1,0,...]).
+
+    Returns:
+        List : retorna uma lista com as características a mais. 
+    """
     caracteristicas = []
     x = 0
     for i in ind1:
@@ -62,9 +89,17 @@ def RetornaCaracteristicaExternas(ind1):
         x = x + 1
     return caracteristicas
 
+
+
 def MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas):
+    """_summary_ Gera um arquivo igual uma base de dados para testar na svm
+
+    Args:
+        listaCaracteristicas (_type_): Quantidade listada de características, igual quando faz leitura em um csv
+        listaCaracteristicasExternas (_type_): Quantidade listada de características, igual quando faz leitura em um csv
+    """
     ARQUIVO = open("Individuos/" + NOMEARQUIVO_CLASSIFICADOR, "w")
-    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTACLASSES, TAMANHO_TRANSFORMADA);
+    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTACLASSES, TAMANHO_TRANSFORMADA)
     leitor.BuildCSV(PATH_BASE, ARQUIVO, listaCaracteristicas, listaCaracteristicasExternas, MATRIZ_PROTEINAS, MATRIZ_PROTEINAS_EXTERNAS)
     ARQUIVO.close()
     return
@@ -209,75 +244,92 @@ def ImprimeSaida(ngen, populacao, record):
     '\n' + '4) Maximo ' + record['Fitness']['4) Maximo  '][1].__str__()
             
     print (saida)
+
 def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=None, halloffame=None, verbose=__debug__):
-  
+    """_summary_
+        É nessa função onde a mágica acontece, a ideia é que todo o processo de evolução das gerações aconteça aqui.
+
+    Args:
+        population (list): Uma lista com vários invíduos
+        toolbox (): objeto da biblioteca deap
+        cxpb (_type_): crossover (A probabilidade de acasalar dois indivíduos)
+        mutpb (_type_): A taxa de mutação de um indivíduo
+        ngen (_type_): número de gerações
+        TAMANHO_POPULACAO (_type_): número da população
+        stats (_type_, optional): Serve para guardar as métricas de cada geração.
+        halloffame (_type_, optional): o hall da fama seria os 10 melhores indivíduos de cada
+        verbose (_type_, optional): Se deve ou não registrar as estatísticas.
+
+    Returns:
+        _type_: _description_
+    """        
     logbook = tools.Logbook()
+    
+    # gen A geração atual
+    # nevals número de avaliações
+    # ele concatena a lista de gerações e números de avaliações com as colunas que estão dentro de stats.
     logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
     # Evaluate the individuals with an invalid fitness
+    # Coloca todos os invíduos que o fitness não é válido em uma lista.
     invalid_ind = [ind for ind in population if not ind.fitness.valid]
+
+
     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
 
-    population = RemoveReponhe(population, TAMANHO_POPULACAO)
+    # population = RemoveReponhe(population, TAMANHO_POPULACAO)
 
-    if halloffame is not None:
-        halloffame.update(population)
+    # if halloffame is not None:
+    #     halloffame.update(population)
 
-    record = stats.compile(population) if stats else {}
-    logbook.record(gen=0, nevals=len(invalid_ind), **record)
-    ImprimeSaida(0, population, record)
-    #if verbose:
-    #    print logbook.stream
+    # record = stats.compile(population) if stats else {}
+    # logbook.record(gen=0, nevals=len(invalid_ind), **record)
+    # ImprimeSaida(0, population, record)
+    # #if verbose:
+    # #    print logbook.stream
 
-    # Avalia a populacao para ser utilizado no crownDistance
-    population = toolbox.select(population, TAMANHO_POPULACAO)
+    # # Avalia a populacao para ser utilizado no crownDistance
+    # population = toolbox.select(population, TAMANHO_POPULACAO)
 
-    # Begin the generational process
-    current_time = datetime.datetime.now()
-    for gen in range(1, ngen + 1):
-        # Select the next generation individuals
-        # offspring = toolbox.select(population, len(population))
-        offspring = tools.selTournamentDCD(population, len(population))
+    # # Begin the generational process
+    # for gen in range(1, ngen + 1):
+    #     # Select the next generation individuals
+    #     # offspring = toolbox.select(population, len(population))
+    #     offspring = tools.selTournamentDCD(population, len(population))
 
-        # Vary the pool of individuals
-        offspring = varAnd(offspring, toolbox, cxpb, mutpb)
+    #     # Vary the pool of individuals
+    #     offspring = varAnd(offspring, toolbox, cxpb, mutpb)
 
-        LOG_GERACOES = open("log/Geracao_" + nomeArquivo + '.txt', "a+")
-        LOG_GERACOES.write('Classificando geracao: ' + gen.__str__() + ' Hora: ' + datetime.datetime.now().__str__() + '\n')
+    #     LOG_GERACOES = open("log/Geracao_" + nomeArquivo + '.txt', "a+")
+    #     LOG_GERACOES.write('Classificando geracao: ' + gen.__str__() + ' Hora: ' + datetime.datetime.now().__str__() + '\n')
 
-        # Evaluate the individuals with an invalid fitness
-        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-        for ind, fit in zip(invalid_ind, fitnesses):
-            ind.fitness.values = fit
+    #     # Evaluate the individuals with an invalid fitness
+    #     invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+    #     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+    #     for ind, fit in zip(invalid_ind, fitnesses):
+    #         ind.fitness.values = fit
 
-        offspring = RemoveReponhe(offspring, TAMANHO_POPULACAO)
+    #     offspring = RemoveReponhe(offspring, TAMANHO_POPULACAO)
 
-        # Update the hall of fame with the generated individuals
-        if halloffame is not None:
-            halloffame.update(offspring)
+    #     # Update the hall of fame with the generated individuals
+    #     if halloffame is not None:
+    #         halloffame.update(offspring)
 
-        # Select the next generation population
-        population = toolbox.select(population + offspring, TAMANHO_POPULACAO)
+    #     # Select the next generation population
+    #     population = toolbox.select(population + offspring, TAMANHO_POPULACAO)
 
-        # Append the current generation statistics to the logbook
-        record = stats.compile(population) if stats else {}
-        logbook.record(gen=gen, nevals=len(invalid_ind), **record)
-        ImprimeSaida(gen, population, record)
+    #     # Append the current generation statistics to the logbook
+    #     record = stats.compile(population) if stats else {}
+    #     logbook.record(gen=gen, nevals=len(invalid_ind), **record)
+    #     ImprimeSaida(gen, population, record)
+    #     #if verbose:
+    #     #    print logbook.stream
 
-        # Log time
-        time_arrow = arrow.get((datetime.datetime.now() - current_time).__str__(), "H:m:s.SSSSSS")
-        LOG_GERACOES.write('Tempo gasto: ' + time_arrow.format("H [hora(s)], m [minuto(s)], s [segundo(s)]") + '\n')
-        current_time = datetime.datetime.now()
-
-        #if verbose:
-        #    print logbook.stream
-
-    # para printar o que tem dentro do logbook;
-    for record in logbook:
-        print(record)
+    # # para printar o que tem dentro do logbook;
+    # for record in logbook:
+    #     print(record)
 
     return population, logbook
 
@@ -424,7 +476,7 @@ def main():
 
     for p in pop:
         # percorre cada indivíduo
-        print(p,"\n")
+        # print(p,"\n")
         for i in range(0, IND_SIZE):
             # print(i,"\n")
             # Se o índice atual estiver entre os valores especificados no passo anterior, ele define 
