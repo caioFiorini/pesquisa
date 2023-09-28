@@ -7,6 +7,7 @@ import csv
 import os
 import numpy
 import copy
+import arrow
 
 from deap import algorithms
 from deap import base
@@ -193,12 +194,19 @@ def RemoveReponhe(pop, tamanhoOriginal):
     return pop
 
 def ImprimeSaida(ngen, populacao, record):
+    print(populacao)
+    print("\n\n")
     saida = ngen.__str__() + '\t' + len(populacao).__str__() + \
-            '\t' + record['Filhos']['Ind. Repetidos\t '].__str__() + '\t' + record['Filhos']['Piores / Melhores  '].__str__() + \
-            '\t' + record['Fitness']['2) Desvio Padrao   '][0].__str__() + '\t' +  record['Fitness']['2) Desvio Padrao   '][1].__str__() + \
-            '\t' + record['Fitness']['4) Maximo  '][0].__str__() + '\t' + record['Fitness']['4) Maximo  '][1].__str__() + \
-            '\t' + record['Fitness']['1) Media   '][0].__str__() + '\t' + record['Fitness']['1) Media   '][1].__str__() + \
-            '\t' + record['Fitness']['3) Minimo  '][0].__str__() + '\t' +  record['Fitness']['3) Minimo  '][1].__str__()
+    '\t' + record['Filhos']['Ind. Repetidos\t '].__str__() + \
+    '\n' + 'Piores / Melhores ' + record['Filhos']['Piores / Melhores  '].__str__() + \
+    '\n' + '1) Media  ' + record['Fitness']['1) Media   '][0].__str__() + \
+    '\n' + '1) Media  ' + record['Fitness']['1) Media   '][1].__str__() + \
+    '\n' + '2) Desvio Padrao ' + record['Fitness']['2) Desvio Padrao   '][0].__str__() + \
+    '\n' + '2) Desvio Padrao ' + record['Fitness']['2) Desvio Padrao   '][1].__str__() + \
+    '\n' + '3) Minimo ' + record['Fitness']['3) Minimo  '][0].__str__() + \
+    '\n' + '3) Minimo ' + record['Fitness']['3) Minimo  '][1].__str__() + \
+    '\n' + '4) Maximo ' + record['Fitness']['4) Maximo  '][0].__str__() + \
+    '\n' + '4) Maximo ' + record['Fitness']['4) Maximo  '][1].__str__()
             
     print (saida)
 def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=None, halloffame=None, verbose=__debug__):
@@ -242,6 +250,7 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
     population = toolbox.select(population, TAMANHO_POPULACAO)
 
     # Begin the generational process
+    current_time = datetime.datetime.now()
     for gen in range(1, ngen + 1):
         # Select the next generation individuals
         # offspring = toolbox.select(population, len(population))
@@ -272,6 +281,12 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
         record = stats.compile(population) if stats else {}
         logbook.record(gen=gen, nevals=len(invalid_ind), **record)
         ImprimeSaida(gen, population, record)
+
+        # Log time
+        time_arrow = arrow.get((datetime.datetime.now() - current_time).__str__(), "H:m:s.SSSSSS")
+        LOG_GERACOES.write('Tempo gasto: ' + time_arrow.format("H [hora(s)], m [minuto(s)], s [segundo(s)]") + '\n')
+        current_time = datetime.datetime.now()
+
         #if verbose:
         #    print logbook.stream
 
