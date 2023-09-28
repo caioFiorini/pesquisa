@@ -202,22 +202,7 @@ def ImprimeSaida(ngen, populacao, record):
             
     print (saida)
 def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=None, halloffame=None, verbose=__debug__):
-    """_summary_
-
-    Args:
-        population (list): Uma lista com vários invíduos
-        toolbox (): objeto da biblioteca deap
-        cxpb (_type_): _description_
-        mutpb (_type_): _description_
-        ngen (_type_): _description_
-        TAMANHO_POPULACAO (_type_): _description_
-        stats (_type_, optional): _description_. Defaults to None.
-        halloffame (_type_, optional): _description_. Defaults to None.
-        verbose (_type_, optional): _description_. Defaults to __debug__.
-
-    Returns:
-        _type_: _description_
-    """        
+  
     logbook = tools.Logbook()
     logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
