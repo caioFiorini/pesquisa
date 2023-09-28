@@ -201,8 +201,23 @@ def ImprimeSaida(ngen, populacao, record):
             '\t' + record['Fitness']['3) Minimo  '][0].__str__() + '\t' +  record['Fitness']['3) Minimo  '][1].__str__()
             
     print (saida)
-
 def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=None, halloffame=None, verbose=__debug__):
+    """_summary_
+
+    Args:
+        population (list): Uma lista com vários invíduos
+        toolbox (): objeto da biblioteca deap
+        cxpb (_type_): _description_
+        mutpb (_type_): _description_
+        ngen (_type_): _description_
+        TAMANHO_POPULACAO (_type_): _description_
+        stats (_type_, optional): _description_. Defaults to None.
+        halloffame (_type_, optional): _description_. Defaults to None.
+        verbose (_type_, optional): _description_. Defaults to __debug__.
+
+    Returns:
+        _type_: _description_
+    """        
     logbook = tools.Logbook()
     logbook.header = ['gen', 'nevals'] + (stats.fields if stats else [])
 
@@ -259,6 +274,10 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
         ImprimeSaida(gen, population, record)
         #if verbose:
         #    print logbook.stream
+
+    # para printar o que tem dentro do logbook;
+    for record in logbook:
+        print(record)
 
     return population, logbook
 
@@ -398,20 +417,30 @@ def main():
     # print(type(pop))
 
     for p in pop:
-        # Inicializa uma lista vazia para os pais dos indivíduos.
+        # Inicializa uma lista vazia para os pais dos indivíduos. 
         p.pais = []
         # print(p.pais)
 
 
     for p in pop:
+        # percorre cada indivíduo
+        print(p,"\n")
         for i in range(0, IND_SIZE):
+            # print(i,"\n")
+            # Se o índice atual estiver entre os valores especificados no passo anterior, ele define 
+            # o valor no índice i do indivíduo p como 1.
             if(i == 0 or i == 1 or i == 50 or i == 51 or i == 52 or i == 103):
                 p[i] = 1
             else:
                 p[i] = 0
 
     stats1 = tools.Statistics(lambda ind: ind.fitness.values)
+
+
+    # na biblioteca 
+
     stats1.register("1) Media   ", numpy.mean,axis=0)
+    # numpy.std calcula o desvio padrão.
     stats1.register("2) Desvio Padrao   ", numpy.std,axis=0)
     stats1.register("3) Minimo  ", numpy.min,axis=0)
     stats1.register("4) Maximo  ", numpy.max,axis=0)
