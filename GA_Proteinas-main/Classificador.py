@@ -54,6 +54,7 @@ class Bunch(dict):
         pass
 
 class Classificador:
+    # contrutor
     def __init__(self, path, nomeArquivo):
         self.path = path
         self.nomeArquivo = nomeArquivo
@@ -96,6 +97,6 @@ class Classificador:
         arquivo = self.load_proteina()
 
         clf = svm.SVC(kernel='rbf', C=1000)
-        scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='accuracy')
-        #scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='f1_macro')
+        # scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='accuracy')
+        scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='f1_macro')
         return scores.mean()
