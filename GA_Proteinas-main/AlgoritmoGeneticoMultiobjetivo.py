@@ -135,9 +135,28 @@ def CarregaProteinasExternas(path_Base):
         MATRIZ_PROTEINAS_EXTERNAS.insert(0, x)
 
 def selElitistAndTournament(individuals, k, frac_elitist, tournsize):
+    """_summary_ 
+
+    Args:
+        individuals (list): Uma lista de individuos.
+        k (int): O número de indivíduos para seleção.
+        frac_elitist (_type_): não sei (ainda)
+        tournsize (int): O número de indivíduos participantes de cada torneio.
+
+    Returns:
+        _type_: retorna uma lista concatenada com a seleção dos melhores e a seleção do torneio.
+    """
     return tools.selBest(individuals, int(k*frac_elitist)) + tools.selTournament(individuals, int(k*(1-frac_elitist)), tournsize=tournsize)
 
 def ClassificadorCaracteristica(listaCaracteristicas):
+    """_summary_ Recebe uma lista de caracteristicas de apenas 1 indivíduo.
+
+    Args:
+        listaCaracteristicas (_type_): lista com 0s e 1s [0,1,0,1] -> Cromossomo.
+
+    Returns:
+        _type_: Como o fitness no trabalho do Bruno é baseado no fmeasure ele retorna o fmeasure.
+    """
     if(listaCaracteristicas.__len__() == 0):
         return 0
     svm = Classificador(PATH_CLASSIFICADOR, NOMEARQUIVO_CLASSIFICADOR)
@@ -146,19 +165,28 @@ def ClassificadorCaracteristica(listaCaracteristicas):
     return resultFMeasure
 
 def Melhor(pop):
+    """_summary_ Retorna uma lista com as características do melhor indivíduo.
+
+    Args:
+        pop (list): Lista de indivíduos (popoulação).
+
+    Returns:
+        _type_: retorna uma lista com as características presentes no melhore indivíduo.
+    """
     melhor = []
     fitness = 0
     for p in pop:
         if(fitness < p.fitness.values):
             melhor = p
             fitness = p.fitness.values
+
+    # manda o indivíduo para receber somente as características.
     melhor = RetornaCaracteristica(melhor)
     return melhor
 
 # Em termos simples, o decorador mate_decorator() permite que você armazene os pais dos filhos gerados 
 # por um cruzamento. Isso pode ser útil para fins de depuração ou para rastrear a evolução de uma 
 # população ao longo do tempo.
-
 def mate_decorator(func):
     def wraper(ind1, ind2, *args, **kargs):
         pais = []
@@ -169,10 +197,20 @@ def mate_decorator(func):
         ret = filhos
         for f in filhos:
             f.pais = pais
+        # esse return eu não tenho certeza se está correto
         return ret
     return wraper
 
 def contaFilhos(pop):
+    """_summary_ tem a finalidade de contar quantos indivíduos na população atual são considerados 
+    "piores" ou "melhores" em relação à sua aptidão em comparação com a média da aptidão de seus pais.
+
+    Args:
+        pop (list): lista de indivíduos.
+
+    Returns:
+       numPiores, numMelhores int: Quantos indivíduos na população atual são piores ou melhores em relação à média da aptidão de seus pais.
+    """
     numPiores = 0
     numMelhores = 0
     for f in pop:
@@ -196,7 +234,16 @@ def contaFilhos(pop):
     return numPiores, numMelhores
 
 def contaIndividuosIguais(pop):
+    """_summary_ 
+
+    Args:
+        pop (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     numRepetidos = 0
+    # quando seta um conjunto, o conjunto só permite elementos iguais
     unicos = set()
     for i in range(len(pop)):
         unicos.add(tuple(pop[i]))
