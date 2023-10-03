@@ -237,10 +237,10 @@ def contaIndividuosIguais(pop):
     """_summary_ 
 
     Args:
-        pop (_type_): _description_
+        pop (list): lista com os indivíduos de determinada população.
 
     Returns:
-        _type_: _description_
+        _type_: retorna a quantidade de indivíduos iguais.
     """
     numRepetidos = 0
     # quando seta um conjunto, o conjunto só permite elementos iguais
@@ -249,7 +249,13 @@ def contaIndividuosIguais(pop):
         unicos.add(tuple(pop[i]))
     return len(pop) - len(unicos)
 
+# Aparenetemente esse função não é usada
 def InicializaPopulacao(pop):
+    """_summary_ Incia a população
+
+    Args:
+        pop (list): lista de indivíduos de uma determinada população
+    """
     for p in pop:
         seed = random.randrange(1, 290)
         #print 'SEMENTE:', seed
@@ -264,8 +270,22 @@ def InicializaPopulacao(pop):
                 p[i] = valor
                 contador = contador + 1
 
+
 def RemoveReponhe(pop, tamanhoOriginal):
+    """_summary_
+    Essa função parece ter como objetivo remover indivíduos da população cujo 
+    segundo valor de aptidão seja igual a zero e, em seguida, preencher a população com cópias 
+    dos indivíduos existentes até que o tamanho original seja restaurado.
+
+    Args:
+        pop (list): lista de individuos
+        tamanhoOriginal (int): tamanho da população
+
+    Returns:
+        list: Uma lista de indivíduos.
+    """
     for p in pop:
+        # Remove indivíduos coju o fitness é igual a 0.
         if (p.fitness.values[1] == 0):
             pop.remove(p)
 
@@ -321,60 +341,79 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
     # Coloca todos os invíduos que o fitness não é válido em uma lista.
     invalid_ind = [ind for ind in population if not ind.fitness.valid]
 
-
+    # Pelo que eu entendi fitnesses é uma lista que recebe uma lista onde o nosso map, ele está pegando cada
+    # indivíduo do invalid_ind e avaliando no toolbox.evaluate; Com isso retorna uma lista com o fitness dos
+    # invalid_ind.
     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+    # Nesse for ele está iterando em cada invalid_ind e está "atribuindo" a ele o valor do seu respectivo 
+    # fitness.
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
 
-    # population = RemoveReponhe(population, TAMANHO_POPULACAO)
+    # Recebe a população sem os indivíduos com fitness igual a 0;
+    population = RemoveReponhe(population, TAMANHO_POPULACAO)
 
-    # if halloffame is not None:
-    #     halloffame.update(population)
+    # Atualiza o Hall da fama
+    if halloffame is not None:
+        halloffame.update(population)
 
-    # record = stats.compile(population) if stats else {}
-    # logbook.record(gen=0, nevals=len(invalid_ind), **record)
-    # ImprimeSaida(0, population, record)
-    # #if verbose:
-    # #    print logbook.stream
+    # stats.compile recebe os dados sobre os quais a estatística é coletada.
+    record = stats.compile(population) if stats else {}
+    # salva as estatísticas das gerações no logbook.
+    logbook.record(gen=0, nevals=len(invalid_ind), **record)
+    ImprimeSaida(0, population, record)
 
-    # # Avalia a populacao para ser utilizado no crownDistance
-    # population = toolbox.select(population, TAMANHO_POPULACAO)
+    # if verbose:
+    #    print logbook.stream
 
-    # # Begin the generational process
-    # for gen in range(1, ngen + 1):
-    #     # Select the next generation individuals
-    #     # offspring = toolbox.select(population, len(population))
-    #     offspring = tools.selTournamentDCD(population, len(population))
+    # Aplica o operador de seleção do NSGA2 nos indivíduos da população.
+    # Ele manda a população e o tamanho da população que seria os indivíduos 
+    # para selecionar.
+    population = toolbox.select(population, TAMANHO_POPULACAO)
 
-    #     # Vary the pool of individuals
-    #     offspring = varAnd(offspring, toolbox, cxpb, mutpb)
+    # Begin the generational process
+    for gen in range(1, ngen + 1):
+        # Select the next generation individuals
+        
+        # offspring = toolbox.select(population, len(population))
 
-    #     LOG_GERACOES = open("log/Geracao_" + nomeArquivo + '.txt', "a+")
-    #     LOG_GERACOES.write('Classificando geracao: ' + gen.__str__() + ' Hora: ' + datetime.datetime.now().__str__() + '\n')
 
-    #     # Evaluate the individuals with an invalid fitness
-    #     invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-    #     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-    #     for ind, fit in zip(invalid_ind, fitnesses):
-    #         ind.fitness.values = fit
+        # Seleção do torneio baseada na dominância (D) entre dois indivíduos, caso os dois indivíduos 
+        # não interdominem a seleção é feita com base na distância de aglomeração (CD).
+        # Obs: O comprimento da sequencia de individuos deve ser 4.
+        offspring = tools.selTournamentDCD(population, len(population))
 
-    #     offspring = RemoveReponhe(offspring, TAMANHO_POPULACAO)
+        # Aplica a mutação e o crossover na população.
+        offspring = varAnd(offspring, toolbox, cxpb, mutpb)
 
-    #     # Update the hall of fame with the generated individuals
-    #     if halloffame is not None:
-    #         halloffame.update(offspring)
+        # Abre o arquivo de log.
+        LOG_GERACOES = open("log/Geracao_" + nomeArquivo + '.txt', "a+")
+        LOG_GERACOES.write('Classificando geracao: ' + gen.__str__() + ' Hora: ' + datetime.datetime.now().__str__() + '\n')
 
-    #     # Select the next generation population
-    #     population = toolbox.select(population + offspring, TAMANHO_POPULACAO)
+        # Evaluate the individuals with an invalid fitness
+        
+        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+        for ind, fit in zip(invalid_ind, fitnesses):
+            ind.fitness.values = fit
 
-    #     # Append the current generation statistics to the logbook
-    #     record = stats.compile(population) if stats else {}
-    #     logbook.record(gen=gen, nevals=len(invalid_ind), **record)
-    #     ImprimeSaida(gen, population, record)
-    #     #if verbose:
-    #     #    print logbook.stream
+        offspring = RemoveReponhe(offspring, TAMANHO_POPULACAO)
 
-    # # para printar o que tem dentro do logbook;
+        # Update the hall of fame with the generated individuals
+        if halloffame is not None:
+            halloffame.update(offspring)
+
+        # Select the next generation population
+        population = toolbox.select(population + offspring, TAMANHO_POPULACAO)
+
+        # Append the current generation statistics to the logbook
+        record = stats.compile(population) if stats else {}
+        logbook.record(gen=gen, nevals=len(invalid_ind), **record)
+        ImprimeSaida(gen, population, record)
+        #if verbose:
+        #    print logbook.stream
+
+    # para printar o que tem dentro do logbook;
     # for record in logbook:
     #     print(record)
 
@@ -552,6 +591,7 @@ def main():
 
     eaMulti(pop, toolbox, CROSSOVER, TAXA_MUTACAO, GERACOES, POPULACAO, stats=stats, halloffame=hof)
     
+    # guarda os melhores e escreve no arquivo.
     MELHORES = open("melhores/" + nomeArquivo + '.txt', "a+")
     MELHORES.write('\nHALL OF FAME:')
     for elem in hof:
