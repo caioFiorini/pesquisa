@@ -134,9 +134,10 @@ def CarregaProteinasExternas(path_Base):
         x = list(reader)
         MATRIZ_PROTEINAS_EXTERNAS.insert(0, x)
 
+# não é utilizada.
 def selElitistAndTournament(individuals, k, frac_elitist, tournsize):
     """_summary_ 
-
+        Faz a seleção dos melhores e aplica o torneio.
     Args:
         individuals (list): Uma lista de individuos.
         k (int): O número de indivíduos para seleção.
@@ -271,7 +272,7 @@ def InicializaPopulacao(pop):
                 contador = contador + 1
 
 
-def RemoveReponhe(pop, tamanhoOriginal):
+def RemoveRepoe(pop, tamanhoOriginal):
     """_summary_
     Essa função parece ter como objetivo remover indivíduos da população cujo 
     segundo valor de aptidão seja igual a zero e, em seguida, preencher a população com cópias 
@@ -285,7 +286,7 @@ def RemoveReponhe(pop, tamanhoOriginal):
         list: Uma lista de indivíduos.
     """
     for p in pop:
-        # Remove indivíduos coju o fitness é igual a 0.
+        # Remove indivíduos cujo o fitness é igual a 0.
         if (p.fitness.values[1] == 0):
             pop.remove(p)
 
@@ -351,7 +352,7 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
         ind.fitness.values = fit
 
     # Recebe a população sem os indivíduos com fitness igual a 0;
-    population = RemoveReponhe(population, TAMANHO_POPULACAO)
+    population = RemoveRepoe(population, TAMANHO_POPULACAO)
 
     # Atualiza o Hall da fama
     if halloffame is not None:
@@ -397,7 +398,7 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
 
-        offspring = RemoveReponhe(offspring, TAMANHO_POPULACAO)
+        offspring = RemoveRepoe(offspring, TAMANHO_POPULACAO)
 
         # Update the hall of fame with the generated individuals
         if halloffame is not None:
