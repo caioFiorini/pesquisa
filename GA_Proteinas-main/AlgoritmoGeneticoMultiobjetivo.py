@@ -7,7 +7,7 @@ import csv
 import os
 import numpy
 import copy
-import arrow
+# import arrow
 
 from deap import algorithms
 from deap import base
@@ -431,8 +431,7 @@ def varAnd(population, toolbox, cxpb, mutpb):
                     operators.
     :param cxpb: The probability of mating two individuals.
     :param mutpb: The probability of mutating an individual.
-    :returns: A list of varied individuals that are independent of their
-              parents.
+    :returns: A list of varied individuals that are independent of their parents.
 
     The variation goes as follow. First, the parental population
     :math:`P_\mathrm{p}` is duplicated using the :meth:`toolbox.clone` method
@@ -541,6 +540,9 @@ hof = tools.HallOfFame(HALL_OF_FAME)
 #toolbox.register("map", dtm.map)
 
 def main():
+
+    print("passei aqui")
+
     a = datetime.datetime.now()
 
     # gera uma semente aleatória
@@ -593,7 +595,7 @@ def main():
     eaMulti(pop, toolbox, CROSSOVER, TAXA_MUTACAO, GERACOES, POPULACAO, stats=stats, halloffame=hof)
     
     # guarda os melhores e escreve no arquivo.
-    MELHORES = open("melhores/" + nomeArquivo + '.txt', "a+")
+    MELHORES = open("melhores/" + sys.argv[1] + '.txt', "a+")
     MELHORES.write('\nHALL OF FAME:')
     for elem in hof:
         MELHORES.write(elem.__str__() + elem.fitness.values.__str__() + '\n')
