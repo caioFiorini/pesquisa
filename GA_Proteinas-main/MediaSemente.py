@@ -47,3 +47,4 @@ plt.legend()
 
 # Exibir o gráfico
 plt.show()
+plt.savefig('mediaSementes.png')
