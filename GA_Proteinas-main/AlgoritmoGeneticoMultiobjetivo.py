@@ -541,7 +541,7 @@ hof = tools.HallOfFame(HALL_OF_FAME)
 
 def main():
 
-    print("passei aqui")
+    # print("passei aqui")
 
     a = datetime.datetime.now()
 
