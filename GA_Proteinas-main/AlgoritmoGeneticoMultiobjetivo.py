@@ -546,8 +546,8 @@ def main():
     a = datetime.datetime.now()
 
     # gera uma semente aleatória
-    # random.seed(sys.argv[1])
-    random.seed(1)
+    random.seed(sys.argv[1])
+    #random.seed(1)
 
     CarregaProteinas(PATH_BASE)
     CarregaProteinasExternas(PATH_BASE_EXTERNA)
