@@ -3,6 +3,7 @@ import re
 import matplotlib.pyplot as plt
 
 path = "./melhores"
+path_Media_geral = "./media_das_medias"
 
 arquivos = os.listdir(path)
 lista = []
@@ -27,24 +28,9 @@ while i != lista.__len__():
         media.append(soma/11)
         soma = 0
 
-# Criar o gráfico de linha
-plt.figure(figsize=(6, 6))  # Tamanho da figura (opcional)
+i = 0
 
-plt.plot(arquivos, media, marker='o', linestyle='-', color='b', label='Média')
-
-# Definir rótulos e título
-plt.xlabel('Sementes')
-plt.ylabel('Média Sementes')
-plt.title('Média de cada semente')
-plt.grid(True)
-
-# Adicionar rótulos aos pontos
-for i, rate in enumerate(media):
-    plt.text(arquivos[i], rate, f'{rate:.2f}', ha='center', va='bottom')
-
-# Adicionar legenda
-plt.legend()
-
-# Exibir o gráfico
-plt.show()
-plt.savefig('mediaSementes.png')
+for arquivo in arquivos:
+    with open(os.path.join(path_Media_geral, arquivo), 'a') as file:
+        file.write(str(media[i]))
+    i += 1
