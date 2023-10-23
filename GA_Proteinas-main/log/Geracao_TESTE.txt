@@ -1668,4 +1668,6 @@ Classificando geracao: 96 Hora: 2023-09-12 20:33:19.205157
 Classificando geracao: 97 Hora: 2023-09-12 20:33:32.822014
 Classificando geracao: 98 Hora: 2023-09-12 20:33:42.405087
 Classificando geracao: 99 Hora: 2023-09-12 20:33:58.527448
-Classificando geracao: 100 Hora: 2023-09-12 20:34:08.514988
+Classificando geracao: 100 Hora: 2023-09-12 20:34:08.514988Classificando geracao: 1 Hora: 2023-10-23 15:59:52.293854
+Classificando geracao: 1 Hora: 2023-10-23 16:15:28.199192
+Classificando geracao: 1 Hora: 2023-10-23 16:21:07.948164

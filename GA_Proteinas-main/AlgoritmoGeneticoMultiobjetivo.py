@@ -1,36 +1,65 @@
-import random
+# Standard Library Imports
 import array
-import datetime
-import numpy
-import sys
 import csv
+import datetime
 import os
+import random
+import sys
+
+# Third-party Library Imports
 import numpy
-import copy
-# import arrow
+from deap import base, creator, tools
 
-from deap import algorithms
-from deap import base
-from deap import creator
-from deap import tools
-#from deap import dtm
-
+# Local Imports
 from Classificador import Classificador
 from IOArquivo import LeituraArquivo
 
-NUMERO_AMOSTRAS = 490
-TAMANHO_TRANSFORMADA = 10
-
-LISTACLASSES = ["Hidrolases", "Isomerases", "Liases", "Ligases", "Oxidoredutases", "Transferases"]
+# ====== MARK: Defining paths ======
 PATH_BASE = "BaseSting"
 PATH_BASE_EXTERNA = "BaseExterna"
 NOME_ARQUIVO_EXTERNO = 'BaseExterna_Reduzida.csv'
 PATH_CLASSIFICADOR = "Individuos/"
-#nomeArquivo = sys.argv[1]
-nomeArquivo = 'TESTE'
-NOMEARQUIVO_CLASSIFICADOR = nomeArquivo + ".csv"
+# TODO: uncomment when in final product
+# NOME_ARQUIVO = sys.argv[1]
+
+# TODO: comment when in final product
+NOME_ARQUIVO = 'TESTE'
+NOME_ARQUIVO_CLASSIFICADOR = NOME_ARQUIVO + ".csv"
+
+# ====== MARK: Algorithm's main parameters ======
+NUMERO_AMOSTRAS = 490
+TAMANHO_TRANSFORMADA = 10
+IND_SIZE = 104
+# POPULACAO = 500
+POPULACAO = 100
+TORNEIO = 2
+CROSSOVER = 0.7
+TAXA_MUTACAO = 0.01
+# GERACOES = 100
+GERACOES = 10
+HALL_OF_FAME = 10
+ELITISMO = 1
+
+# TODO: Uncomment when in production
+# POPULACAO = int(sys.argv[2])
+# CROSSOVER=float(sys.argv[4])
+# GERACOES=int(sys.argv[3])
+# TAXA_MUTACAO = float(sys.argv[6])
+# TORNEIO=int(sys.argv[5])
+# HALL_OF_FAME = 10
+# ELITISMO = int(sys.argv[7])
+
 MATRIZ_PROTEINAS = []
 MATRIZ_PROTEINAS_EXTERNAS = []
+
+LISTA_CLASSES = [
+    "Hidrolases",
+    "Isomerases", 
+    "Liases", 
+    "Ligases", 
+    "Oxidoredutases", 
+    "Transferases"
+]
 
 def evaluate(individual):
     """ Essa função retorna o fitness do indivíduo.
@@ -42,7 +71,7 @@ def evaluate(individual):
         o fitness para o indivíduo e a quantidade de características.
     """
 
-    # dentro do cromosso temos as características presentes no indivíduos [0,1,0,1,0,1]
+    # dentro do cromossomo temos as características presentes no indivíduos [0,1,0,1,0,1]
     # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
     listaCaracteristicas = RetornaCaracteristica(individual)
     listaCaracteristicasExternas = RetornaCaracteristicaExternas(individual)
@@ -98,8 +127,8 @@ def MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas):
         listaCaracteristicas (_type_): Quantidade listada de características, igual quando faz leitura em um csv
         listaCaracteristicasExternas (_type_): Quantidade listada de características, igual quando faz leitura em um csv
     """
-    ARQUIVO = open("Individuos/" + NOMEARQUIVO_CLASSIFICADOR, "w")
-    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTACLASSES, TAMANHO_TRANSFORMADA)
+    ARQUIVO = open("Individuos/" + NOME_ARQUIVO_CLASSIFICADOR, "w")
+    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTA_CLASSES, TAMANHO_TRANSFORMADA)
     leitor.BuildCSV(PATH_BASE, ARQUIVO, listaCaracteristicas, listaCaracteristicasExternas, MATRIZ_PROTEINAS, MATRIZ_PROTEINAS_EXTERNAS)
     ARQUIVO.close()
     return
@@ -111,7 +140,7 @@ def openTxt(path_Base, classe):
 
 def CarregaProteinas(path_Base):
     contador = 0
-    for numeroclasse, classe in enumerate(LISTACLASSES): 
+    for numeroclasse, classe in enumerate(LISTA_CLASSES): 
 
         # Dentro de cada pasta de classe, tem um arquivo .txt com o nome da classe
         # e os arquivos .csv que devem ser lidos
@@ -160,7 +189,7 @@ def ClassificadorCaracteristica(listaCaracteristicas):
     """
     if(listaCaracteristicas.__len__() == 0):
         return 0
-    svm = Classificador(PATH_CLASSIFICADOR, NOMEARQUIVO_CLASSIFICADOR)
+    svm = Classificador(PATH_CLASSIFICADOR, NOME_ARQUIVO_CLASSIFICADOR)
     #resultPrecision = svm.fitness()
     resultFMeasure = svm.fitness1()
     return resultFMeasure
@@ -210,7 +239,7 @@ def contaFilhos(pop):
         pop (list): lista de indivíduos.
 
     Returns:
-       numPiores, numMelhores int: Quantos indivíduos na população atual são piores ou melhores em relação à média da aptidão de seus pais.
+    numPiores, numMelhores int: Quantos indivíduos na população atual são piores ou melhores em relação à média da aptidão de seus pais.
     """
     numPiores = 0
     numMelhores = 0
@@ -388,7 +417,7 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
         offspring = varAnd(offspring, toolbox, cxpb, mutpb)
 
         # Abre o arquivo de log.
-        LOG_GERACOES = open("log/Geracao_" + nomeArquivo + '.txt', "a+")
+        LOG_GERACOES = open("log/Geracao_" + NOME_ARQUIVO + '.txt', "a+")
         LOG_GERACOES.write('Classificando geracao: ' + gen.__str__() + ' Hora: ' + datetime.datetime.now().__str__() + '\n')
 
         # Evaluate the individuals with an invalid fitness
@@ -470,24 +499,6 @@ def varAnd(population, toolbox, cxpb, mutpb):
 
     return offspring
 
-#Individuo and #Operator genetic
-IND_SIZE = 104
-# POPULACAO = int(sys.argv[2])
-# CROSSOVER=float(sys.argv[4])
-# GERACOES=int(sys.argv[3])
-# TAXA_MUTACAO = float(sys.argv[6])
-# TORNEIO=int(sys.argv[5])
-# HALL_OF_FAME = 10
-# ELITISMO = int(sys.argv[7])
-
-POPULACAO = 500
-TORNEIO = 2
-CROSSOVER = 0.7
-TAXA_MUTACAO = 0.01
-GERACOES = 100
-HALL_OF_FAME = 10
-ELITISMO = 1
-
 # Function Max
 
 
@@ -546,8 +557,8 @@ def main():
     a = datetime.datetime.now()
 
     # gera uma semente aleatória
-    random.seed(sys.argv[1])
-    #random.seed(1)
+    # random.seed(sys.argv[1])
+    random.seed(1)
 
     CarregaProteinas(PATH_BASE)
     CarregaProteinasExternas(PATH_BASE_EXTERNA)
