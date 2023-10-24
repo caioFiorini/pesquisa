@@ -4,7 +4,6 @@ import csv
 import datetime
 import os
 import random
-import sys
 
 # Third-party Library Imports
 import numpy
@@ -12,7 +11,7 @@ from deap import base, creator, tools
 
 # Local Imports
 from Classificador import Classificador
-from IOArquivo import LeituraArquivo
+from IOArquivo import FileReader
 
 # ====== MARK: Defining paths ======
 PATH_BASE = "BaseSting"
@@ -61,82 +60,91 @@ LISTA_CLASSES = [
     "Transferases"
 ]
 
-def evaluate(individual):
+def evaluateFitnessOfIndividual(individual) -> (numpy.float64, int):
     """ Essa função retorna o fitness do indivíduo.
 
     Args:
-        individual : indivíduos da população.
+        individual : creator.Individual
+            indivíduos da população. 
 
     Returns:
-        o fitness para o indivíduo e a quantidade de características.
+        (float64, int)
+            o fitness para o indivíduo e a quantidade de características.
     """
-
     # dentro do cromossomo temos as características presentes no indivíduos [0,1,0,1,0,1]
     # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
-    listaCaracteristicas = RetornaCaracteristica(individual)
-    listaCaracteristicasExternas = RetornaCaracteristicaExternas(individual)
-    MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas)
-    fitness = ClassificadorCaracteristica(listaCaracteristicas)
+    attributes_of_individual = get_attributes_of_individual(individual)
+    external_attributes_of_individual = get_external_attributes_of_individual(individual)
+    create_SVM_file(attributes_of_individual, external_attributes_of_individual)
+    fitness = ClassificadorCaracteristica(attributes_of_individual)
     #fitness = 1 - fitness
-    tamanho = listaCaracteristicas.__len__() + listaCaracteristicasExternas.__len__()
-    return fitness, tamanho,
+    tamanho = attributes_of_individual.__len__() + external_attributes_of_individual.__len__()
+    return fitness, tamanho
 
-def RetornaCaracteristica(ind1):
+def get_attributes_of_individual(individual) -> [str]:
     """Lista as características (atributos) de um indivíduo.
 
     Args:
-        ind1: o indivíduo. (cromossomo [0,0,1,0,...]).
+        individual : deap.creator.Individual
+            o indivíduo. (cromossomo [0,0,1,0,...]).
 
     Returns:
-        List : retorna uma lista com as caracterísitcas.
+        [str]
+            lista com as caracterísitcas do indivíduo.
     """
-    caracteristicas = []
+    attributes = []
     x = 0
-    for i in ind1:
+    for i in individual:
         if(x >= 50):
-            return caracteristicas
+            return attributes
+        # WARNING: olhar isso com a tropa
         if(i == 1):
-            caracteristicas.append(x)
+            attributes.append(x)
         x = x + 1
-    return caracteristicas
+    return attributes
 
-def RetornaCaracteristicaExternas(ind1):
+def get_external_attributes_of_individual(individual) -> [str]:
     """Lista as características das bases externas de enriquecimento da base principal.
 
     Args:
-        ind1 (_type_): O individuos (cromossomo [0,0,1,0,...]).
+        individual : deap.creator.Individual
+            o indivíduo. (cromossomo [0,0,1,0,...]).
 
     Returns:
-        List : retorna uma lista com as características a mais. 
+        [str]
+            retorna uma lista com as características a mais. 
     """
-    caracteristicas = []
+    attributes = []
     x = 0
-    for i in ind1:
+    for i in individual:
         if(x >= 51 and i == 1):
             valor = x - 51
-            caracteristicas.append(valor)
+            attributes.append(valor)
         x = x + 1
-    return caracteristicas
+    return attributes
 
 
 
-def MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas):
+def create_SVM_file(attributes_of_individual: [str], external_attributes_of_individual: [str]):
     """_summary_ Gera um arquivo igual uma base de dados para testar na svm
 
     Args:
-        listaCaracteristicas (_type_): Quantidade listada de características, igual quando faz leitura em um csv
-        listaCaracteristicasExternas (_type_): Quantidade listada de características, igual quando faz leitura em um csv
+        attributes_of_individual : [str]
+            Quantidade listada de características, igual quando faz leitura em um csv
+        
+        external_attributes_of_individual : [str]
+            Quantidade listada de características, igual quando faz leitura em um csv
     """
-    ARQUIVO = open("Individuos/" + NOME_ARQUIVO_CLASSIFICADOR, "w")
-    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTA_CLASSES, TAMANHO_TRANSFORMADA)
-    leitor.BuildCSV(PATH_BASE, ARQUIVO, listaCaracteristicas, listaCaracteristicasExternas, MATRIZ_PROTEINAS, MATRIZ_PROTEINAS_EXTERNAS)
-    ARQUIVO.close()
+    SVM_FILE = open("Individuos/" + NOME_ARQUIVO_CLASSIFICADOR, "w")
+    reader = FileReader(NUMERO_AMOSTRAS, LISTA_CLASSES, TAMANHO_TRANSFORMADA)
+    reader.BuildCSV(PATH_BASE, SVM_FILE, attributes_of_individual, external_attributes_of_individual, MATRIZ_PROTEINAS, MATRIZ_PROTEINAS_EXTERNAS)
+    SVM_FILE.close()
     return
 
 def openTxt(path_Base, classe):
-    caminho = os.path.join(path_Base, classe, classe + ".txt")
-    arq = open(caminho, 'r')
-    return arq
+    file_path = os.path.join(path_Base, classe, classe + ".txt")
+    text_file = open(file_path, 'r')
+    return text_file
 
 def CarregaProteinas(path_Base):
     contador = 0
@@ -162,21 +170,6 @@ def CarregaProteinasExternas(path_Base):
         reader = csv.reader(csvfile, delimiter=';')
         x = list(reader)
         MATRIZ_PROTEINAS_EXTERNAS.insert(0, x)
-
-# não é utilizada.
-def selElitistAndTournament(individuals, k, frac_elitist, tournsize):
-    """_summary_ 
-        Faz a seleção dos melhores e aplica o torneio.
-    Args:
-        individuals (list): Uma lista de individuos.
-        k (int): O número de indivíduos para seleção.
-        frac_elitist (_type_): não sei (ainda)
-        tournsize (int): O número de indivíduos participantes de cada torneio.
-
-    Returns:
-        _type_: retorna uma lista concatenada com a seleção dos melhores e a seleção do torneio.
-    """
-    return tools.selBest(individuals, int(k*frac_elitist)) + tools.selTournament(individuals, int(k*(1-frac_elitist)), tournsize=tournsize)
 
 def ClassificadorCaracteristica(listaCaracteristicas):
     """_summary_ Recebe uma lista de caracteristicas de apenas 1 indivíduo.
@@ -211,7 +204,7 @@ def Melhor(pop):
             fitness = p.fitness.values
 
     # manda o indivíduo para receber somente as características.
-    melhor = RetornaCaracteristica(melhor)
+    melhor = get_attributes_of_individual(melhor)
     return melhor
 
 # Em termos simples, o decorador mate_decorator() permite que você armazene os pais dos filhos gerados 
@@ -542,7 +535,7 @@ toolbox.register("mate", tools.cxTwoPoint)
 toolbox.register("mutate", tools.mutShuffleIndexes, indpb=TAXA_MUTACAO)
 
 # registra a função criada evaluate na biblioteca Deap
-toolbox.register("evaluate", evaluate)
+toolbox.register("evaluate", evaluateFitnessOfIndividual)
 
 # faz o cruzemento entre pais, gera os filhos e armazena pai e filho juntos
 toolbox.decorate("mate", mate_decorator)
@@ -606,7 +599,7 @@ def main():
     eaMulti(pop, toolbox, CROSSOVER, TAXA_MUTACAO, GERACOES, POPULACAO, stats=stats, halloffame=hof)
     
     # guarda os melhores e escreve no arquivo.
-    MELHORES = open("melhores/" + sys.argv[1] + '.txt', "a+")
+    MELHORES = open("melhores/" + NOME_ARQUIVO + '.txt', "a+")
     MELHORES.write('\nHALL OF FAME:')
     for elem in hof:
         MELHORES.write(elem.__str__() + elem.fitness.values.__str__() + '\n')

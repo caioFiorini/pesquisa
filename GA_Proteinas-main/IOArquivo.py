@@ -1,11 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import csv
 import os
 import numpy
-import copy
 
-class LeituraArquivo:
+class FileReader:
 
     def __init__(self, numeroAmostras, listaClasses, tamanhoTransformada):
         self.numeroAmostras = numeroAmostras
