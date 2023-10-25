@@ -7,7 +7,7 @@ import csv
 import os
 import numpy
 import copy
-import arrow
+# import arrow
 
 from deap import algorithms
 from deap import base
@@ -134,10 +134,30 @@ def CarregaProteinasExternas(path_Base):
         x = list(reader)
         MATRIZ_PROTEINAS_EXTERNAS.insert(0, x)
 
+# não é utilizada.
 def selElitistAndTournament(individuals, k, frac_elitist, tournsize):
+    """_summary_ 
+        Faz a seleção dos melhores e aplica o torneio.
+    Args:
+        individuals (list): Uma lista de individuos.
+        k (int): O número de indivíduos para seleção.
+        frac_elitist (_type_): não sei (ainda)
+        tournsize (int): O número de indivíduos participantes de cada torneio.
+
+    Returns:
+        _type_: retorna uma lista concatenada com a seleção dos melhores e a seleção do torneio.
+    """
     return tools.selBest(individuals, int(k*frac_elitist)) + tools.selTournament(individuals, int(k*(1-frac_elitist)), tournsize=tournsize)
 
 def ClassificadorCaracteristica(listaCaracteristicas):
+    """_summary_ Recebe uma lista de caracteristicas de apenas 1 indivíduo.
+
+    Args:
+        listaCaracteristicas (_type_): lista com 0s e 1s [0,1,0,1] -> Cromossomo.
+
+    Returns:
+        _type_: Como o fitness no trabalho do Bruno é baseado no fmeasure ele retorna o fmeasure.
+    """
     if(listaCaracteristicas.__len__() == 0):
         return 0
     svm = Classificador(PATH_CLASSIFICADOR, NOMEARQUIVO_CLASSIFICADOR)
@@ -146,19 +166,28 @@ def ClassificadorCaracteristica(listaCaracteristicas):
     return resultFMeasure
 
 def Melhor(pop):
+    """_summary_ Retorna uma lista com as características do melhor indivíduo.
+
+    Args:
+        pop (list): Lista de indivíduos (popoulação).
+
+    Returns:
+        _type_: retorna uma lista com as características presentes no melhore indivíduo.
+    """
     melhor = []
     fitness = 0
     for p in pop:
         if(fitness < p.fitness.values):
             melhor = p
             fitness = p.fitness.values
+
+    # manda o indivíduo para receber somente as características.
     melhor = RetornaCaracteristica(melhor)
     return melhor
 
 # Em termos simples, o decorador mate_decorator() permite que você armazene os pais dos filhos gerados 
 # por um cruzamento. Isso pode ser útil para fins de depuração ou para rastrear a evolução de uma 
 # população ao longo do tempo.
-
 def mate_decorator(func):
     def wraper(ind1, ind2, *args, **kargs):
         pais = []
@@ -169,10 +198,20 @@ def mate_decorator(func):
         ret = filhos
         for f in filhos:
             f.pais = pais
+        # esse return eu não tenho certeza se está correto
         return ret
     return wraper
 
 def contaFilhos(pop):
+    """_summary_ tem a finalidade de contar quantos indivíduos na população atual são considerados 
+    "piores" ou "melhores" em relação à sua aptidão em comparação com a média da aptidão de seus pais.
+
+    Args:
+        pop (list): lista de indivíduos.
+
+    Returns:
+       numPiores, numMelhores int: Quantos indivíduos na população atual são piores ou melhores em relação à média da aptidão de seus pais.
+    """
     numPiores = 0
     numMelhores = 0
     for f in pop:
@@ -196,13 +235,28 @@ def contaFilhos(pop):
     return numPiores, numMelhores
 
 def contaIndividuosIguais(pop):
+    """_summary_ 
+
+    Args:
+        pop (list): lista com os indivíduos de determinada população.
+
+    Returns:
+        _type_: retorna a quantidade de indivíduos iguais.
+    """
     numRepetidos = 0
+    # quando seta um conjunto, o conjunto só permite elementos iguais
     unicos = set()
     for i in range(len(pop)):
         unicos.add(tuple(pop[i]))
     return len(pop) - len(unicos)
 
+# Aparenetemente esse função não é usada
 def InicializaPopulacao(pop):
+    """_summary_ Incia a população
+
+    Args:
+        pop (list): lista de indivíduos de uma determinada população
+    """
     for p in pop:
         seed = random.randrange(1, 290)
         #print 'SEMENTE:', seed
@@ -217,8 +271,22 @@ def InicializaPopulacao(pop):
                 p[i] = valor
                 contador = contador + 1
 
-def RemoveReponhe(pop, tamanhoOriginal):
+
+def RemoveRepoe(pop, tamanhoOriginal):
+    """_summary_
+    Essa função parece ter como objetivo remover indivíduos da população cujo 
+    segundo valor de aptidão seja igual a zero e, em seguida, preencher a população com cópias 
+    dos indivíduos existentes até que o tamanho original seja restaurado.
+
+    Args:
+        pop (list): lista de individuos
+        tamanhoOriginal (int): tamanho da população
+
+    Returns:
+        list: Uma lista de indivíduos.
+    """
     for p in pop:
+        # Remove indivíduos cujo o fitness é igual a 0.
         if (p.fitness.values[1] == 0):
             pop.remove(p)
 
@@ -274,60 +342,79 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
     # Coloca todos os invíduos que o fitness não é válido em uma lista.
     invalid_ind = [ind for ind in population if not ind.fitness.valid]
 
-
+    # Pelo que eu entendi fitnesses é uma lista que recebe uma lista onde o nosso map, ele está pegando cada
+    # indivíduo do invalid_ind e avaliando no toolbox.evaluate; Com isso retorna uma lista com o fitness dos
+    # invalid_ind.
     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+    # Nesse for ele está iterando em cada invalid_ind e está "atribuindo" a ele o valor do seu respectivo 
+    # fitness.
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
 
-    # population = RemoveReponhe(population, TAMANHO_POPULACAO)
+    # Recebe a população sem os indivíduos com fitness igual a 0;
+    population = RemoveRepoe(population, TAMANHO_POPULACAO)
 
-    # if halloffame is not None:
-    #     halloffame.update(population)
+    # Atualiza o Hall da fama
+    if halloffame is not None:
+        halloffame.update(population)
 
-    # record = stats.compile(population) if stats else {}
-    # logbook.record(gen=0, nevals=len(invalid_ind), **record)
-    # ImprimeSaida(0, population, record)
-    # #if verbose:
-    # #    print logbook.stream
+    # stats.compile recebe os dados sobre os quais a estatística é coletada.
+    record = stats.compile(population) if stats else {}
+    # salva as estatísticas das gerações no logbook.
+    logbook.record(gen=0, nevals=len(invalid_ind), **record)
+    ImprimeSaida(0, population, record)
 
-    # # Avalia a populacao para ser utilizado no crownDistance
-    # population = toolbox.select(population, TAMANHO_POPULACAO)
+    # if verbose:
+    #    print logbook.stream
 
-    # # Begin the generational process
-    # for gen in range(1, ngen + 1):
-    #     # Select the next generation individuals
-    #     # offspring = toolbox.select(population, len(population))
-    #     offspring = tools.selTournamentDCD(population, len(population))
+    # Aplica o operador de seleção do NSGA2 nos indivíduos da população.
+    # Ele manda a população e o tamanho da população que seria os indivíduos 
+    # para selecionar.
+    population = toolbox.select(population, TAMANHO_POPULACAO)
 
-    #     # Vary the pool of individuals
-    #     offspring = varAnd(offspring, toolbox, cxpb, mutpb)
+    # Begin the generational process
+    for gen in range(1, ngen + 1):
+        # Select the next generation individuals
+        
+        # offspring = toolbox.select(population, len(population))
 
-    #     LOG_GERACOES = open("log/Geracao_" + nomeArquivo + '.txt', "a+")
-    #     LOG_GERACOES.write('Classificando geracao: ' + gen.__str__() + ' Hora: ' + datetime.datetime.now().__str__() + '\n')
 
-    #     # Evaluate the individuals with an invalid fitness
-    #     invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-    #     fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-    #     for ind, fit in zip(invalid_ind, fitnesses):
-    #         ind.fitness.values = fit
+        # Seleção do torneio baseada na dominância (D) entre dois indivíduos, caso os dois indivíduos 
+        # não interdominem a seleção é feita com base na distância de aglomeração (CD).
+        # Obs: O comprimento da sequencia de individuos deve ser 4.
+        offspring = tools.selTournamentDCD(population, len(population))
 
-    #     offspring = RemoveReponhe(offspring, TAMANHO_POPULACAO)
+        # Aplica a mutação e o crossover na população.
+        offspring = varAnd(offspring, toolbox, cxpb, mutpb)
 
-    #     # Update the hall of fame with the generated individuals
-    #     if halloffame is not None:
-    #         halloffame.update(offspring)
+        # Abre o arquivo de log.
+        LOG_GERACOES = open("log/Geracao_" + nomeArquivo + '.txt', "a+")
+        LOG_GERACOES.write('Classificando geracao: ' + gen.__str__() + ' Hora: ' + datetime.datetime.now().__str__() + '\n')
 
-    #     # Select the next generation population
-    #     population = toolbox.select(population + offspring, TAMANHO_POPULACAO)
+        # Evaluate the individuals with an invalid fitness
+        
+        invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
+        fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
+        for ind, fit in zip(invalid_ind, fitnesses):
+            ind.fitness.values = fit
 
-    #     # Append the current generation statistics to the logbook
-    #     record = stats.compile(population) if stats else {}
-    #     logbook.record(gen=gen, nevals=len(invalid_ind), **record)
-    #     ImprimeSaida(gen, population, record)
-    #     #if verbose:
-    #     #    print logbook.stream
+        offspring = RemoveRepoe(offspring, TAMANHO_POPULACAO)
 
-    # # para printar o que tem dentro do logbook;
+        # Update the hall of fame with the generated individuals
+        if halloffame is not None:
+            halloffame.update(offspring)
+
+        # Select the next generation population
+        population = toolbox.select(population + offspring, TAMANHO_POPULACAO)
+
+        # Append the current generation statistics to the logbook
+        record = stats.compile(population) if stats else {}
+        logbook.record(gen=gen, nevals=len(invalid_ind), **record)
+        ImprimeSaida(gen, population, record)
+        #if verbose:
+        #    print logbook.stream
+
+    # para printar o que tem dentro do logbook;
     # for record in logbook:
     #     print(record)
 
@@ -344,8 +431,7 @@ def varAnd(population, toolbox, cxpb, mutpb):
                     operators.
     :param cxpb: The probability of mating two individuals.
     :param mutpb: The probability of mutating an individual.
-    :returns: A list of varied individuals that are independent of their
-              parents.
+    :returns: A list of varied individuals that are independent of their parents.
 
     The variation goes as follow. First, the parental population
     :math:`P_\mathrm{p}` is duplicated using the :meth:`toolbox.clone` method
@@ -454,11 +540,14 @@ hof = tools.HallOfFame(HALL_OF_FAME)
 #toolbox.register("map", dtm.map)
 
 def main():
+
+    # print("passei aqui")
+
     a = datetime.datetime.now()
 
     # gera uma semente aleatória
-    # random.seed(sys.argv[1])
-    random.seed(1)
+    random.seed(sys.argv[1])
+    #random.seed(1)
 
     CarregaProteinas(PATH_BASE)
     CarregaProteinasExternas(PATH_BASE_EXTERNA)
@@ -505,7 +594,8 @@ def main():
 
     eaMulti(pop, toolbox, CROSSOVER, TAXA_MUTACAO, GERACOES, POPULACAO, stats=stats, halloffame=hof)
     
-    MELHORES = open("melhores/" + nomeArquivo + '.txt', "a+")
+    # guarda os melhores e escreve no arquivo.
+    MELHORES = open("melhores/" + sys.argv[1] + '.txt', "a+")
     MELHORES.write('\nHALL OF FAME:')
     for elem in hof:
         MELHORES.write(elem.__str__() + elem.fitness.values.__str__() + '\n')
