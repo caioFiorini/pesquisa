@@ -1727,3 +1727,8 @@ Classificando geracao: 3 Hora: 2023-10-23 21:29:51.081318
 Classificando geracao: 4 Hora: 2023-10-23 21:30:09.258285
 Classificando geracao: 5 Hora: 2023-10-23 21:30:28.331837
 Classificando geracao: 6 Hora: 2023-10-23 21:30:45.580756
+Classificando geracao: 1 Hora: 2023-10-24 11:21:56.674825
+Classificando geracao: 2 Hora: 2023-10-24 11:22:14.990991
+Classificando geracao: 1 Hora: 2023-10-25 08:49:08.742460
+Classificando geracao: 2 Hora: 2023-10-25 08:49:27.282005
+Classificando geracao: 1 Hora: 2023-10-25 08:51:14.868432

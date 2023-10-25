@@ -13,30 +13,31 @@ from deap import base, creator, tools
 from Classificador import Classificador
 from IOArquivo import FileReader
 
-# ====== MARK: Defining paths ======
-PATH_BASE = "BaseSting"
-PATH_BASE_EXTERNA = "BaseExterna"
-NOME_ARQUIVO_EXTERNO = 'BaseExterna_Reduzida.csv'
-PATH_CLASSIFICADOR = "Individuos/"
-# TODO: uncomment when in final product
-# NOME_ARQUIVO = sys.argv[1]
+# ====== MARK: Defining paths and file names ======
+DATABASE_PATH = "BaseSting"
+EXTERNAL_DATABASE_PATH = "BaseExterna"
+EXTERNAL_DATABASE_FILE_NAME = 'BaseExterna_Reduzida.csv'
+CLASSIFIER_PATH = "Individuos/"
 
+# TODO: uncomment when in final product
+# FILE_NAME = sys.argv[1]
 # TODO: comment when in final product
-NOME_ARQUIVO = 'TESTE'
-NOME_ARQUIVO_CLASSIFICADOR = NOME_ARQUIVO + ".csv"
+FILE_NAME = 'TESTE'
+CLASSIFIER_FILE_NAME = FILE_NAME + ".csv"
 
 # ====== MARK: Algorithm's main parameters ======
-NUMERO_AMOSTRAS = 490
-TAMANHO_TRANSFORMADA = 10
-IND_SIZE = 104
-# POPULACAO = 500
-POPULACAO = 100
-TORNEIO = 2
+# TODO: Comment when in production
+SAMPLE_COUNT = 490
+TAMANHO_TRANSFORMADA = 10 # TODO: rename
+INDIVIDUAL_SIZE = 104
+# POPULATION_SIZE = 500
+POPULATION_SIZE = 100
+TOURNAMENT_SIZE = 2 # NOT used in this file; check tsp.py or tspNovo.py
 CROSSOVER = 0.7
-TAXA_MUTACAO = 0.01
-# GERACOES = 100
-GERACOES = 10
-HALL_OF_FAME = 10
+MUTATION_RATE = 0.01
+# GENERATION_COUNT = 100
+GENERATION_COUNT = 10
+HALL_OF_FAME_SIZE = 10
 ELITISMO = 1
 
 # TODO: Uncomment when in production
@@ -48,10 +49,7 @@ ELITISMO = 1
 # HALL_OF_FAME = 10
 # ELITISMO = int(sys.argv[7])
 
-MATRIZ_PROTEINAS = []
-MATRIZ_PROTEINAS_EXTERNAS = []
-
-LISTA_CLASSES = [
+PROTEIN_CLASSES_LIST = [
     "Hidrolases",
     "Isomerases", 
     "Liases", 
@@ -60,7 +58,10 @@ LISTA_CLASSES = [
     "Transferases"
 ]
 
-def evaluateFitnessOfIndividual(individual) -> (numpy.float64, int):
+protein_matrix = []
+external_protein_matrix = []
+
+def evaluate_fitness_of_individual(individual) -> (numpy.float64, int):
     """ Essa função retorna o fitness do indivíduo.
 
     Args:
@@ -74,9 +75,10 @@ def evaluateFitnessOfIndividual(individual) -> (numpy.float64, int):
     # dentro do cromossomo temos as características presentes no indivíduos [0,1,0,1,0,1]
     # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
     attributes_of_individual = get_attributes_of_individual(individual)
-    external_attributes_of_individual = get_external_attributes_of_individual(individual)
+    external_attributes_of_individual = get_external_DB_attributes_of_individual(individual)
     create_SVM_file(attributes_of_individual, external_attributes_of_individual)
-    fitness = ClassificadorCaracteristica(attributes_of_individual)
+    fitness = get_fitness_of_individual(attributes_of_individual)
+    # check whether this comment is really useful or not
     #fitness = 1 - fitness
     tamanho = attributes_of_individual.__len__() + external_attributes_of_individual.__len__()
     return fitness, tamanho
@@ -93,17 +95,17 @@ def get_attributes_of_individual(individual) -> [str]:
             lista com as caracterísitcas do indivíduo.
     """
     attributes = []
-    x = 0
-    for i in individual:
-        if(x >= 50):
+    attribute_count = 0
+    for attribute in individual:
+        if(attribute_count >= 50):
             return attributes
-        # WARNING: olhar isso com a tropa
-        if(i == 1):
-            attributes.append(x)
-        x = x + 1
+        # WARNING: check with everyone (returns array with two items) -> [0, 1]
+        if(attribute == 1):
+            attributes.append(attribute_count) # why?
+        attribute_count += 1
     return attributes
 
-def get_external_attributes_of_individual(individual) -> [str]:
+def get_external_DB_attributes_of_individual(individual) -> [str]:
     """Lista as características das bases externas de enriquecimento da base principal.
 
     Args:
@@ -112,15 +114,16 @@ def get_external_attributes_of_individual(individual) -> [str]:
 
     Returns:
         [str]
-            retorna uma lista com as características a mais. 
+            retorna uma lista com as características externas 
     """
     attributes = []
-    x = 0
-    for i in individual:
-        if(x >= 51 and i == 1):
-            valor = x - 51
-            attributes.append(valor)
-        x = x + 1
+    attribute_count = 0
+    # WARNING: improve ASAP
+    for attribute in individual:
+        if(attribute_count >= 51 and attribute == 1):
+            value = attribute_count - 51 
+            attributes.append(value) # why?
+        attribute_count += 1
     return attributes
 
 
@@ -135,43 +138,37 @@ def create_SVM_file(attributes_of_individual: [str], external_attributes_of_indi
         external_attributes_of_individual : [str]
             Quantidade listada de características, igual quando faz leitura em um csv
     """
-    SVM_FILE = open("Individuos/" + NOME_ARQUIVO_CLASSIFICADOR, "w")
-    reader = FileReader(NUMERO_AMOSTRAS, LISTA_CLASSES, TAMANHO_TRANSFORMADA)
-    reader.BuildCSV(PATH_BASE, SVM_FILE, attributes_of_individual, external_attributes_of_individual, MATRIZ_PROTEINAS, MATRIZ_PROTEINAS_EXTERNAS)
+    SVM_FILE = open("Individuos/" + CLASSIFIER_FILE_NAME, "w")
+    file_reader = FileReader(SAMPLE_COUNT, PROTEIN_CLASSES_LIST, TAMANHO_TRANSFORMADA)
+    file_reader.BuildCSV(DATABASE_PATH, SVM_FILE, attributes_of_individual, external_attributes_of_individual, protein_matrix, external_protein_matrix)
     SVM_FILE.close()
     return
 
-def openTxt(path_Base, classe):
-    file_path = os.path.join(path_Base, classe, classe + ".txt")
+def get_text_file_contents(base_path: str, protein_class: str):
+    file_path = os.path.join(base_path, protein_class, protein_class + ".txt")
     text_file = open(file_path, 'r')
     return text_file
 
-def CarregaProteinas(path_Base):
-    contador = 0
-    for numeroclasse, classe in enumerate(LISTA_CLASSES): 
-
+def load_proteins(base_file_path: str):
+    index = 0
+    for class_number, protein_class in enumerate(PROTEIN_CLASSES_LIST): 
         # Dentro de cada pasta de classe, tem um arquivo .txt com o nome da classe
         # e os arquivos .csv que devem ser lidos
-        listaProteinas = openTxt(path_Base, classe)
-        # print(listaProteinas)
+        protein_list = get_text_file_contents(base_file_path, protein_class)
+        for protein in protein_list:
+            with open(os.path.join(base_file_path, protein_class, protein.rstrip('\n').rstrip('\r')), 'r') as csvfile:
+                protein_reader = csv.reader(csvfile, delimiter=';')
+                # Turning the protein_reader into a list helps later on when we want to use random access (check if we need it though).
+                protein_matrix.insert(index, list(protein_reader))
+                index = index + 1
 
-        for proteina in listaProteinas:
-            with open(os.path.join(path_Base, classe, proteina.rstrip('\n').rstrip('\r')), 'r') as csvfile:
-                reader = csv.reader(csvfile, delimiter=';')
-                x = list(reader)
-                MATRIZ_PROTEINAS.insert(contador, x)
-                contador = contador + 1
-        
-        # print(MATRIZ_PROTEINAS)
+def load_external_DB_proteins(base_file_path: str) -> None:
+    with open(os.path.join(base_file_path, EXTERNAL_DATABASE_FILE_NAME.rstrip('\n').rstrip('\r')), 'r') as csvfile:
+        protein_reader = csv.reader(csvfile, delimiter=';')
+        # why insert at 0? SUS!
+        external_protein_matrix.insert(0, list(protein_reader))
 
-
-def CarregaProteinasExternas(path_Base):
-    with open(os.path.join(path_Base, NOME_ARQUIVO_EXTERNO.rstrip('\n').rstrip('\r')), 'r') as csvfile:
-        reader = csv.reader(csvfile, delimiter=';')
-        x = list(reader)
-        MATRIZ_PROTEINAS_EXTERNAS.insert(0, x)
-
-def ClassificadorCaracteristica(listaCaracteristicas):
+def get_fitness_of_individual(attribute_list: [int]) -> numpy.float64:
     """_summary_ Recebe uma lista de caracteristicas de apenas 1 indivíduo.
 
     Args:
@@ -180,14 +177,16 @@ def ClassificadorCaracteristica(listaCaracteristicas):
     Returns:
         _type_: Como o fitness no trabalho do Bruno é baseado no fmeasure ele retorna o fmeasure.
     """
-    if(listaCaracteristicas.__len__() == 0):
+    
+    if not attribute_list:
         return 0
-    svm = Classificador(PATH_CLASSIFICADOR, NOME_ARQUIVO_CLASSIFICADOR)
-    #resultPrecision = svm.fitness()
+    svm = Classificador(CLASSIFIER_PATH, CLASSIFIER_FILE_NAME)
+    # check which function we are really using and remove the comment
+    # resultPrecision = svm.fitness()
     resultFMeasure = svm.fitness1()
     return resultFMeasure
 
-def Melhor(pop):
+def get_best_attributes_from_individual(pop):
     """_summary_ Retorna uma lista com as características do melhor indivíduo.
 
     Args:
@@ -283,7 +282,7 @@ def InicializaPopulacao(pop):
         seed = random.randrange(1, 290)
         #print 'SEMENTE:', seed
         contador = 0
-        for i in range(0, IND_SIZE):
+        for i in range(0, INDIVIDUAL_SIZE):
 
             valor = random.randint(0, 1)
             if (seed == contador):
@@ -410,7 +409,7 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
         offspring = varAnd(offspring, toolbox, cxpb, mutpb)
 
         # Abre o arquivo de log.
-        LOG_GERACOES = open("log/Geracao_" + NOME_ARQUIVO + '.txt', "a+")
+        LOG_GERACOES = open("log/Geracao_" + FILE_NAME + '.txt', "a+")
         LOG_GERACOES.write('Classificando geracao: ' + gen.__str__() + ' Hora: ' + datetime.datetime.now().__str__() + '\n')
 
         # Evaluate the individuals with an invalid fitness
@@ -518,7 +517,7 @@ toolbox.register("indices", random.randint, 0, 1)
 # A função tools.initRepeat repete um procedimento uma quantidade específica de vezes, no caso abaixo
 # seria a quantidade de vezes do IND_SIZE.
 # Essa função registra um indivíduo e inicializa ele com 0s - 1s aleatórios e repete IND_SIZE vezes.
-toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.indices, IND_SIZE)
+toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.indices, INDIVIDUAL_SIZE)
 
 # Essa função registra uma função de colocar indivíduos em uma lista e repete toolbox.individual vezes 
 # (quantidade de indivíduos).
@@ -532,15 +531,15 @@ toolbox.register("select", tools.selNSGA2)
 toolbox.register("mate", tools.cxTwoPoint)
 
 # registra uma função que embaralhe os atributos do indivíduo de entrada e retorne o mutante. 
-toolbox.register("mutate", tools.mutShuffleIndexes, indpb=TAXA_MUTACAO)
+toolbox.register("mutate", tools.mutShuffleIndexes, indpb=MUTATION_RATE)
 
 # registra a função criada evaluate na biblioteca Deap
-toolbox.register("evaluate", evaluateFitnessOfIndividual)
+toolbox.register("evaluate", evaluate_fitness_of_individual)
 
 # faz o cruzemento entre pais, gera os filhos e armazena pai e filho juntos
 toolbox.decorate("mate", mate_decorator)
 
-hof = tools.HallOfFame(HALL_OF_FAME)
+hof = tools.HallOfFame(HALL_OF_FAME_SIZE)
 #toolbox.register("map", dtm.map)
 
 def main():
@@ -553,11 +552,11 @@ def main():
     # random.seed(sys.argv[1])
     random.seed(1)
 
-    CarregaProteinas(PATH_BASE)
-    CarregaProteinasExternas(PATH_BASE_EXTERNA)
+    load_proteins(DATABASE_PATH)
+    load_external_DB_proteins(EXTERNAL_DATABASE_PATH)
 
     # inicializa uma lista com os indivíduos da população
-    pop = toolbox.population(n=POPULACAO)
+    pop = toolbox.population(n=POPULATION_SIZE)
     # print(pop)
     # print(type(pop))
 
@@ -570,7 +569,7 @@ def main():
     for p in pop:
         # percorre cada indivíduo
         # print(p,"\n")
-        for i in range(0, IND_SIZE):
+        for i in range(0, INDIVIDUAL_SIZE):
             # print(i,"\n")
             # Se o índice atual estiver entre os valores especificados no passo anterior, ele define 
             # o valor no índice i do indivíduo p como 1.
@@ -596,10 +595,10 @@ def main():
 
     stats = tools.MultiStatistics(Fitness=stats1, Filhos=stats2)
 
-    eaMulti(pop, toolbox, CROSSOVER, TAXA_MUTACAO, GERACOES, POPULACAO, stats=stats, halloffame=hof)
+    eaMulti(pop, toolbox, CROSSOVER, MUTATION_RATE, GENERATION_COUNT, POPULATION_SIZE, stats=stats, halloffame=hof)
     
     # guarda os melhores e escreve no arquivo.
-    MELHORES = open("melhores/" + NOME_ARQUIVO + '.txt', "a+")
+    MELHORES = open("melhores/" + FILE_NAME + '.txt', "a+")
     MELHORES.write('\nHALL OF FAME:')
     for elem in hof:
         MELHORES.write(elem.__str__() + elem.fitness.values.__str__() + '\n')
