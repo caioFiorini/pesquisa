@@ -1846,3 +1846,8 @@ Classificando geracao: 2 Hora: 2023-10-26 16:33:55.876353
 Classificando geracao: 3 Hora: 2023-10-26 16:33:59.728861
 Classificando geracao: 4 Hora: 2023-10-26 16:34:04.332263
 Classificando geracao: 5 Hora: 2023-10-26 16:34:08.826142
+Classificando geracao: 1 Hora: 2023-10-26 16:37:01.648462
+Classificando geracao: 2 Hora: 2023-10-26 16:37:04.923703
+Classificando geracao: 3 Hora: 2023-10-26 16:37:08.537603
+Classificando geracao: 4 Hora: 2023-10-26 16:37:12.930034
+Classificando geracao: 5 Hora: 2023-10-26 16:37:17.255684
