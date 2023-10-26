@@ -64,7 +64,8 @@ external_protein_matrix = []
 
 
 def evaluate_fitness_of_individual(individual) -> (numpy.float64, int):
-    """Essa função retorna o fitness do indivíduo.
+    """
+    Essa função retorna o fitness do indivíduo.
 
     Args:
         individual : creator.Individual
