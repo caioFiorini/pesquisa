@@ -45,7 +45,6 @@ class UnusedAlgorithmFunctions:
         """
         for p in pop:
             seed = random.randrange(1, 290)
-            #print 'SEMENTE:', seed
             contador = 0
             for i in range(0, INDIVIDUAL_SIZE):
 

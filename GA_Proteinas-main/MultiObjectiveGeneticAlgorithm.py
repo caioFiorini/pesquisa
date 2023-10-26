@@ -1,19 +1,12 @@
 # Standard Library Imports
-import array
-import csv
 import datetime
-import os
 import random
-import time
 
 # Third-party Library Imports
-import numpy
-from deap import base, creator, tools
+from deap import tools
 
 # Local Imports
 from MOGATerminalLogger import MOGATerminalLogger
-from Classificador import Classificador
-from IOArquivo import FileReader
 
 
 class MultiObjectiveGeneticAlgorithm:
@@ -163,8 +156,10 @@ class MultiObjectiveGeneticAlgorithm:
             individual.fitness.values = fitness
 
         # Recebe a população sem os indivíduos com fitness igual a 0;
-        self.population = self.remove_individuals_with_zero_fitness_and_adjust_population(
-            self.population, self.population_size
+        self.population = (
+            self.remove_individuals_with_zero_fitness_and_adjust_population(
+                self.population, self.population_size
+            )
         )
 
         # Atualiza o Hall da fama
@@ -183,7 +178,9 @@ class MultiObjectiveGeneticAlgorithm:
         # Aplica o operador de seleção do NSGA2 nos indivíduos da população.
         # Ele manda a população e o tamanho da população que seria os indivíduos
         # para selecionar.
-        self.population = self.evolution_toolbox.select(self.population, self.population_size)
+        self.population = self.evolution_toolbox.select(
+            self.population, self.population_size
+        )
 
         # Begin the generational process
         for generation_number in range(1, self.generation_count + 1):
@@ -233,8 +230,10 @@ class MultiObjectiveGeneticAlgorithm:
             logbook.record(
                 gen=generation_number, nevals=len(invalid_individuals), **record
             )
-            
-            MOGATerminalLogger.print_generation_results(generation_number, len(self.population), record)
+
+            MOGATerminalLogger.print_generation_results(
+                generation_number, len(self.population), record
+            )
             # if verbose:
             #    print logbook.stream
 

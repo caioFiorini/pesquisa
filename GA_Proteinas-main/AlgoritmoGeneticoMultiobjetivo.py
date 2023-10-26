@@ -1,10 +1,10 @@
 # Standard Library Imports
 import array
 import csv
-import datetime
 import os
 import random
 import time
+import sys
 
 # Third-party Library Imports
 import numpy
@@ -13,7 +13,7 @@ from deap import base, creator, tools
 # Local Imports
 from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
 from Classificador import Classificador
-from IOArquivo import FileReader
+from FileManager import FileManager
 
 # ====== MARK: Defining paths and file names ======
 DATABASE_PATH = "BaseSting"
@@ -22,34 +22,34 @@ EXTERNAL_DATABASE_FILE_NAME = "BaseExterna_Reduzida.csv"
 CLASSIFIER_PATH = "Individuos/"
 
 # TODO: uncomment when in final product
-# FILE_NAME = sys.argv[1]
+FILE_NAME = sys.argv[1]
+
 # TODO: comment when in final product
-FILE_NAME = "TESTE"
+# FILE_NAME = "TESTE"
+
 CLASSIFIER_FILE_NAME = FILE_NAME + ".csv"
 
 # ====== MARK: Algorithm's main parameters ======
+# TODO: Uncomment when in production
+POPULATION_SIZE = int(sys.argv[2])
+GENERATION_COUNT = int(sys.argv[3])
+CROSSOVER = float(sys.argv[4])
+TOURNAMENT_SIZE = int(sys.argv[5])
+MUTATION_RATE = float(sys.argv[6])
+ELITISMO = int(sys.argv[7])
+
 # TODO: Comment when in production
-SAMPLE_COUNT = 490
+# POPULATION_SIZE = 500
+# TOURNAMENT_SIZE = 2  # NOT used in this file; check tsp.py or tspNovo.py
+# CROSSOVER = 0.7
+# MUTATION_RATE = 0.01
+# GENERATION_COUNT = 100
+# ELITISMO = 1 # TODO: rename when find out what this is
+
+HALL_OF_FAME_SIZE = 10
+SAMPLE_COUNT = 500
 TAMANHO_TRANSFORMADA = 10  # TODO: rename when find out what this is
 INDIVIDUAL_SIZE = 104
-# POPULATION_SIZE = 500
-POPULATION_SIZE = 20
-TOURNAMENT_SIZE = 2  # NOT used in this file; check tsp.py or tspNovo.py
-CROSSOVER = 0.7
-MUTATION_RATE = 0.01
-# GENERATION_COUNT = 100
-GENERATION_COUNT = 5
-HALL_OF_FAME_SIZE = 10
-ELITISMO = 1
-
-# TODO: Uncomment when in production
-# POPULACAO = int(sys.argv[2])
-# CROSSOVER=float(sys.argv[4])
-# GERACOES=int(sys.argv[3])
-# TAXA_MUTACAO = float(sys.argv[6])
-# TORNEIO=int(sys.argv[5])
-# HALL_OF_FAME = 10
-# ELITISMO = int(sys.argv[7])
 
 PROTEIN_CLASSES_LIST = [
     "Hidrolases",
@@ -120,7 +120,7 @@ def load_proteins(base_file_path: str):
     for class_number, protein_class in enumerate(PROTEIN_CLASSES_LIST):
         # Dentro de cada pasta de classe, tem um arquivo .txt com o nome da classe
         # e os arquivos .csv que devem ser lidos
-        protein_list = get_text_file_contents(base_file_path, protein_class)
+        protein_list = FileManager.get_text_file_contents(base_file_path, protein_class)
         for protein in protein_list:
             with open(
                 os.path.join(
@@ -165,10 +165,10 @@ def evaluate_fitness_of_individual(individual) -> (numpy.float64, int):
     fitness = get_fitness_of_individual(attributes_of_individual)
     # check whether this comment is really useful or not
     # fitness = 1 - fitness
-    tamanho = (
+    individual_size = (
         attributes_of_individual.__len__() + external_attributes_of_individual.__len__()
     )
-    return fitness, tamanho
+    return fitness, individual_size
 
 
 def get_attributes_of_individual(individual) -> [str]:
@@ -229,7 +229,7 @@ def create_SVM_file(
             Quantidade listada de características, igual quando faz leitura em um csv
     """
     SVM_FILE = open("Individuos/" + CLASSIFIER_FILE_NAME, "w")
-    file_reader = FileReader(SAMPLE_COUNT, PROTEIN_CLASSES_LIST, TAMANHO_TRANSFORMADA)
+    file_reader = FileManager(SAMPLE_COUNT, PROTEIN_CLASSES_LIST, TAMANHO_TRANSFORMADA)
     file_reader.BuildCSV(
         DATABASE_PATH,
         SVM_FILE,
@@ -240,12 +240,6 @@ def create_SVM_file(
     )
     SVM_FILE.close()
     return
-
-
-def get_text_file_contents(base_path: str, protein_class: str):
-    file_path = os.path.join(base_path, protein_class, protein_class + ".txt")
-    text_file = open(file_path, "r")
-    return text_file
 
 def get_fitness_of_individual(attribute_list: [int]) -> numpy.float64:
     """_summary_ Recebe uma lista de caracteristicas de apenas 1 indivíduo.
