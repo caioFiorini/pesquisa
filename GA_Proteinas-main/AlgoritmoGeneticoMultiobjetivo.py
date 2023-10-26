@@ -11,6 +11,7 @@ import numpy
 from deap import base, creator, tools
 
 # Local Imports
+from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
 from Classificador import Classificador
 from IOArquivo import FileReader
 
@@ -62,10 +63,89 @@ PROTEIN_CLASSES_LIST = [
 protein_matrix = []
 external_protein_matrix = []
 
+def setup_creator():
+    # O creator cria uma nova classe com o nome passado no parâmetro
+    # Em termos mais simples, essa linha de código cria uma nova classe de aptidão chamada FitnessMulti que tem dois componentes.
+    # O primeiro componente é positivo e o segundo componente é negativo. A biblioteca Deap irá minimizar o segundo componente
+    # da aptidão, o que significa maximizar o primeiro componente da aptidão.
+    creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0))
+
+    # array.array -> é usado para criar um arranjo de tipos específicos.
+    # no caso o Type code é i, logo ele cria um arranjo de inteiros
+    # Ele cria um arranjo com os elementos do fitnes.
+    creator.create("Individual", array.array, typecode="i", fitness=creator.FitnessMulti)
+    
+def setup_and_get_evolution_toolbox():
+    # Attribute generator
+    evolution_toolbox = base.Toolbox()
+
+    # O método register registra uma função na biblioteca Deap com o nome passado e você pode fornecer argumentos padrão que serão passados ​​automaticamente
+    # ao chamar a função registrada. Argumentos fixos podem então ser substituídos no momento da chamada da função.
+
+    # Em específico essa função gera uma função que quando chamada ela gera números aleatórios entre 1 e 0;
+    evolution_toolbox.register("indices", random.randint, 0, 1)
+
+    # A função tools.initRepeat repete um procedimento uma quantidade específica de vezes, no caso abaixo
+    # seria a quantidade de vezes do IND_SIZE.
+    # Essa função registra um indivíduo e inicializa ele com 0s - 1s aleatórios e repete IND_SIZE vezes.
+    evolution_toolbox.register(
+        "individual", tools.initRepeat, creator.Individual, evolution_toolbox.indices, INDIVIDUAL_SIZE
+    )
+
+    # Essa função registra uma função de colocar indivíduos em uma lista e repete toolbox.individual vezes
+    # (quantidade de indivíduos).
+    evolution_toolbox.register("population", tools.initRepeat, list, evolution_toolbox.individual)
+
+    # Operadores genetic
+    # registra uma função de seleção de indivíduo do NSGA2
+    evolution_toolbox.register("select", tools.selNSGA2)
+
+    # registra uma função que executa um cruzamento de dois pontos nos indivíduos da sequência de entrada
+    evolution_toolbox.register("mate", tools.cxTwoPoint)
+
+    # registra uma função que embaralhe os atributos do indivíduo de entrada e retorne o mutante.
+    evolution_toolbox.register("mutate", tools.mutShuffleIndexes, indpb=MUTATION_RATE)
+
+    # registra a função criada evaluate na biblioteca Deap
+    evolution_toolbox.register("evaluate", evaluate_fitness_of_individual)
+
+    # faz o cruzemento entre pais, gera os filhos e armazena pai e filho juntos
+    evolution_toolbox.decorate("mate", mate_and_get_mating_info)
+    # toolbox.register("map", dtm.map)
+    
+    return evolution_toolbox
+    
+def load_proteins(base_file_path: str):
+    index = 0
+    for class_number, protein_class in enumerate(PROTEIN_CLASSES_LIST):
+        # Dentro de cada pasta de classe, tem um arquivo .txt com o nome da classe
+        # e os arquivos .csv que devem ser lidos
+        protein_list = get_text_file_contents(base_file_path, protein_class)
+        for protein in protein_list:
+            with open(
+                os.path.join(
+                    base_file_path, protein_class, protein.rstrip("\n").rstrip("\r")
+                ),
+                "r",
+            ) as csvfile:
+                protein_reader = csv.reader(csvfile, delimiter=";")
+                # Turning the protein_reader into a list helps later on when we want to use random access (check if we need it though).
+                protein_matrix.insert(index, list(protein_reader))
+                index = index + 1
+                
+def load_external_DB_proteins(base_file_path: str) -> None:
+    with open(
+        os.path.join(
+            base_file_path, EXTERNAL_DATABASE_FILE_NAME.rstrip("\n").rstrip("\r")
+        ),
+        "r",
+    ) as csvfile:
+        protein_reader = csv.reader(csvfile, delimiter=";")
+        # why insert at 0? SUS!
+        external_protein_matrix.insert(0, list(protein_reader))
 
 def evaluate_fitness_of_individual(individual) -> (numpy.float64, int):
-    """
-    Essa função retorna o fitness do indivíduo.
+    """Essa função retorna o fitness do indivíduo.
 
     Args:
         individual : creator.Individual
@@ -167,38 +247,6 @@ def get_text_file_contents(base_path: str, protein_class: str):
     text_file = open(file_path, "r")
     return text_file
 
-
-def load_proteins(base_file_path: str):
-    index = 0
-    for class_number, protein_class in enumerate(PROTEIN_CLASSES_LIST):
-        # Dentro de cada pasta de classe, tem um arquivo .txt com o nome da classe
-        # e os arquivos .csv que devem ser lidos
-        protein_list = get_text_file_contents(base_file_path, protein_class)
-        for protein in protein_list:
-            with open(
-                os.path.join(
-                    base_file_path, protein_class, protein.rstrip("\n").rstrip("\r")
-                ),
-                "r",
-            ) as csvfile:
-                protein_reader = csv.reader(csvfile, delimiter=";")
-                # Turning the protein_reader into a list helps later on when we want to use random access (check if we need it though).
-                protein_matrix.insert(index, list(protein_reader))
-                index = index + 1
-
-
-def load_external_DB_proteins(base_file_path: str) -> None:
-    with open(
-        os.path.join(
-            base_file_path, EXTERNAL_DATABASE_FILE_NAME.rstrip("\n").rstrip("\r")
-        ),
-        "r",
-    ) as csvfile:
-        protein_reader = csv.reader(csvfile, delimiter=";")
-        # why insert at 0? SUS!
-        external_protein_matrix.insert(0, list(protein_reader))
-
-
 def get_fitness_of_individual(attribute_list: [int]) -> numpy.float64:
     """_summary_ Recebe uma lista de caracteristicas de apenas 1 indivíduo.
 
@@ -290,318 +338,14 @@ def get_duplicate_individuals_count(population: list) -> int:
 
     return len(population) - len(unique_individuals)
 
-
-def remove_individuals_with_zero_fitness_and_adjust_population(
-    population: list, original_population_size: int
-):
-    """_summary_
-    Essa função parece ter como objetivo remover indivíduos da população cujo
-    segundo valor de aptidão seja igual a zero e, em seguida, preencher a população com cópias
-    dos indivíduos existentes até que o tamanho original seja restaurado.
-
-    Args:
-        pop (list): lista de individuos
-        tamanhoOriginal (int): tamanho da população
-
-    Returns:
-        list: Uma lista de indivíduos.
-    """
-    for individual in population:
-        if individual.fitness.values[1] == 0:
-            population.remove(individual)
-
-    while original_population_size != len(population):
-        seed = random.randrange(0, len(population) - 1)
-        copy_of_individual = population[seed]
-        population.insert(len(population), copy_of_individual)
-    return population
-
-
-def print_results(generation_count: int, population_size: int, record):
-    print("\n\n")
-    saida = (
-        "Número da geração: "
-        + generation_count.__str__()
-        + "\n"
-        + "Tamanho da população: "
-        + population_size.__str__()
-        + "\n"
-        + "Total de filhos repetidos: "
-        + record["Filhos"]["Ind. Repetidos\t "].__str__()
-        + "\n"
-        + "(Filhos abaixo da média, Filhos acima da média) = "
-        + record["Filhos"]["Piores / Melhores  "].__str__()
-        + "\n"
-        + "1) Media  "
-        + record["Fitness"]["1) Media   "][0].__str__()
-        + "\n"
-        + "1) Media  "
-        + record["Fitness"]["1) Media   "][1].__str__()
-        + "\n"
-        + "2) Desvio Padrao "
-        + record["Fitness"]["2) Desvio Padrao   "][0].__str__()
-        + "\n"
-        + "2) Desvio Padrao "
-        + record["Fitness"]["2) Desvio Padrao   "][1].__str__()
-        + "\n"
-        + "3) Minimo "
-        + record["Fitness"]["3) Minimo  "][0].__str__()
-        + "\n"
-        + "3) Minimo "
-        + record["Fitness"]["3) Minimo  "][1].__str__()
-        + "\n"
-        + "4) Maximo "
-        + record["Fitness"]["4) Maximo  "][0].__str__()
-        + "\n"
-        + "4) Maximo "
-        + record["Fitness"]["4) Maximo  "][1].__str__()
-    )
-
-    print(saida)
-
-
-def execute_multi_objective_evolutionary_algorithm(
-    population,
-    evolution_toolbox,
-    crossover_probability,
-    mutation_probability,
-    generation_count,
-    population_size,
-    stats=None,
-    hall_of_fame=None,
-    verbose=__debug__,
-):
-    """_summary_
-        É nessa função onde a mágica acontece, a ideia é que todo o processo de evolução das gerações aconteça aqui.
-
-    Args:
-        population (list): Uma lista com vários invíduos
-        toolbox (): objeto da biblioteca deap
-        cxpb (_type_): crossover (A probabilidade de acasalar dois indivíduos)
-        mutpb (_type_): A taxa de mutação de um indivíduo
-        ngen (_type_): número de gerações
-        TAMANHO_POPULACAO (_type_): número da população
-        stats (_type_, optional): Serve para guardar as métricas de cada geração.
-        halloffame (_type_, optional): o hall da fama seria os 10 melhores indivíduos de cada
-        verbose (_type_, optional): Se deve ou não registrar as estatísticas.
-
-    Returns:
-        _type_: _description_
-    """
-    logbook = tools.Logbook()
-
-    # gen A geração atual
-    # nevals número de avaliações
-    # ele concatena a lista de gerações e números de avaliações com as colunas que estão dentro de stats.
-    logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
-
-    # Evaluate the individuals with an invalid fitness
-    # Coloca todos os invíduos que o fitness não é válido em uma lista.
-    invalid_individuals = [
-        individual for individual in population if not individual.fitness.valid
-    ]
-
-    # Pelo que eu entendi fitnesses é uma lista que recebe uma lista onde o nosso map, ele está pegando cada
-    # indivíduo do invalid_ind e avaliando no toolbox.evaluate; Com isso retorna uma lista com o fitness dos
-    # invalid_ind.
-    fitnesses = evolution_toolbox.map(evolution_toolbox.evaluate, invalid_individuals)
-    # Nesse for ele está iterando em cada invalid_ind e está "atribuindo" a ele o valor do seu respectivo
-    # fitness.
-    for individual, fitness in zip(invalid_individuals, fitnesses):
-        individual.fitness.values = fitness
-
-    # Recebe a população sem os indivíduos com fitness igual a 0;
-    population = remove_individuals_with_zero_fitness_and_adjust_population(
-        population, population_size
-    )
-
-    # Atualiza o Hall da fama
-    if hall_of_fame is not None:
-        hall_of_fame.update(population)
-
-    # stats.compile recebe os dados sobre os quais a estatística é coletada.
-    record = stats.compile(population) if stats else {}
-    # salva as estatísticas das gerações no logbook.
-    logbook.record(gen=0, nevals=len(invalid_individuals), **record)
-    print_results(0, len(population), record)
-
-    # if verbose:
-    #     print(logbook.stream)
-
-    # Aplica o operador de seleção do NSGA2 nos indivíduos da população.
-    # Ele manda a população e o tamanho da população que seria os indivíduos
-    # para selecionar.
-    population = evolution_toolbox.select(population, population_size)
-
-    # Begin the generational process
-    for generation_number in range(1, generation_count + 1):
-        # Select the next generation individuals
-
-        # offspring = toolbox.select(population, len(population))
-
-        # Seleção do torneio baseada na dominância (D) entre dois indivíduos, caso os dois indivíduos
-        # não interdominem a seleção é feita com base na distância de aglomeração (CD).
-        # Obs: O comprimento da sequencia de individuos deve ser 4.
-        offspring = tools.selTournamentDCD(population, len(population))
-
-        # Aplica a mutação e o crossover na população.
-        offspring = apply_variation_crossover_mutation(
-            offspring, evolution_toolbox, crossover_probability, mutation_probability
-        )
-
-        # Abre o arquivo de log.
-        LOG_GERACOES = open("log/Geracao_" + FILE_NAME + ".txt", "a+")
-        LOG_GERACOES.write(
-            "Classificando geracao: "
-            + generation_number.__str__()
-            + " Hora: "
-            + datetime.datetime.now().__str__()
-            + "\n"
-        )
-
-        # Evaluate the individuals with an invalid fitness
-
-        invalid_individuals = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = evolution_toolbox.map(
-            evolution_toolbox.evaluate, invalid_individuals
-        )
-        for individual, fitness in zip(invalid_individuals, fitnesses):
-            individual.fitness.values = fitness
-
-        offspring = remove_individuals_with_zero_fitness_and_adjust_population(
-            offspring, population_size
-        )
-
-        # Update the hall of fame with the generated individuals
-        if hall_of_fame is not None:
-            hall_of_fame.update(offspring)
-
-        # Select the next generation population
-        population = evolution_toolbox.select(population + offspring, population_size)
-
-        # Append the current generation statistics to the logbook
-        record = stats.compile(population) if stats else {}
-        logbook.record(gen=generation_number, nevals=len(invalid_individuals), **record)
-        print_results(generation_number, len(population), record)
-        # if verbose:
-        #    print logbook.stream
-
-    # para printar o que tem dentro do logbook;
-    # for record in logbook:
-    #     print(record)
-
-    return population, logbook
-
-
-def apply_variation_crossover_mutation(
-    population, evolution_toolbox, crossover_probability, mutation_probability
-):
-    """Part of an evolutionary algorithm applying only the variation part
-    (crossover **and** mutation). The modified individuals have their
-    fitness invalidated. The individuals are cloned so returned population is
-    independent of the input population.
-
-    :param population: A list of individuals to vary.
-    :param toolbox: A :class:`~deap.base.Toolbox` that contains the evolution
-                    operators.
-    :param cxpb: The probability of mating two individuals.
-    :param mutpb: The probability of mutating an individual.
-    :returns: A list of varied individuals that are independent of their parents.
-
-    The variation goes as follow. First, the parental population
-    :math:`P_\mathrm{p}` is duplicated using the :meth:`toolbox.clone` method
-    and the result is put into the offspring population :math:`P_\mathrm{o}`.
-    A first loop over :math:`P_\mathrm{o}` is executed to mate pairs of consecutive
-    individuals. According to the crossover probability *cxpb*, the
-    individuals :math:`\mathbf{x}_i` and :math:`\mathbf{x}_{i+1}` are mated
-    using the :meth:`toolbox.mate` method. The resulting children
-    :math:`\mathbf{y}_i` and :math:`\mathbf{y}_{i+1}` replace their respective
-    parents in :math:`P_\mathrm{o}`. A second loop over the resulting
-    :math:`P_\mathrm{o}` is executed to mutate every individual with a
-    probability *mutpb*. When an individual is mutated it replaces its not
-    mutated version in :math:`P_\mathrm{o}`. The resulting
-    :math:`P_\mathrm{o}` is returned.
-
-    This variation is named *And* beceause of its propention to apply both
-    crossover and mutation on the individuals. Note that both operators are
-    not applied systematicaly, the resulting individuals can be generated from
-    crossover only, mutation only, crossover and mutation, and reproduction
-    according to the given probabilities. Both probabilities should be in
-    :math:`[0, 1]`.
-    """
-    offspring = [evolution_toolbox.clone(individual) for individual in population]
-
-    # Apply crossover
-    for i in range(1, len(offspring), 2):
-        if random.random() < crossover_probability:
-            offspring[i - 1], offspring[i] = evolution_toolbox.mate(
-                offspring[i - 1], offspring[i]
-            )
-            del offspring[i - 1].fitness.values, offspring[i].fitness.values
-
-    # Apply mutation
-    for i in range(len(offspring)):
-        if random.random() < mutation_probability:
-            (offspring[i],) = evolution_toolbox.mutate(offspring[i])
-            del offspring[i].fitness.values
-
-    return offspring
-
-
-# O creator cria uma nova classe com o nome passado no parâmetro
-# Em termos mais simples, essa linha de código cria uma nova classe de aptidão chamada FitnessMulti que tem dois componentes.
-# O primeiro componente é positivo e o segundo componente é negativo. A biblioteca Deap irá minimizar o segundo componente
-# da aptidão, o que significa maximizar o primeiro componente da aptidão.
-creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0))
-
-# array.array -> é usado para criar um arranjo de tipos específicos.
-# no caso o Type code é i, logo ele cria um arranjo de inteiros
-# Ele cria um arranjo com os elementos do fitnes.
-creator.create("Individual", array.array, typecode="i", fitness=creator.FitnessMulti)
-
-# Attribute generator
-toolbox = base.Toolbox()
-
-# O método register registra uma função na biblioteca Deap com o nome passado e você pode fornecer argumentos padrão que serão passados ​​automaticamente
-# ao chamar a função registrada. Argumentos fixos podem então ser substituídos no momento da chamada da função.
-
-# Em específico essa função gera uma função que quando chamada ela gera números aleatórios entre 1 e 0;
-toolbox.register("indices", random.randint, 0, 1)
-
-# A função tools.initRepeat repete um procedimento uma quantidade específica de vezes, no caso abaixo
-# seria a quantidade de vezes do IND_SIZE.
-# Essa função registra um indivíduo e inicializa ele com 0s - 1s aleatórios e repete IND_SIZE vezes.
-toolbox.register(
-    "individual", tools.initRepeat, creator.Individual, toolbox.indices, INDIVIDUAL_SIZE
-)
-
-# Essa função registra uma função de colocar indivíduos em uma lista e repete toolbox.individual vezes
-# (quantidade de indivíduos).
-toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
-# Operadores genetic
-# registra uma função de seleção de indivíduo do NSGA2
-toolbox.register("select", tools.selNSGA2)
-
-# registra uma função que executa um cruzamento de dois pontos nos indivíduos da sequência de entrada
-toolbox.register("mate", tools.cxTwoPoint)
-
-# registra uma função que embaralhe os atributos do indivíduo de entrada e retorne o mutante.
-toolbox.register("mutate", tools.mutShuffleIndexes, indpb=MUTATION_RATE)
-
-# registra a função criada evaluate na biblioteca Deap
-toolbox.register("evaluate", evaluate_fitness_of_individual)
-
-# faz o cruzemento entre pais, gera os filhos e armazena pai e filho juntos
-toolbox.decorate("mate", mate_and_get_mating_info)
-
-hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)
-# toolbox.register("map", dtm.map)
-
-
 def main():
     start_time = time.time()
 
+    setup_creator()
+    evolution_toolbox = setup_and_get_evolution_toolbox()
+
+    hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)
+    
     # gera uma semente aleatória
     # random.seed(sys.argv[1])
     random.seed(1)
@@ -613,7 +357,7 @@ def main():
     load_external_DB_proteins(EXTERNAL_DATABASE_PATH)
 
     # inicializa uma lista com os indivíduos da população
-    population = toolbox.population(n=POPULATION_SIZE)
+    population = evolution_toolbox.population(n=POPULATION_SIZE)
 
     for individual in population:
         # Inicializa uma lista vazia para os pais dos indivíduos.
@@ -643,17 +387,20 @@ def main():
     stats = tools.MultiStatistics(Fitness=stats1, Filhos=stats2)
 
     print("Starting algorithm...")
-    execute_multi_objective_evolutionary_algorithm(
+    multi_objective_genetic_algorithm = MultiObjectiveGeneticAlgorithm(
         population,
-        toolbox,
+        evolution_toolbox,
         CROSSOVER,
         MUTATION_RATE,
         GENERATION_COUNT,
         POPULATION_SIZE,
         stats=stats,
         hall_of_fame=hall_of_fame,
+        FILE_NAME=FILE_NAME
     )
 
+    multi_objective_genetic_algorithm.execute()
+   
     # guarda os melhores e escreve no arquivo.
     print("\n\nSetting up hall of fame...")
     best_individuals = open("melhores/" + FILE_NAME + ".txt", "a+")

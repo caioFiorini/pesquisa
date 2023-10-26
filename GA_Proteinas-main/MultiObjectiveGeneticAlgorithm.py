@@ -11,6 +11,7 @@ import numpy
 from deap import base, creator, tools
 
 # Local Imports
+from MOGATerminalLogger import MOGATerminalLogger
 from Classificador import Classificador
 from IOArquivo import FileReader
 
@@ -27,9 +28,10 @@ class MultiObjectiveGeneticAlgorithm:
         stats=None,
         hall_of_fame=None,
         verbose=__debug__,
+        FILE_NAME="TESTE",
     ):
         self.population = population
-        self.evolution_toolbox = (evolution_toolbox,)
+        self.evolution_toolbox = evolution_toolbox
         self.crossover_probability = crossover_probability
         self.mutation_probability = mutation_probability
         self.generation_count = generation_count
@@ -37,6 +39,7 @@ class MultiObjectiveGeneticAlgorithm:
         self.stats = stats
         self.hall_of_fame = hall_of_fame
         self.verbose = verbose
+        self.FILE_NAME = FILE_NAME
 
     def remove_individuals_with_zero_fitness_and_adjust_population(
         self, population: list, original_population_size: int
@@ -62,9 +65,9 @@ class MultiObjectiveGeneticAlgorithm:
             copy_of_individual = population[seed]
             population.insert(len(population), copy_of_individual)
         return population
-    
+
     def apply_variation_crossover_mutation(
-    self, population, evolution_toolbox, crossover_probability, mutation_probability
+        self, population, evolution_toolbox, crossover_probability, mutation_probability
     ):
         """Part of an evolutionary algorithm applying only the variation part
         (crossover **and** mutation). The modified individuals have their
@@ -117,60 +120,7 @@ class MultiObjectiveGeneticAlgorithm:
 
         return offspring
 
-    def print_results(self, generation_count: int, population_size: int, record):
-        print("\n\n")
-        log = (
-            "Número da geração: "
-            + generation_count.__str__()
-            + "\n"
-            + "Tamanho da população: "
-            + population_size.__str__()
-            + "\n"
-            + "Total de filhos repetidos: "
-            + record["Filhos"]["Ind. Repetidos\t "].__str__()
-            + "\n"
-            + "(Filhos abaixo da média, Filhos acima da média) = "
-            + record["Filhos"]["Piores / Melhores  "].__str__()
-            + "\n"
-            + "1) Media  "
-            + record["Fitness"]["1) Media   "][0].__str__()
-            + "\n"
-            + "1) Media  "
-            + record["Fitness"]["1) Media   "][1].__str__()
-            + "\n"
-            + "2) Desvio Padrao "
-            + record["Fitness"]["2) Desvio Padrao   "][0].__str__()
-            + "\n"
-            + "2) Desvio Padrao "
-            + record["Fitness"]["2) Desvio Padrao   "][1].__str__()
-            + "\n"
-            + "3) Minimo "
-            + record["Fitness"]["3) Minimo  "][0].__str__()
-            + "\n"
-            + "3) Minimo "
-            + record["Fitness"]["3) Minimo  "][1].__str__()
-            + "\n"
-            + "4) Maximo "
-            + record["Fitness"]["4) Maximo  "][0].__str__()
-            + "\n"
-            + "4) Maximo "
-            + record["Fitness"]["4) Maximo  "][1].__str__()
-        )
-
-        print(log)
-
-    def execute_multi_objective_evolutionary_algorithm(
-        self,
-        population,
-        evolution_toolbox,
-        crossover_probability,
-        mutation_probability,
-        generation_count,
-        population_size,
-        stats=None,
-        hall_of_fame=None,
-        verbose=__debug__,
-    ):
+    def execute(self):
         """_summary_
             É nessa função onde a mágica acontece, a ideia é que todo o processo de evolução das gerações aconteça aqui.
 
@@ -193,19 +143,19 @@ class MultiObjectiveGeneticAlgorithm:
         # gen A geração atual
         # nevals número de avaliações
         # ele concatena a lista de gerações e números de avaliações com as colunas que estão dentro de stats.
-        logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
+        logbook.header = ["gen", "nevals"] + (self.stats.fields if self.stats else [])
 
         # Evaluate the individuals with an invalid fitness
         # Coloca todos os invíduos que o fitness não é válido em uma lista.
         invalid_individuals = [
-            individual for individual in population if not individual.fitness.valid
+            individual for individual in self.population if not individual.fitness.valid
         ]
 
         # Pelo que eu entendi fitnesses é uma lista que recebe uma lista onde o nosso map, ele está pegando cada
         # indivíduo do invalid_ind e avaliando no toolbox.evaluate; Com isso retorna uma lista com o fitness dos
         # invalid_ind.
-        fitnesses = evolution_toolbox.map(
-            evolution_toolbox.evaluate, invalid_individuals
+        fitnesses = self.evolution_toolbox.map(
+            self.evolution_toolbox.evaluate, invalid_individuals
         )
         # Nesse for ele está iterando em cada invalid_ind e está "atribuindo" a ele o valor do seu respectivo
         # fitness.
@@ -213,19 +163,19 @@ class MultiObjectiveGeneticAlgorithm:
             individual.fitness.values = fitness
 
         # Recebe a população sem os indivíduos com fitness igual a 0;
-        population = self.remove_individuals_with_zero_fitness_and_adjust_population(
-            population, population_size
+        self.population = self.remove_individuals_with_zero_fitness_and_adjust_population(
+            self.population, self.population_size
         )
 
         # Atualiza o Hall da fama
-        if hall_of_fame is not None:
-            hall_of_fame.update(population)
+        if self.hall_of_fame is not None:
+            self.hall_of_fame.update(self.population)
 
         # stats.compile recebe os dados sobre os quais a estatística é coletada.
-        record = stats.compile(population) if stats else {}
+        record = self.stats.compile(self.population) if self.stats else {}
         # salva as estatísticas das gerações no logbook.
         logbook.record(gen=0, nevals=len(invalid_individuals), **record)
-        self.print_results(0, len(population), record)
+        MOGATerminalLogger.print_generation_results(0, len(self.population), record)
 
         # if verbose:
         #     print(logbook.stream)
@@ -233,10 +183,10 @@ class MultiObjectiveGeneticAlgorithm:
         # Aplica o operador de seleção do NSGA2 nos indivíduos da população.
         # Ele manda a população e o tamanho da população que seria os indivíduos
         # para selecionar.
-        population = evolution_toolbox.select(population, population_size)
+        self.population = self.evolution_toolbox.select(self.population, self.population_size)
 
         # Begin the generational process
-        for generation_number in range(1, generation_count + 1):
+        for generation_number in range(1, self.generation_count + 1):
             # Select the next generation individuals
 
             # offspring = toolbox.select(population, len(population))
@@ -244,54 +194,47 @@ class MultiObjectiveGeneticAlgorithm:
             # Seleção do torneio baseada na dominância (D) entre dois indivíduos, caso os dois indivíduos
             # não interdominem a seleção é feita com base na distância de aglomeração (CD).
             # Obs: O comprimento da sequencia de individuos deve ser 4.
-            offspring = tools.selTournamentDCD(population, len(population))
+            offspring = tools.selTournamentDCD(self.population, len(self.population))
 
             # Aplica a mutação e o crossover na população.
             offspring = self.apply_variation_crossover_mutation(
                 offspring,
-                evolution_toolbox,
-                crossover_probability,
-                mutation_probability,
+                self.evolution_toolbox,
+                self.crossover_probability,
+                self.mutation_probability,
             )
 
-            # Abre o arquivo de log.
-            LOG_GERACOES = open("log/Geracao_" + FILE_NAME + ".txt", "a+")
-            LOG_GERACOES.write(
-                "Classificando geracao: "
-                + generation_number.__str__()
-                + " Hora: "
-                + datetime.datetime.now().__str__()
-                + "\n"
-            )
+            self.log_generation(generation_number)
 
             # Evaluate the individuals with an invalid fitness
 
             invalid_individuals = [ind for ind in offspring if not ind.fitness.valid]
-            fitnesses = evolution_toolbox.map(
-                evolution_toolbox.evaluate, invalid_individuals
+            fitnesses = self.evolution_toolbox.map(
+                self.evolution_toolbox.evaluate, invalid_individuals
             )
             for individual, fitness in zip(invalid_individuals, fitnesses):
                 individual.fitness.values = fitness
 
             offspring = self.remove_individuals_with_zero_fitness_and_adjust_population(
-                offspring, population_size
+                offspring, self.population_size
             )
 
             # Update the hall of fame with the generated individuals
-            if hall_of_fame is not None:
-                hall_of_fame.update(offspring)
+            if self.hall_of_fame is not None:
+                self.hall_of_fame.update(offspring)
 
             # Select the next generation population
-            population = evolution_toolbox.select(
-                population + offspring, population_size
+            self.population = self.evolution_toolbox.select(
+                self.population + offspring, self.population_size
             )
 
             # Append the current generation statistics to the logbook
-            record = stats.compile(population) if stats else {}
+            record = self.stats.compile(self.population) if self.stats else {}
             logbook.record(
                 gen=generation_number, nevals=len(invalid_individuals), **record
             )
-            self.print_results(generation_number, len(population), record)
+            
+            MOGATerminalLogger.print_generation_results(generation_number, len(self.population), record)
             # if verbose:
             #    print logbook.stream
 
@@ -299,4 +242,14 @@ class MultiObjectiveGeneticAlgorithm:
         # for record in logbook:
         #     print(record)
 
-        return population, logbook
+        return self.population, logbook
+
+    def log_generation(self, generation_number):
+        GENERATION_LOG = open("log/Geracao_" + self.FILE_NAME + ".txt", "a+")
+        GENERATION_LOG.write(
+            "Classificando geracao: "
+            + generation_number.__str__()
+            + " Hora: "
+            + datetime.datetime.now().__str__()
+            + "\n"
+        )
