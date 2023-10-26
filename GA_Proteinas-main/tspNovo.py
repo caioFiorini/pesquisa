@@ -37,7 +37,7 @@ POPULACAO = 200
 CROSSOVER=0.6
 GERACOES=100
 TAXA_MUTACAO = 0.001
-TORNEIO=2
+TOURNAMENT_SIZE=2
 HALL_OF_FAME=5
 #----------------------------------------------------------------------------------
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -62,7 +62,7 @@ def evalTSP(individual):
 
 toolbox.register("mate", tools.cxPartialyMatched)
 toolbox.register("mutate", tools.mutShuffleIndexes, indpb=TAXA_MUTACAO)
-toolbox.register("select", tools.selTournament, tournsize=TORNEIO)
+toolbox.register("select", tools.selTournament, tournsize=TOURNAMENT_SIZE)
 toolbox.register("evaluate", evalTSP)
 #ELITISMO
 #toolbox.register("select", selElitistAndTournament, frac_elitist=0.1 , tournsize=TORNEIO)
