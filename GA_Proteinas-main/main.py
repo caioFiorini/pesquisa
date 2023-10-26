@@ -22,31 +22,29 @@ EXTERNAL_DATABASE_FILE_NAME = "BaseExterna_Reduzida.csv"
 CLASSIFIER_PATH = "Individuos/"
 
 # TODO: uncomment when in final product
-# FILE_NAME = sys.argv[1]
+FILE_NAME = sys.argv[1]
 
 # TODO: comment when in final product
-FILE_NAME = "TESTE"
+# FILE_NAME = "TESTE"
 
 CLASSIFIER_FILE_NAME = FILE_NAME + ".csv"
 
 # ====== MARK: Algorithm's main parameters ======
 # TODO: Uncomment when in production
-# POPULATION_SIZE = int(sys.argv[2])
-# GENERATION_COUNT = int(sys.argv[3])
-# CROSSOVER = float(sys.argv[4])
-# TOURNAMENT_SIZE = int(sys.argv[5])
-# MUTATION_RATE = float(sys.argv[6])
-# ELITISMO = int(sys.argv[7])
+POPULATION_SIZE = int(sys.argv[2])
+GENERATION_COUNT = int(sys.argv[3])
+CROSSOVER = float(sys.argv[4])
+TOURNAMENT_SIZE = int(sys.argv[5])
+MUTATION_RATE = float(sys.argv[6])
+ELITISMO = int(sys.argv[7])
 
 # TODO: Comment when in production
 # POPULATION_SIZE = 500
-POPULATION_SIZE = 20
-TOURNAMENT_SIZE = 2  # NOT used in this file; check tsp.py or tspNovo.py
-CROSSOVER = 0.7
-MUTATION_RATE = 0.01
+# TOURNAMENT_SIZE = 2  # NOT used in this file; check tsp.py or tspNovo.py
+# CROSSOVER = 0.7
+# MUTATION_RATE = 0.01
 # GENERATION_COUNT = 100
-GENERATION_COUNT = 5
-ELITISMO = 1  # TODO: rename when find out what this is
+# ELITISMO = 1  # TODO: rename when find out what this is
 
 HALL_OF_FAME_SIZE = 10
 SAMPLE_COUNT = 490
