@@ -42,7 +42,7 @@ POPULACAO = int(sys.argv[2])
 CROSSOVER=float(sys.argv[4])
 GERACOES=int(sys.argv[3])
 TAXA_MUTACAO = float(sys.argv[6])
-TORNEIO=int(sys.argv[5])
+TOURNAMENT_SIZE=int(sys.argv[5])
 HALL_OF_FAME=10  
 ELITISMO = int(sys.argv[7])
 
@@ -77,9 +77,9 @@ toolbox.register("mutate", tools.mutShuffleIndexes, indpb=TAXA_MUTACAO)
 toolbox.register("evaluate", evalTSP)
 #ELITISMO
 if ELITISMO == 1:
-    toolbox.register("select", selElitistAndTournament, frac_elitist=0.1 , tournsize=TORNEIO)
+    toolbox.register("select", selElitistAndTournament, frac_elitist=0.1 , tournsize=TOURNAMENT_SIZE)
 elif ELITISMO == 0:
-    toolbox.register("select", tools.selTournament, tournsize=TORNEIO)
+    toolbox.register("select", tools.selTournament, tournsize=TOURNAMENT_SIZE)
 
 
 def mate_decorator(func):
