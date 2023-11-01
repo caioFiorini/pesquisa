@@ -168,21 +168,7 @@ def get_duplicate_individuals_count(population: list) -> int:
 
 def main():
     start_time = time.time()
-
     setup_creator()
-    evolution_toolbox = MOGAToolbox(
-        INDIVIDUAL_SIZE,
-        MUTATION_RATE,
-        CLASSIFIER_FILE_NAME,
-        CLASSIFIER_PATH,
-        SAMPLE_COUNT,
-        PROTEIN_CLASSES_LIST,
-        TAMANHO_TRANSFORMADA,
-        DATABASE_PATH,
-        protein_matrix,
-        external_protein_matrix,
-    ).toolbox
-
     hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)
 
     # gera uma semente aleatória
@@ -195,6 +181,18 @@ def main():
     print("Loading external protein DB...")
     load_external_DB_proteins(EXTERNAL_DATABASE_PATH)
 
+    evolution_toolbox = MOGAToolbox(
+        INDIVIDUAL_SIZE,
+        MUTATION_RATE,
+        CLASSIFIER_FILE_NAME,
+        CLASSIFIER_PATH,
+        SAMPLE_COUNT,
+        PROTEIN_CLASSES_LIST,
+        TAMANHO_TRANSFORMADA,
+        DATABASE_PATH,
+        protein_matrix,
+        external_protein_matrix,
+    ).toolbox
     # inicializa uma lista com os indivíduos da população
     population = evolution_toolbox.population(n=POPULATION_SIZE)
 

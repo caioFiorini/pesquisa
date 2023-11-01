@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from sklearn import datasets, svm
+from sklearn import svm
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 import csv
@@ -53,7 +53,7 @@ class Bunch(dict):
         # ignoring the pickled __dict__
         pass
 
-class Classificador:
+class SVMClassifier:
     # contrutor
     def __init__(self, path, nomeArquivo):
         self.path = path
