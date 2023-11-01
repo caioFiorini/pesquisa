@@ -49,7 +49,7 @@ class MOGAToolbox:
         """
         # dentro do cromossomo temos as características presentes no indivíduos [0,1,0,1,0,1]
         # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
-        attributes_of_individual = self.__get_attributes_of_individual(individual)
+        attributes_of_individual = self.__get_internal_DB_attributes_of_individual(individual)
         external_attributes_of_individual = (
             self.__get_external_DB_attributes_of_individual(individual)
         )
@@ -64,6 +64,32 @@ class MOGAToolbox:
             + external_attributes_of_individual.__len__()
         )
         return fitness, individual_size
+    
+    def __get_internal_DB_attributes_of_individual(self, individual) -> [str]:
+        """Lista as características (atributos) de um indivíduo.
+
+        Args:
+            individual : deap.creator.Individual
+                o indivíduo. (cromossomo [0,0,1,0,...]).
+
+        Returns:
+            [str]
+                lista com as caracterísitcas do indivíduo.
+        """
+        return [index for index, attribute in enumerate(individual[:50]) if attribute == 1]
+    
+    def __get_external_DB_attributes_of_individual(self, individual) -> [str]:
+        """Lista as características das bases externas de enriquecimento da base principal.
+
+        Args:
+            individual : deap.creator.Individual
+                o indivíduo. (cromossomo [0,0,1,0,...]).
+
+        Returns:
+            [str]
+                retorna uma lista com as características externas
+        """
+        return [index for index, attribute in enumerate(individual[51:]) if attribute == 1]
 
     # Em termos simples, o decorador mate_decorator() permite que você armazene os pais dos filhos gerados
     # por um cruzamento. Isso pode ser útil para fins de depuração ou para rastrear a evolução de uma
@@ -142,19 +168,6 @@ class MOGAToolbox:
         _FMeasure_result = svm.fitness1()
         return _FMeasure_result
 
-    def __get_attributes_of_individual(self, individual) -> [str]:
-        """Lista as características (atributos) de um indivíduo.
-
-        Args:
-            individual : deap.creator.Individual
-                o indivíduo. (cromossomo [0,0,1,0,...]).
-
-        Returns:
-            [str]
-                lista com as caracterísitcas do indivíduo.
-        """
-        return [index for index, attribute in enumerate(individual[:50]) if attribute == 1]
-
     def __create_SVM_file(
         self, attributes_of_individual: [str], external_attributes_of_individual: [str]
     ):
@@ -183,17 +196,4 @@ class MOGAToolbox:
         )
         SVM_FILE.close()
         return
-
-    def __get_external_DB_attributes_of_individual(self, individual) -> [str]:
-        """Lista as características das bases externas de enriquecimento da base principal.
-
-        Args:
-            individual : deap.creator.Individual
-                o indivíduo. (cromossomo [0,0,1,0,...]).
-
-        Returns:
-            [str]
-                retorna uma lista com as características externas
-        """
-        return [index - 51 for index, attribute in enumerate(individual) if index >= 51 and attribute == 1]
 
