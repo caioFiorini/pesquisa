@@ -6,10 +6,10 @@ import random
 from deap import tools
 
 # Local Imports
-from MOGATerminalLogger import MOGATerminalLogger
+from moga_terminal_logger import MOGATerminalLogger
 
 
-class MultiObjectiveGeneticAlgorithm:
+class NSGA2:
     def __init__(
         self,
         population,

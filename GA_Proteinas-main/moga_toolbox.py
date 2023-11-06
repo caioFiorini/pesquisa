@@ -6,8 +6,8 @@ import numpy
 from deap import base, creator, tools
 
 # Local Imports
-from SVMClassifier import SVMClassifier
-from FileManager import FileManager
+from svm_classifier import SVMClassifier
+from file_manager import FileManager
 
 
 class MOGAToolbox:
@@ -49,7 +49,9 @@ class MOGAToolbox:
         """
         # dentro do cromossomo temos as características presentes no indivíduos [0,1,0,1,0,1]
         # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
-        attributes_of_individual = self.__get_internal_DB_attributes_of_individual(individual)
+        attributes_of_individual = self.__get_internal_DB_attributes_of_individual(
+            individual
+        )
         external_attributes_of_individual = (
             self.__get_external_DB_attributes_of_individual(individual)
         )
@@ -64,7 +66,7 @@ class MOGAToolbox:
             + external_attributes_of_individual.__len__()
         )
         return fitness, individual_size
-    
+
     def __get_internal_DB_attributes_of_individual(self, individual) -> [str]:
         """Lista as características (atributos) de um indivíduo.
 
@@ -76,8 +78,10 @@ class MOGAToolbox:
             [str]
                 lista com as caracterísitcas do indivíduo.
         """
-        return [index for index, attribute in enumerate(individual[:50]) if attribute == 1]
-    
+        return [
+            index for index, attribute in enumerate(individual[:50]) if attribute == 1
+        ]
+
     def __get_external_DB_attributes_of_individual(self, individual) -> [str]:
         """Lista as características das bases externas de enriquecimento da base principal.
 
@@ -89,7 +93,9 @@ class MOGAToolbox:
             [str]
                 retorna uma lista com as características externas
         """
-        return [index for index, attribute in enumerate(individual[51:]) if attribute == 1]
+        return [
+            index for index, attribute in enumerate(individual[51:]) if attribute == 1
+        ]
 
     # Em termos simples, o decorador mate_decorator() permite que você armazene os pais dos filhos gerados
     # por um cruzamento. Isso pode ser útil para fins de depuração ou para rastrear a evolução de uma
@@ -196,4 +202,3 @@ class MOGAToolbox:
         )
         SVM_FILE.close()
         return
-
