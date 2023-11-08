@@ -46,9 +46,10 @@ def evaluate(individual):
     # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
     listaCaracteristicas = RetornaCaracteristica(individual)
     listaCaracteristicasExternas = RetornaCaracteristicaExternas(individual)
-    MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas)
+    # MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas)
+    MontaArquivoKNN(listaCaracteristicas, listaCaracteristicasExternas)
     fitness = ClassificadorCaracteristica(listaCaracteristicas)
-    #fitness = 1 - fitness
+    fitness = 1 - fitness
     tamanho = listaCaracteristicas.__len__() + listaCaracteristicasExternas.__len__()
     return fitness, tamanho,
 
@@ -93,6 +94,19 @@ def RetornaCaracteristicaExternas(ind1):
 
 def MontaArquivoSVM(listaCaracteristicas, listaCaracteristicasExternas):
     """_summary_ Gera um arquivo igual uma base de dados para testar na svm
+
+    Args:
+        listaCaracteristicas (_type_): Quantidade listada de características, igual quando faz leitura em um csv
+        listaCaracteristicasExternas (_type_): Quantidade listada de características, igual quando faz leitura em um csv
+    """
+    ARQUIVO = open("Individuos/" + NOMEARQUIVO_CLASSIFICADOR, "w")
+    leitor = LeituraArquivo(NUMERO_AMOSTRAS, LISTACLASSES, TAMANHO_TRANSFORMADA)
+    leitor.BuildCSV(PATH_BASE, ARQUIVO, listaCaracteristicas, listaCaracteristicasExternas, MATRIZ_PROTEINAS, MATRIZ_PROTEINAS_EXTERNAS)
+    ARQUIVO.close()
+    return
+
+def MontaArquivoKNN(listaCaracteristicas, listaCaracteristicasExternas):
+    """_summary_ Gera um arquivo igual uma base de dados para testar no KNN
 
     Args:
         listaCaracteristicas (_type_): Quantidade listada de características, igual quando faz leitura em um csv
@@ -160,9 +174,9 @@ def ClassificadorCaracteristica(listaCaracteristicas):
     """
     if(listaCaracteristicas.__len__() == 0):
         return 0
-    svm = Classificador(PATH_CLASSIFICADOR, NOMEARQUIVO_CLASSIFICADOR)
+    model = Classificador(PATH_CLASSIFICADOR, NOMEARQUIVO_CLASSIFICADOR)
     #resultPrecision = svm.fitness()
-    resultFMeasure = svm.fitness1()
+    resultFMeasure = model.fitness_with_knn()
     return resultFMeasure
 
 def Melhor(pop):

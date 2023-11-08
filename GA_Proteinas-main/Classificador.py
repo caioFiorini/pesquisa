@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from sklearn import datasets, svm
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 import csv
@@ -92,6 +93,12 @@ class Classificador:
         clf.fit(arquivo.data, arquivo.target)
         return clf.best_score_
         #return 45.01
+
+    def fitness_with_knn(self):
+        arquivo = self.load_proteina()
+        knn = KNeighborsClassifier(metric='euclidean')
+        scores = cross_val_score(knn, arquivo.date, arquivo.target, cv=10, scoring='f1_macro')
+        return scores.mean()
 
     def fitness1(self):
         arquivo = self.load_proteina()

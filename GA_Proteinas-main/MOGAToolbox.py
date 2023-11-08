@@ -117,7 +117,7 @@ class MOGAToolbox:
         )
         fitness = self.get_fitness_of_individual(attributes_of_individual)
         # check whether this comment is really useful or not
-        # fitness = 1 - fitness
+        fitness = 1 - fitness
         individual_size = (
             attributes_of_individual.__len__()
             + external_attributes_of_individual.__len__()
@@ -136,10 +136,10 @@ class MOGAToolbox:
 
         if not attribute_list:
             return 0
-        svm = Classificador(self.CLASSIFIER_PATH, self.CLASSIFIER_FILE_NAME)
+        model = Classificador(self.CLASSIFIER_PATH, self.CLASSIFIER_FILE_NAME)
         # check which function we are really using and remove the comment
         # resultPrecision = svm.fitness()
-        _FMeasure_result = svm.fitness1()
+        _FMeasure_result = model.fitness_with_knn()
         return _FMeasure_result
 
     def get_attributes_of_individual(self, individual) -> [str]:
@@ -190,7 +190,34 @@ class MOGAToolbox:
         )
         SVM_FILE.close()
         return
+    
+    def create_KNN_file(
+            self, attributes_of_individual: [str], external_attributes_of_individual: [str]
+    ):
+        """_summary_ Gera um arquivo igual uma base de dados para testar no KNN
 
+        Args:
+            attributes_of_individual : [str]
+                Quantidade listada de características, igual quando faz leitura em um csv
+
+            external_attributes_of_individual : [str]
+                Quantidade listada de características, igual quando faz leitura em um csv
+        """
+        KNN_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
+        file_reader = FileManager(
+            self.SAMPLE_COUNT, self.PROTEIN_CLASSES_LIST, self.TAMANHO_TRANSFORMADA
+        )
+        file_reader.BuildCSV(
+            self.DATABASE_PATH,
+            KNN_FILE,
+            attributes_of_individual,
+            external_attributes_of_individual,
+            self.protein_matrix,
+            self.external_protein_matrix,
+        )
+        KNN_FILE.close()
+
+    
     # Em termos simples, o decorador mate_decorator() permite que você armazene os pais dos filhos gerados
     # por um cruzamento. Isso pode ser útil para fins de depuração ou para rastrear a evolução de uma
     # população ao longo do tempo.
