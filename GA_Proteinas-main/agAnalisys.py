@@ -6,6 +6,7 @@ import numpy as np
 import sys
 
 path = sys.argv[1]
+# print(path)
 data1 = [np.array([]) for _ in range(2)]
 data2 = [np.array([]) for _ in range(2)]
 data3 = [np.array([]) for _ in range(2)]

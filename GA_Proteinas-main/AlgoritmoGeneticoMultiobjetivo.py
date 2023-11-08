@@ -297,7 +297,7 @@ def RemoveRepoe(pop, tamanhoOriginal):
     return pop
 
 def ImprimeSaida(ngen, populacao, record):
-    print(populacao)
+    #print(populacao)
     print("\n\n")
     saida = ngen.__str__() + '\t' + len(populacao).__str__() + \
     '\t' + record['Filhos']['Ind. Repetidos\t '].__str__() + \
@@ -312,6 +312,16 @@ def ImprimeSaida(ngen, populacao, record):
     '\n' + '4) Maximo ' + record['Fitness']['4) Maximo  '][1].__str__()
             
     print (saida)
+
+def ImprimeSaida_SemDetalhe(ngen, populacao, record):
+    saida = ngen.__str__() + '\t' + len(populacao).__str__() + \
+            '\t' + record['Filhos']['Ind. Repetidos\t '].__str__() + '\t' + record['Filhos']['Piores / Melhores  '].__str__() + \
+            '\t' + record['Fitness']['2) Desvio Padrao   '][0].__str__() + '\t' +  record['Fitness']['2) Desvio Padrao   '][1].__str__() + \
+            '\t' + record['Fitness']['4) Maximo  '][0].__str__() + '\t' + record['Fitness']['4) Maximo  '][1].__str__() + \
+            '\t' + record['Fitness']['1) Media   '][0].__str__() + '\t' + record['Fitness']['1) Media   '][1].__str__() + \
+            '\t' + record['Fitness']['3) Minimo  '][0].__str__() + '\t' +  record['Fitness']['3) Minimo  '][1].__str__()
+    
+    print(saida)
 
 def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=None, halloffame=None, verbose=__debug__):
     """_summary_
@@ -362,7 +372,8 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
     record = stats.compile(population) if stats else {}
     # salva as estatísticas das gerações no logbook.
     logbook.record(gen=0, nevals=len(invalid_ind), **record)
-    ImprimeSaida(0, population, record)
+    # ImprimeSaida(0, population, record)
+    ImprimeSaida_SemDetalhe(0, population, record)
 
     # if verbose:
     #    print logbook.stream
@@ -410,7 +421,8 @@ def eaMulti(population, toolbox, cxpb, mutpb, ngen, TAMANHO_POPULACAO, stats=Non
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}
         logbook.record(gen=gen, nevals=len(invalid_ind), **record)
-        ImprimeSaida(gen, population, record)
+        # ImprimeSaida(gen, population, record)
+        ImprimeSaida_SemDetalhe(gen, population, record)
         #if verbose:
         #    print logbook.stream
 
@@ -472,21 +484,21 @@ def varAnd(population, toolbox, cxpb, mutpb):
 
 #Individuo and #Operator genetic
 IND_SIZE = 104
-# POPULACAO = int(sys.argv[2])
-# CROSSOVER=float(sys.argv[4])
-# GERACOES=int(sys.argv[3])
-# TAXA_MUTACAO = float(sys.argv[6])
-# TORNEIO=int(sys.argv[5])
-# HALL_OF_FAME = 10
-# ELITISMO = int(sys.argv[7])
-
-POPULACAO = 500
-TORNEIO = 2
-CROSSOVER = 0.7
-TAXA_MUTACAO = 0.01
-GERACOES = 100
+POPULACAO = int(sys.argv[2])
+CROSSOVER=float(sys.argv[4])
+GERACOES=int(sys.argv[3])
+TAXA_MUTACAO = float(sys.argv[6])
+TORNEIO=int(sys.argv[5])
 HALL_OF_FAME = 10
-ELITISMO = 1
+ELITISMO = int(sys.argv[7])
+
+# POPULACAO = 500
+# TORNEIO = 2
+# CROSSOVER = 0.7
+# TAXA_MUTACAO = 0.01
+# GERACOES = 100
+# HALL_OF_FAME = 10
+# ELITISMO = 1
 
 # Function Max
 

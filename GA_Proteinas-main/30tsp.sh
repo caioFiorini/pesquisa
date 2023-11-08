@@ -14,12 +14,13 @@ fi
 if [ ! -d "$current_out_folder" ]; then
 	echo "Beggining run"
 	mkdir -p $current_out_folder
-	for sd in "${seed[@]}"; do
+	for sd in "${seed[@]}"
+	do
 		python3 AlgoritmoGeneticoMultiobjetivo.py $sd $1 $2 $3 $4 $5 $6 > "$current_out_folder$sd.lol" 
 	done
 	wait
 	#./delete_blank_space.sh $current_out_folder
-	python3 agAnalisys.py $current_out_folder $direc
+	# python3 agAnalisys.py $current_out_folder $direc
 fi
 
 
