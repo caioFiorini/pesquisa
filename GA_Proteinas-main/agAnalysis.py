@@ -17,11 +17,9 @@ data8 = [np.array([]) for _ in range(2)]
 data9 = [np.array([]) for _ in range(2)]
 itr = 0
 for filename in glob.glob(os.path.join(path, '*.lol')):
-    # print(filename)
     with open(filename) as inf:
         reader = csv.reader(inf, delimiter="\t")
         aux1 = list(zip(*reader))
-        #print(aux1[0][0:])
         data1[itr] = aux1[0][0:]#geracoes        
         data2[itr] = aux1[1][0:]#populacao
         data3[itr] = aux1[2][0:]#repetidos
