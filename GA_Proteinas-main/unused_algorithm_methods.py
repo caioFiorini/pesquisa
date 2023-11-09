@@ -1,7 +1,7 @@
 from deap import tools
 
 
-class UnusedAlgorithmFunctions:
+class UnusedAlgorithmMethods:
     def selElitistAndTournament(individuals, k, frac_elitist, tournsize):
         """_summary_
             Faz a seleção dos melhores e aplica o torneio.
