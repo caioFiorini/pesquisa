@@ -25,6 +25,8 @@ from deap import tools
 #import matplotlib.pyplot as plt
 #import networkx
 
+from constants import Constants
+
 # gr*.json contains the distance map in list of list style in JSON format
 # Optimal solutions are : gr17 = 2085, gr24 = 1272, gr120 = 6942
 with open("tsp/bays29_MATRIX.json", "r") as tsp_data:
@@ -134,18 +136,18 @@ def main():
 
     hof = tools.HallOfFame(HALL_OF_FAME)
     stats1 = tools.Statistics(lambda ind: ind.fitness.values)
-    stats1.register("1) Media   ", numpy.mean)
+    stats1.register(Constants.Stats.AVERAGE, numpy.mean)
     # stats1.register("Mediana ", numpy.median)
     #stats1.register("Variancia   ", numpy.var)
-    stats1.register("2) Desvio Padrao   ", numpy.std)
-    stats1.register("3) Minimo  ", numpy.min)
-    stats1.register("4) Maximo  ", numpy.max)
+    stats1.register(Constants.Stats.STANDARD_DEVIATION, numpy.std)
+    stats1.register(Constants.Stats.MINIMUM, numpy.min)
+    stats1.register(Constants.Stats.MAXIMUM, numpy.max)
     # stats1.register("Histograma  ", numpy.histogram)
     # stats1.register("Count", numpy.ptp)
 
     stats2 = tools.Statistics(lambda ind: ind)
-    stats2.register("Piores / Melhores  ", contaFilhos)
-    stats2.register("Ind. Repetidos	 ", contaIndividuosIguais)
+    stats2.register(Constants.Stats.WORST_BEST, contaFilhos)
+    stats2.register(Constants.Stats.REPEATED_INDIVIDUALS, contaIndividuosIguais)
     
     stats = tools.MultiStatistics(Fitness=stats1, Filhos=stats2)
 

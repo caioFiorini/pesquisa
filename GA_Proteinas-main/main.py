@@ -11,9 +11,10 @@ import numpy
 from deap import base, creator, tools
 
 # Local Imports
-from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
-from MOGAToolbox import MOGAToolbox
-from FileManager import FileManager
+from nsga_2 import NSGA2
+from moga_toolbox import MOGAToolbox
+from file_manager import FileManager
+from constants import Constants
 
 # ====== MARK: Defining paths and file names ======
 DATABASE_PATH = "BaseSting"
@@ -212,19 +213,19 @@ def main():
 
     stats1 = tools.Statistics(lambda individual: individual.fitness.values)
 
-    stats1.register("1) Media   ", numpy.mean, axis=0)
-    stats1.register("2) Desvio Padrao   ", numpy.std, axis=0)
-    stats1.register("3) Minimo  ", numpy.min, axis=0)
-    stats1.register("4) Maximo  ", numpy.max, axis=0)
+    stats1.register(Constants.Stats.AVERAGE, numpy.mean, axis=0)
+    stats1.register(Constants.Stats.STANDARD_DEVIATION, numpy.std, axis=0)
+    stats1.register(Constants.Stats.MINIMUM, numpy.min, axis=0)
+    stats1.register(Constants.Stats.MAXIMUM, numpy.max, axis=0)
 
     stats2 = tools.Statistics(lambda individual: individual)
-    stats2.register("Piores / Melhores  ", count_individuals_relative_to_parent_average)
-    stats2.register("Ind. Repetidos	 ", get_duplicate_individuals_count)
+    stats2.register(Constants.Stats.WORST_BEST, count_individuals_relative_to_parent_average)
+    stats2.register(Constants.Stats.REPEATED_INDIVIDUALS, get_duplicate_individuals_count)
 
     stats = tools.MultiStatistics(Fitness=stats1, Filhos=stats2)
 
     print("Starting algorithm...")
-    multi_objective_genetic_algorithm = MultiObjectiveGeneticAlgorithm(
+    multi_objective_genetic_algorithm = NSGA2(
         population,
         evolution_toolbox,
         CROSSOVER,

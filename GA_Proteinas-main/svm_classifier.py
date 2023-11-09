@@ -8,6 +8,7 @@ import numpy as np
 from os.path import dirname
 from os.path import join
 
+
 class Bunch(dict):
     """Container object for datasets
 
@@ -53,6 +54,7 @@ class Bunch(dict):
         # ignoring the pickled __dict__
         pass
 
+
 class SVMClassifier:
     # contrutor
     def __init__(self, path, nomeArquivo):
@@ -77,26 +79,38 @@ class SVMClassifier:
         if return_X_y:
             return data, target
 
-        return Bunch(data=data, target=target,
-                     target_names=target_names,
-                     DESCR='Proteinas - Cada Classe representa uma determinada funcao',
-                     feature_names=['Hidrolases', 'Isomerases', 'Liases', 'Ligases', 'Oxidoredutases', 'Transferases'])
+        return Bunch(
+            data=data,
+            target=target,
+            target_names=target_names,
+            DESCR="Proteinas - Cada Classe representa uma determinada funcao",
+            feature_names=[
+                "Hidrolases",
+                "Isomerases",
+                "Liases",
+                "Ligases",
+                "Oxidoredutases",
+                "Transferases",
+            ],
+        )
 
     def fitness(self):
         arquivo = self.load_proteina()
-        #parameters = {'kernel': ['rbf'], 'C': [1, 10, 100, 1000]}
-        parameters = {'kernel': ['rbf'], 'C': [1000]}
+        # parameters = {'kernel': ['rbf'], 'C': [1, 10, 100, 1000]}
+        parameters = {"kernel": ["rbf"], "C": [1000]}
         svr = svm.SVC()
 
         clf = GridSearchCV(svr, parameters, cv=10, scoring="accuracy")
         clf.fit(arquivo.data, arquivo.target)
         return clf.best_score_
-        #return 45.01
+        # return 45.01
 
     def fitness1(self):
         arquivo = self.load_proteina()
 
-        clf = svm.SVC(kernel='rbf', C=1000)
+        clf = svm.SVC(kernel="rbf", C=1000)
         # scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='accuracy')
-        scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='f1_macro')
+        scores = cross_val_score(
+            clf, arquivo.data, arquivo.target, cv=10, scoring="f1_macro"
+        )
         return scores.mean()
