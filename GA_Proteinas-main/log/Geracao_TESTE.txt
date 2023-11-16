@@ -1,0 +1,10 @@
+Classificando geracao: 1 Hora: 2023-11-16 14:44:35.220788
+Classificando geracao: 2 Hora: 2023-11-16 14:44:38.213094
+Classificando geracao: 3 Hora: 2023-11-16 14:44:41.618989
+Classificando geracao: 4 Hora: 2023-11-16 14:44:47.036024
+Classificando geracao: 5 Hora: 2023-11-16 14:44:51.529525
+Classificando geracao: 1 Hora: 2023-11-16 14:45:28.764643
+Classificando geracao: 2 Hora: 2023-11-16 14:45:31.630055
+Classificando geracao: 3 Hora: 2023-11-16 14:45:35.193086
+Classificando geracao: 4 Hora: 2023-11-16 14:45:39.900018
+Classificando geracao: 5 Hora: 2023-11-16 14:45:44.128419
