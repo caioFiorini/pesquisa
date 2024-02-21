@@ -1,15 +1,19 @@
 import pandas as pd
+import os
 
-class arquivo:
+class Arquivo:
     def arquivo(self, nomeArquivo):
         if '.csv' not in nomeArquivo:
             print('Por favor envie um arquivo do tipo csv')
         
-        self.dataset = pd.read_csv(nomeArquivo)
+        localArquivo = os.path.join(nomeArquivo)
+        self.dataset = pd.read_csv(localArquivo)
         self.classes = self.dataset.columns
         return self.dataset
 
     
 
 #teste
-# novoArquivo = arquivo('Iris.csv')
+arquivo = Arquivo()
+
+algo = arquivo.arquivo('Iris.csv')

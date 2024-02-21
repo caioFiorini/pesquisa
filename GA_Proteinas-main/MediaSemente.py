@@ -24,7 +24,7 @@ while i != lista.__len__():
     soma += float(lista[i])
     i += 1
     if i>0 and i%11 == 0:
-         # cada posição da lista é 1 semente;
+        # cada posição da lista é 1 semente;
         media.append(soma/11)
         soma = 0
 
