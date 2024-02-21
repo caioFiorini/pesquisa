@@ -95,7 +95,7 @@ class MOGAToolbox:
 
         return toolbox
 
-    def evaluate_fitness_of_individual(self, individual) -> (numpy.float64, int):
+    def evaluate_fitness_of_individual(self, individual) -> (numpy.float64, int): # type: ignore
         """Essa função retorna o fitness do indivíduo.
 
         Args:
@@ -124,7 +124,7 @@ class MOGAToolbox:
         )
         return fitness, individual_size
 
-    def get_fitness_of_individual(self, attribute_list: [int]) -> numpy.float64:
+    def get_fitness_of_individual(self, attribute_list: [int]) -> numpy.float64: # type: ignore
         """_summary_ Recebe uma lista de caracteristicas de apenas 1 indivíduo.
 
         Args:
@@ -142,7 +142,7 @@ class MOGAToolbox:
         _FMeasure_result = model.fitness_with_knn()
         return _FMeasure_result
 
-    def get_attributes_of_individual(self, individual) -> [str]:
+    def get_attributes_of_individual(self, individual) -> [str]: # type: ignore
         """Lista as características (atributos) de um indivíduo.
 
         Args:
@@ -165,7 +165,7 @@ class MOGAToolbox:
         return attributes
 
     def create_SVM_file(
-        self, attributes_of_individual: [str], external_attributes_of_individual: [str]
+        self, attributes_of_individual: [str], external_attributes_of_individual: [str] # type: ignore
     ):
         """_summary_ Gera um arquivo igual uma base de dados para testar na svm
 
@@ -192,7 +192,7 @@ class MOGAToolbox:
         return
     
     def create_KNN_file(
-            self, attributes_of_individual: [str], external_attributes_of_individual: [str]
+            self, attributes_of_individual: [str], external_attributes_of_individual: [str] # type: ignore
     ):
         """_summary_ Gera um arquivo igual uma base de dados para testar no KNN
 
@@ -234,7 +234,7 @@ class MOGAToolbox:
 
         return wrapper
 
-    def get_external_DB_attributes_of_individual(self, individual) -> [str]:
+    def get_external_DB_attributes_of_individual(self, individual) -> [str]: # type: ignore
         """Lista as características das bases externas de enriquecimento da base principal.
 
         Args:

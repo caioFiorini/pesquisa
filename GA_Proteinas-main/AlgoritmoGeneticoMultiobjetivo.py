@@ -16,7 +16,7 @@ from deap import tools
 #from deap import dtm
 
 from Classificador import Classificador
-from IOArquivo import LeituraArquivo
+# from IOArquivo import LeituraArquivo
 
 NUMERO_AMOSTRAS = 490
 TAMANHO_TRANSFORMADA = 10
