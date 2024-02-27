@@ -37,12 +37,12 @@ class Algoritmo_Genetico:
         # da aptidão, o que significa maximizar o primeiro componente da aptidão.
         creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0))
 
-    # array.array -> é usado para criar um arranjo de tipos específicos.
-    # no caso o Type code é i, logo ele cria um arranjo de inteiros
-    # Ele cria um arranjo com os elementos do fitnes.
-    creator.create(
-        "Individual", array.array, typecode="i", fitness=creator.FitnessMulti
-    )
+        # array.array -> é usado para criar um arranjo de tipos específicos.
+        # no caso o Type code é i, logo ele cria um arranjo de inteiros
+        # Ele cria um arranjo com os elementos do fitnes.
+        creator.create(
+            "Individual", array.array, typecode="i", fitness=creator.FitnessMulti
+        )
     
     def count_individuals_relative_to_parent_average(population: list) -> (int, int):  # type: ignore
         """_summary_ tem a finalidade de contar quantos indivíduos na população atual são considerados
@@ -81,3 +81,21 @@ class Algoritmo_Genetico:
                     below_average_count += 1
             individual.pais = []
         return below_average_count, above_average_count
+    
+    def get_duplicate_individuals_count(population: list) -> int:
+        """Count Duplicate Individuals.
+
+        Args:
+            population (list): A list of individuals in a specific population.
+
+        Returns:
+            int: Returns the count of duplicate individuals.
+        """
+        # When you create a set, it only allows unique elements
+        unique_individuals = set()
+        for i in range(len(population)):
+            unique_individuals.add(tuple(population[i]))
+
+        return len(population) - len(unique_individuals)
+
+    

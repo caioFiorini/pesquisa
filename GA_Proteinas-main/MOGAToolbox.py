@@ -19,22 +19,18 @@ class MOGAToolbox:
         CLASSIFIER_FILE_NAME,
         CLASSIFIER_PATH,
         SAMPLE_COUNT,
-        PROTEIN_CLASSES_LIST,
+        CLASSES_LIST, #classes de proteinas do arquivo csv
         TAMANHO_TRANSFORMADA,
         DATABASE_PATH,
-        protein_matrix,
-        external_protein_matrix,
     ) -> None:
         self.INDIVIDUAL_SIZE = INDIVIDUAL_SIZE
         self.MUTATION_RATE = MUTATION_RATE
         self.CLASSIFIER_FILE_NAME = CLASSIFIER_FILE_NAME
         self.CLASSIFIER_PATH = CLASSIFIER_PATH
         self.SAMPLE_COUNT = SAMPLE_COUNT
-        self.PROTEIN_CLASSES_LIST = PROTEIN_CLASSES_LIST
+        self.CLASSES_LIST = CLASSES_LIST
         self.TAMANHO_TRANSFORMADA = TAMANHO_TRANSFORMADA
         self.DATABASE_PATH = DATABASE_PATH
-        self.protein_matrix = protein_matrix
-        self.external_protein_matrix = external_protein_matrix
         self.toolbox = self.setup_and_get_MOGA_toolbox()
 
     def setup_creator():
@@ -142,78 +138,66 @@ class MOGAToolbox:
         _FMeasure_result = model.fitness_with_knn()
         return _FMeasure_result
 
-    def get_attributes_of_individual(self, individual) -> [str]: # type: ignore
-        """Lista as características (atributos) de um indivíduo.
+    # def get_attributes_of_individual(self, individual) -> [str]: # type: ignore
+    #     """Lista as características (atributos) de um indivíduo.
 
-        Args:
-            individual : deap.creator.Individual
-                o indivíduo. (cromossomo [0,0,1,0,...]).
+    #     Args:
+    #         individual : deap.creator.Individual
+    #             o indivíduo. (cromossomo [0,0,1,0,...]).
 
-        Returns:
-            [str]
-                lista com as caracterísitcas do indivíduo.
-        """
-        attributes = []
-        attribute_count = 0
-        for attribute in individual:
-            if attribute_count >= 50:
-                return attributes
-            # WARNING: check with everyone (returns array with two items) -> [0, 1]
-            if attribute == 1:
-                attributes.append(attribute_count)  # why?
-            attribute_count += 1
-        return attributes
+    #     Returns:
+    #         [str]
+    #             lista com as caracterísitcas do indivíduo.
+    #     """
+    #     attributes = []
+    #     attribute_count = 0
+    #     for attribute in individual:
+    #         if attribute_count >= 50:
+    #             return attributes
+    #         # WARNING: check with everyone (returns array with two items) -> [0, 1]
+    #         if attribute == 1:
+    #             attributes.append(attribute_count)  # why?
+    #         attribute_count += 1
+    #     return attributes
 
     def create_SVM_file(
-        self, attributes_of_individual: [str], external_attributes_of_individual: [str] # type: ignore
+        self, attributes_of_individual: [str] # type: ignore
     ):
         """_summary_ Gera um arquivo igual uma base de dados para testar na svm
 
         Args:
             attributes_of_individual : [str]
                 Quantidade listada de características, igual quando faz leitura em um csv
-
-            external_attributes_of_individual : [str]
-                Quantidade listada de características, igual quando faz leitura em um csv
         """
         SVM_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
         file_reader = FileManager(
-            self.SAMPLE_COUNT, self.PROTEIN_CLASSES_LIST, self.TAMANHO_TRANSFORMADA
+            self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA
         )
         file_reader.BuildCSV(
             self.DATABASE_PATH,
             SVM_FILE,
-            attributes_of_individual,
-            external_attributes_of_individual,
-            self.protein_matrix,
-            self.external_protein_matrix,
+            attributes_of_individual
         )
         SVM_FILE.close()
         return
     
     def create_KNN_file(
-            self, attributes_of_individual: [str], external_attributes_of_individual: [str] # type: ignore
+            self, attributes_of_individual: [str] # type: ignore
     ):
         """_summary_ Gera um arquivo igual uma base de dados para testar no KNN
 
         Args:
             attributes_of_individual : [str]
                 Quantidade listada de características, igual quando faz leitura em um csv
-
-            external_attributes_of_individual : [str]
-                Quantidade listada de características, igual quando faz leitura em um csv
         """
         KNN_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
         file_reader = FileManager(
-            self.SAMPLE_COUNT, self.PROTEIN_CLASSES_LIST, self.TAMANHO_TRANSFORMADA
+            self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA
         )
         file_reader.BuildCSV(
             self.DATABASE_PATH,
             KNN_FILE,
             attributes_of_individual,
-            external_attributes_of_individual,
-            self.protein_matrix,
-            self.external_protein_matrix,
         )
         KNN_FILE.close()
 
@@ -234,23 +218,3 @@ class MOGAToolbox:
 
         return wrapper
 
-    def get_external_DB_attributes_of_individual(self, individual) -> [str]: # type: ignore
-        """Lista as características das bases externas de enriquecimento da base principal.
-
-        Args:
-            individual : deap.creator.Individual
-                o indivíduo. (cromossomo [0,0,1,0,...]).
-
-        Returns:
-            [str]
-                retorna uma lista com as características externas
-        """
-        attributes = []
-        attribute_count = 0
-        # WARNING: improve ASAP
-        for attribute in individual:
-            if attribute_count >= 51 and attribute == 1:
-                value = attribute_count - 51
-                attributes.append(value)  # why?
-            attribute_count += 1
-        return attributes

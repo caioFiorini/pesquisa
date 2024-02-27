@@ -8,10 +8,11 @@ class Arquivo:
         
         localArquivo = os.path.join(nomeArquivo)
         self.dataset = pd.read_csv(localArquivo)
-        self.classes = self.dataset.columns
         return self.dataset
 
-    
+    def classes(self):
+        classes = self.dataset.columns    
+        return classes
 
 #teste
 arquivo = Arquivo()
