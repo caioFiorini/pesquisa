@@ -8,13 +8,15 @@ class Arquivo:
         
         localArquivo = os.path.join(nomeArquivo)
         self.dataset = pd.read_csv(localArquivo)
+
+    def dataSet(self):
         return self.dataset
+
 
     def classes(self):
         classes = self.dataset.columns    
         return classes
 
 #teste
-arquivo = Arquivo()
-
-algo = arquivo.arquivo('Iris.csv')
+algo = Arquivo()
+algo.arquivo('Iris.csv')

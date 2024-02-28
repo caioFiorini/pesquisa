@@ -1,7 +1,7 @@
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 
-class algoritmosML:
+class AlgoritmosML:
     def KNN(
             self,
             n_neighbors=5, 

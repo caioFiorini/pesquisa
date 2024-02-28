@@ -21,7 +21,6 @@ class MOGAToolbox:
         SAMPLE_COUNT,
         CLASSES_LIST, #classes de proteinas do arquivo csv
         TAMANHO_TRANSFORMADA,
-        DATABASE_PATH,
     ) -> None:
         self.INDIVIDUAL_SIZE = INDIVIDUAL_SIZE
         self.MUTATION_RATE = MUTATION_RATE
