@@ -49,7 +49,7 @@ HALL_OF_FAME_SIZE = 10
 SAMPLE_COUNT = 490
 TAMANHO_TRANSFORMADA = 10  # TODO: rename when find out what this is
 INDIVIDUAL_SIZE = 104
-MOGAToolbox.py
+
 def main():
     start_time = time.time()
 

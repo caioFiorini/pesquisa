@@ -65,8 +65,8 @@ class Classificador:
         with open(join(module_path, self.nomeArquivo)) as csv_file:
             data_file = csv.reader(csv_file)
             temp = next(data_file)
-            n_samples = int(temp[0])
-            n_features = int(temp[1])
+            n_samples = int(temp[0]) #amostras
+            n_features = int(temp[1])  #características
             target_names = np.array(temp[2:])
             data = np.empty((n_samples, n_features))
             target = np.empty((n_samples,), dtype=np.int64)
@@ -83,22 +83,21 @@ class Classificador:
                      DESCR='Proteinas - Cada Classe representa uma determinada funcao',
                      feature_names=['Hidrolases', 'Isomerases', 'Liases', 'Ligases', 'Oxidoredutases', 'Transferases'])
 
-    def fitness(self):
-        arquivo = self.load_proteina()
-        #parameters = {'kernel': ['rbf'], 'C': [1, 10, 100, 1000]}
-        parameters = {'kernel': ['rbf'], 'C': [1000]}
-        svr = svm.SVC()
+    # def fitness(self, algortimoML):
+    #     arquivo = self.load_proteina()
+    #     #parameters = {'kernel': ['rbf'], 'C': [1, 10, 100, 1000]}
+    #     parameters = {'kernel': ['rbf'], 'C': [1000]}
+    #     svr = svm.SVC()
 
-        clf = GridSearchCV(svr, parameters, cv=10, scoring="accuracy")
-        clf.fit(arquivo.data, arquivo.target)
-        return clf.best_score_
-        #return 45.01
-
-    def fitness_with_knn(self):
+    #     clf = GridSearchCV(svr, parameters, cv=10, scoring="accuracy")
+    #     clf.fit(arquivo.data, arquivo.target)
+    #     return clf.best_score_
+        
+    
+    def fitness(self, algortimoML):
         arquivo = self.load_proteina()
-        knn = KNeighborsClassifier(metric='euclidean')
-        scores = cross_val_score(knn, arquivo.date, arquivo.target, cv=10, scoring='f1_macro')
-        return scores.mean()
+        algortimoML.fit(arquivo.data, arquivo.target)
+        return algortimoML.best_score_
 
     def fitness1(self):
         arquivo = self.load_proteina()

@@ -9,6 +9,7 @@ from deap import base, creator, tools
 # Local Imports
 from Classificador import Classificador
 from FileManager import FileManager
+from ArquivoML import AlgoritmosML
 
 
 class MOGAToolbox:
@@ -119,7 +120,7 @@ class MOGAToolbox:
         )
         return fitness, individual_size
 
-    def get_fitness_of_individual(self, attribute_list: [int]) -> numpy.float64: # type: ignore
+    def get_fitness_of_individual(self, algoritmoML, attribute_list: [int]) -> numpy.float64: # type: ignore
         """_summary_ Recebe uma lista de caracteristicas de apenas 1 indivíduo.
 
         Args:
@@ -134,7 +135,7 @@ class MOGAToolbox:
         model = Classificador(self.CLASSIFIER_PATH, self.CLASSIFIER_FILE_NAME)
         # check which function we are really using and remove the comment
         # resultPrecision = svm.fitness()
-        _FMeasure_result = model.fitness_with_knn()
+        _FMeasure_result = model.fitness(algoritmoML)
         return _FMeasure_result
 
     # def get_attributes_of_individual(self, individual) -> [str]: # type: ignore
@@ -159,46 +160,46 @@ class MOGAToolbox:
     #         attribute_count += 1
     #     return attributes
 
-    def create_SVM_file(
-        self, attributes_of_individual: [str] # type: ignore
-    ):
-        """_summary_ Gera um arquivo igual uma base de dados para testar na svm
+    # def create_SVM_file(
+    #     self, attributes_of_individual: [str] # type: ignore
+    # ):
+    #     """_summary_ Gera um arquivo igual uma base de dados para testar na svm
 
-        Args:
-            attributes_of_individual : [str]
-                Quantidade listada de características, igual quando faz leitura em um csv
-        """
-        SVM_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
-        file_reader = FileManager(
-            self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA
-        )
-        file_reader.BuildCSV(
-            self.DATABASE_PATH,
-            SVM_FILE,
-            attributes_of_individual
-        )
-        SVM_FILE.close()
-        return
+    #     Args:
+    #         attributes_of_individual : [str]
+    #             Quantidade listada de características, igual quando faz leitura em um csv
+    #     """
+    #     SVM_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
+    #     file_reader = FileManager(
+    #         self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA
+    #     )
+    #     file_reader.BuildCSV(
+    #         self.DATABASE_PATH,
+    #         SVM_FILE,
+    #         attributes_of_individual
+    #     )
+    #     SVM_FILE.close()
+    #     return
     
-    def create_KNN_file(
-            self, attributes_of_individual: [str] # type: ignore
-    ):
-        """_summary_ Gera um arquivo igual uma base de dados para testar no KNN
+    # def create_KNN_file(
+    #         self, attributes_of_individual: [str] # type: ignore
+    # ):
+    #     """_summary_ Gera um arquivo igual uma base de dados para testar no KNN
 
-        Args:
-            attributes_of_individual : [str]
-                Quantidade listada de características, igual quando faz leitura em um csv
-        """
-        KNN_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
-        file_reader = FileManager(
-            self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA
-        )
-        file_reader.BuildCSV(
-            self.DATABASE_PATH,
-            KNN_FILE,
-            attributes_of_individual,
-        )
-        KNN_FILE.close()
+    #     Args:
+    #         attributes_of_individual : [str]
+    #             Quantidade listada de características, igual quando faz leitura em um csv
+    #     """
+    #     KNN_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
+    #     file_reader = FileManager(
+    #         self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA
+    #     )
+    #     file_reader.BuildCSV(
+    #         self.DATABASE_PATH,
+    #         KNN_FILE,
+    #         attributes_of_individual,
+    #     )
+    #     KNN_FILE.close()
 
     
     # Em termos simples, o decorador mate_decorator() permite que você armazene os pais dos filhos gerados
