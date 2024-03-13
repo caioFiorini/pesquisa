@@ -21,42 +21,28 @@ class Arquivo:
         classes = self.dataset.columns    
         return classes
     
+    #melhorar o nome dessa função depois.
+    #adicionar o indivíduo como parâmetro.
+    # O nome da classe é algo extremamente importante
     
-    
-    
-    
-    def load_Arquivo_Nome_Nao_Passa_Por_Parametro(self):
-        return 0
-
-    def load_Arquivo_Nome_Passado_Por_Parametro(self, nomeClass):
+    def load_Atributos(self, individuo, nomeClass):
         
-        dataset = pd.read_csv('Iris.csv')
-        
-        
-        # A ideia é que o usuário informe o nome da classe ou simplesmente pegamos a última.
-        
-        # teste        
-        respostas = dataset[nomeClass]
-        print(respostas)
-        
-        dataset = dataset.drop(nomeClass, axis=1)
-        print(dat)
-        
-        # Código que tinha antes
-        
-        # temp = next(data_file)
-        # n_samples = int(temp[0]) #amostras
-        # n_features = int(temp[1])  #características
-        # target_names = np.array(temp[2:])
-        # data = np.empty((n_samples, n_features))
-        # target = np.empty((n_samples,), dtype=np.int64)
-
-        # for i, ir in enumerate(data_file):
-        #     data[i] = np.asarray(ir[:-1], dtype=np.float64)
-        #     target[i] = np.asarray(ir[-1], dtype=np.int64)
+        dataset = self.dataset
+        individuo = [0,1,0,1]
+        for i,ind in enumerate(individuo):
+            # print(i)
+            # print("Individuo: " + str(ind))
+            if(ind == 0):
+                dataset = dataset.drop(dataset.columns[i],axis=1)
                 
+        classe = dataset[nomeClass]
+        # print(classe)
+        dataset = dataset.drop(nomeClass, axis=1)
+        # print(dataset)
+        return dataset, classe
+    
 #teste
 algo = Arquivo()
 algo.arquivo('Iris.csv')
 
-arquivo = algo.load_Arquivo_Nome_Passado_Por_Parametro("class")
+arquivo = algo.load_Atributos("class")
