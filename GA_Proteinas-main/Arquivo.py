@@ -18,7 +18,12 @@ class Arquivo:
 
 
     def classes(self):
-        classes = self.dataset.columns    
+        
+        df = self.dataset
+        classes = df.columns
+        
+        
+        
         return classes
     
     #melhorar o nome dessa função depois.
@@ -45,4 +50,5 @@ class Arquivo:
 algo = Arquivo()
 algo.arquivo('Iris.csv')
 
-arquivo = algo.load_Atributos("class")
+# arquivo = algo.load_Atributos("class")
+jato = algo.classes()
