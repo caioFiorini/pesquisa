@@ -15,8 +15,8 @@ from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
 from MOGAToolbox import MOGAToolbox as mt
 from FileManager import FileManager
 from Arquivo import Arquivo
-from ArquivoAG import Algoritmo_Genetico
-from ArquivoML import AlgoritmosML
+from algoritmo_Genetico import Algoritmo_Genetico
+from algoritmos_ML import AlgoritmosML
 
 # ====== MARK: Defining paths and file names ======
 CLASSIFIER_PATH = "Individuos/"
