@@ -3,7 +3,6 @@ from sklearn.svm import SVC
 
 class AlgoritmosML:
     def KNN(
-            self,
             n_neighbors=5, 
             weights='uniform', 
             algorithm='auto', 
@@ -26,7 +25,6 @@ class AlgoritmosML:
         return knn 
     
     def SVM(
-            self,
             C = 1.0,
             kernel ='rbf',
             degree = 3,

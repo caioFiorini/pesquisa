@@ -3,7 +3,10 @@ import os
 import os.path as dirname
 import os.path as join
 import numpy as np
-import csv
+import sys
+# Pega o diretório onde o arquivo Classificador está alocado.
+sys.path.insert(0, '../codigos_AG')
+from algoritmos_ML import AlgoritmosML
 
 class Arquivo:
     def arquivo(self, nomeArquivo):
@@ -21,33 +24,34 @@ class Arquivo:
         classes = self.dataset.columns    
         return classes
     
-    def dataframe_to_csv_test(self, nomeClass = "n"):
+    def dataframe_to_csv_test(self, nomeClass = "class"):
         dataset = pd.read_csv('Iris.csv')
 
-        # A ideia é que o usuário informe o nome da classe ou simplesmente pegamos a última.
-        if(nomeClass != "n"):
-            # teste (funciona)     
-            respostas = dataset[nomeClass]
-            print(respostas)
+        # A ideia é que o usuário informe o nome da classe ou simplesmente pegamos a última coluna.
+        if "class" not in nomeClass:
+            #pego a última coluna e removo ela!
+            nome_ultima_coluna = dataset.columns[dataset.columns.__len__()-1]
+            classe = dataset[nome_ultima_coluna]
+            dataset = dataset.drop(nome_ultima_coluna, axis=1)
             
-            dataset = dataset.drop(nomeClass, axis=1)
+            #  classe = dataset[nomeClass]
+            print(classe)
+            # dataset = dataset.drop(nomeClass, axis=1)
             print(dataset)
-        
-        #pego a última coluna e removo ela!
-        nome_ultima_coluna = dataset.columns[dataset.columns.__len__()-1]
-        ultima_coluna = dataset[nome_ultima_coluna]
-        dataset = dataset.drop(nome_ultima_coluna, axis=1)
-        
-        #  classe = dataset[nomeClass]
-        # # print(classe)
-        # dataset = dataset.drop(nomeClass, axis=1)
-        # # print(dataset)
-        # return dataset, classe
+
+        classe = dataset[nomeClass]
+        print(classe)
+            
+        dataset = dataset.drop(nomeClass, axis=1)
+        # dataset=dataset.drop(dataset.index[0])
+        print(dataset)
+        return dataset, classe
     
-#teste
-algo = Arquivo()
-algo.arquivo('Iris.csv')
+# #teste
+# algo = Arquivo()
+# algo.arquivo('Iris.csv')
 
-# arquivo = algo.load_Arquivo_Nome_Passado_Por_Parametro("class")
+# # ml = Algoritmos_ML()
 
-arquivo = algo.load_Arquivo_Nome_Passado_Por_Parametro()
+# arquivo = algo.dataframe_to_csv_test()
+

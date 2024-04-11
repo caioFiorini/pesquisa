@@ -64,3 +64,6 @@ Criei duas funções:
     	def load_Arquivo_Nome_Passado_Por_Parametro(self, nomeClass)
 
 	Essas duas funções são a ideia de o usuário informar ou não o nome da classe.
+
+
+Nota (10/04)

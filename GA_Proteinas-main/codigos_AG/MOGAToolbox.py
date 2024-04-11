@@ -9,7 +9,7 @@ from deap import base, creator, tools
 # Local Imports
 from Classificador import Classificador
 from FileManager import FileManager
-from ArquivoML import AlgoritmosML
+from algoritmos_ML import AlgoritmosML
 
 
 class MOGAToolbox:
