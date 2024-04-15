@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import numpy
+from Arquivo import Arquivo
 
 
 class FileManager:
@@ -13,6 +14,7 @@ class FileManager:
 
     @staticmethod
     # modificar essa função
+    # abre o arquivo
     def get_text_file_contents(base_path: str, protein_class: str): # <----------
         file_path = os.path.join(base_path, protein_class, protein_class + ".txt")# <------
         text_file = open(file_path, "r")
@@ -29,7 +31,8 @@ class FileManager:
             self.numeroAmostras.__str__()
             + ","
             + features
-            + ",Hidrolases,Isomerases,Liases,Ligases,Oxidoredutases,Transferases\n" #retirar essa linha
+            + ","+Arquivo.retorna_nome_atributos()
+            # + ",Hidrolases,Isomerases,Liases,Ligases,Oxidoredutases,Transferases\n" #retirar essa linha pegar a partir da classe Arquivo.
         )
         self.CorpoArquivoCSV(
             path_Base,

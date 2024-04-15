@@ -15,10 +15,13 @@ class Arquivo:
         
         self.localArquivo = os.path.join(nomeArquivo)
         self.dataset = pd.read_csv(self.localArquivo)
-
+        # pega o nome dos atributos.
+        self.atributos = self.dataset.columns.to_list()
     def dataSet(self):
         return self.dataset
 
+    def retorna_nome_atributos(self):
+        return self.atributos
 
     def classes(self):
         classes = self.dataset.columns    
@@ -47,11 +50,22 @@ class Arquivo:
         print(dataset)
         return dataset, classe
     
+    def prepara_data_frame(self, atributos_ind):
+        
+        dataset, classe = self.dataframe_to_csv_test()
+        
+        # pega as colunas que tem 1
+        cols_para_manter = [dataset.columns[i] for i in range(len(dataset.columns)) if atributos_ind[i] != 0]
+        dataset = dataset[cols_para_manter]
+
+        # print(df)
+        return dataset, classe
+            
 # #teste
-# algo = Arquivo()
-# algo.arquivo('Iris.csv')
+algo = Arquivo()
+algo.arquivo('Iris.csv')
 
-# # ml = Algoritmos_ML()
+# ml = Algoritmos_ML()
 
-# arquivo = algo.dataframe_to_csv_test()
-
+atributo_individuo = [0,1,0,1,0]
+str = algo.prepara_data_frame(atributo_individuo)
