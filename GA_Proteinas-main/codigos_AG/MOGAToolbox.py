@@ -30,7 +30,7 @@ class MOGAToolbox:
         self.SAMPLE_COUNT = SAMPLE_COUNT
         self.CLASSES_LIST = CLASSES_LIST
         self.TAMANHO_TRANSFORMADA = TAMANHO_TRANSFORMADA
-        self.DATABASE_PATH = DATABASE_PATH
+        # self.DATABASE_PATH = DATABASE_PATH
         self.toolbox = self.setup_and_get_MOGA_toolbox()
 
     def setup_creator():
@@ -60,13 +60,7 @@ class MOGAToolbox:
         # A função tools.initRepeat repete um procedimento uma quantidade específica de vezes, no caso abaixo
         # seria a quantidade de vezes do IND_SIZE.
         # Essa função registra um indivíduo e inicializa ele com 0s - 1s aleatórios e repete IND_SIZE vezes.
-        toolbox.register(
-            "individual",
-            tools.initRepeat,
-            creator.Individual,
-            toolbox.indices,
-            self.INDIVIDUAL_SIZE,
-        )
+        toolbox.register("individual",tools.initRepeat,creator.Individual,toolbox.indices,self.INDIVIDUAL_SIZE)
 
         # Essa função registra uma função de colocar indivíduos em uma lista e repete toolbox.individual vezes
         # (quantidade de indivíduos).
@@ -105,19 +99,11 @@ class MOGAToolbox:
         # dentro do cromossomo temos as características presentes no indivíduos [0,1,0,1,0,1]
         # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
         attributes_of_individual = self.get_attributes_of_individual(individual)
-        external_attributes_of_individual = (
-            self.get_external_DB_attributes_of_individual(individual)
-        )
-        self.create_SVM_file(
-            attributes_of_individual, external_attributes_of_individual
-        )
+        self.create_file(attributes_of_individual)
         fitness = self.get_fitness_of_individual(attributes_of_individual)
         # check whether this comment is really useful or not
         fitness = 1 - fitness
-        individual_size = (
-            attributes_of_individual.__len__()
-            + external_attributes_of_individual.__len__()
-        )
+        individual_size = (attributes_of_individual.__len__())
         return fitness, individual_size
 
     def get_fitness_of_individual(self, algoritmoML, attribute_list: [int]) -> numpy.float64: # type: ignore
@@ -138,69 +124,39 @@ class MOGAToolbox:
         _FMeasure_result = model.fitness(algoritmoML)
         return _FMeasure_result
 
-    # def get_attributes_of_individual(self, individual) -> [str]: # type: ignore
-    #     """Lista as características (atributos) de um indivíduo.
+    def get_attributes_of_individual(self, individual) -> [str]: # type: ignore
+        """Lista as características (atributos) de um indivíduo.
+        Pega somente as "Colunas" onde temos o 1.
 
-    #     Args:
-    #         individual : deap.creator.Individual
-    #             o indivíduo. (cromossomo [0,0,1,0,...]).
+        Args:
+            individual : deap.creator.Individual
+                o indivíduo. (cromossomo [0,0,1,0,...]).
 
-    #     Returns:
-    #         [str]
-    #             lista com as caracterísitcas do indivíduo.
-    #     """
-    #     attributes = []
-    #     attribute_count = 0
-    #     for attribute in individual:
-    #         if attribute_count >= 50:
-    #             return attributes
-    #         # WARNING: check with everyone (returns array with two items) -> [0, 1]
-    #         if attribute == 1:
-    #             attributes.append(attribute_count)  # why?
-    #         attribute_count += 1
-    #     return attributes
+        Returns:
+            [str]
+                lista com as caracterísitcas do indivíduo.
+        """
+        attributes = []
+        attribute_count = 0
+        
+        for attribute in individual:
+            if attribute == 1:
+                attributes.append(attribute_count)  # why?
+            attribute_count += 1
+        return attributes
 
-    # def create_SVM_file(
-    #     self, attributes_of_individual: [str] # type: ignore
-    # ):
-    #     """_summary_ Gera um arquivo igual uma base de dados para testar na svm
+    def create_file(self, attributes_of_individual: [str]): # type: ignore
+        """_summary_ Gera um arquivo igual uma base de dados para testar na svm
 
-    #     Args:
-    #         attributes_of_individual : [str]
-    #             Quantidade listada de características, igual quando faz leitura em um csv
-    #     """
-    #     SVM_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
-    #     file_reader = FileManager(
-    #         self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA
-    #     )
-    #     file_reader.BuildCSV(
-    #         self.DATABASE_PATH,
-    #         SVM_FILE,
-    #         attributes_of_individual
-    #     )
-    #     SVM_FILE.close()
-    #     return
-    
-    # def create_KNN_file(
-    #         self, attributes_of_individual: [str] # type: ignore
-    # ):
-    #     """_summary_ Gera um arquivo igual uma base de dados para testar no KNN
-
-    #     Args:
-    #         attributes_of_individual : [str]
-    #             Quantidade listada de características, igual quando faz leitura em um csv
-    #     """
-    #     KNN_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
-    #     file_reader = FileManager(
-    #         self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA
-    #     )
-    #     file_reader.BuildCSV(
-    #         self.DATABASE_PATH,
-    #         KNN_FILE,
-    #         attributes_of_individual,
-    #     )
-    #     KNN_FILE.close()
-
+        Args:
+            attributes_of_individual : [str]
+                Quantidade listada de características, igual quando faz leitura em um csv
+        """
+        SVM_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
+        file_reader = FileManager(self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA)
+        file_reader.BuildCSV(self.DATABASE_PATH,SVM_FILE,attributes_of_individual)
+        SVM_FILE.close()
+        
     
     # Em termos simples, o decorador mate_decorator() permite que você armazene os pais dos filhos gerados
     # por um cruzamento. Isso pode ser útil para fins de depuração ou para rastrear a evolução de uma

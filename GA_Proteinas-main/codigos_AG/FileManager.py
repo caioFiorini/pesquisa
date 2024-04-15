@@ -12,8 +12,9 @@ class FileManager:
         self.arquivo = ""
 
     @staticmethod
-    def get_text_file_contents(base_path: str, protein_class: str):
-        file_path = os.path.join(base_path, protein_class, protein_class + ".txt")
+    # modificar essa função
+    def get_text_file_contents(base_path: str, protein_class: str): # <----------
+        file_path = os.path.join(base_path, protein_class, protein_class + ".txt")# <------
         text_file = open(file_path, "r")
         return text_file
 
@@ -21,28 +22,19 @@ class FileManager:
         self,
         path_Base,
         arquivoSaida,
-        listaCaracteristica,
-        listaCaracteristicaExternas,
-        MATRIZ_PROTEINAS,
-        MATRIZ_PROTEINAS_EXTERNAS,
+        listaCaracteristica
     ):
-        features = (
-            listaCaracteristica.__len__() * self.tamanhoTransformada
-            + listaCaracteristicaExternas.__len__()
-        ).__str__()
+        features = (listaCaracteristica.__len__() * self.tamanhoTransformada).__str__()
         arquivoSaida.write(
             self.numeroAmostras.__str__()
             + ","
             + features
-            + ",Hidrolases,Isomerases,Liases,Ligases,Oxidoredutases,Transferases\n"
+            + ",Hidrolases,Isomerases,Liases,Ligases,Oxidoredutases,Transferases\n" #retirar essa linha
         )
         self.CorpoArquivoCSV(
             path_Base,
             arquivoSaida,
             listaCaracteristica,
-            listaCaracteristicaExternas,
-            MATRIZ_PROTEINAS,
-            MATRIZ_PROTEINAS_EXTERNAS,
         )
 
     def CorpoArquivoCSV(
@@ -88,84 +80,6 @@ class FileManager:
 
             str = numeroclasse.__str__() + "\n"
             arquivoSaida.write(str)
-
-    def BuildCSV_WEKA(
-        self,
-        path_Base,
-        arquivoSaida,
-        listaCaracteristica,
-        listaCaracteristicaExternas,
-        MATRIZ_PROTEINAS,
-        MATRIZ_PROTEINAS_EXTERNAS,
-    ):
-        features = (
-            listaCaracteristica.__len__() * self.tamanhoTransformada
-            + listaCaracteristicaExternas.__len__()
-        )
-
-        contador = 0
-        for x in range(features + 1):
-            if x == 0:
-                contador = contador + 1
-                arquivoSaida.write(contador.__str__())
-            else:
-                contador = contador + 1
-                arquivoSaida.write("," + contador.__str__())
-
-        arquivoSaida.write("\n")
-
-        self.CorpoArquivoCSV_WEKA(
-            path_Base,
-            arquivoSaida,
-            listaCaracteristica,
-            listaCaracteristicaExternas,
-            MATRIZ_PROTEINAS,
-            MATRIZ_PROTEINAS_EXTERNAS,
-        )
-
-    def CorpoArquivoCSV_WEKA(
-        self,
-        path_Base,
-        arquivoSaida,
-        listaCaracteristica,
-        listaCaracteristicaExternas,
-        MATRIZ_PROTEINAS,
-        MATRIZ_PROTEINAS_EXTERNAS,
-    ):
-        matrizExternas = MATRIZ_PROTEINAS_EXTERNAS[0]
-
-        for contador, list in enumerate(MATRIZ_PROTEINAS):
-            matriz = matriz = numpy.array(list)
-
-            for caracteristica in listaCaracteristica:
-                for m in matriz:
-                    str = m[caracteristica].replace(",", ".").__str__()
-                    arquivoSaida.write(str + ",")
-
-            for caracteristicaExterna in listaCaracteristicaExternas:
-                strExt = (
-                    matrizExternas[contador][caracteristicaExterna]
-                    .replace(",", ".")
-                    .__str__()
-                )
-                arquivoSaida.write(strExt + ",")
-
-            numeroclasse = ""
-            if contador < 162:
-                numeroclasse = "Hidrolases\n"
-            elif contador < 217:
-                numeroclasse = "Isomerases\n"
-            elif contador < 279:
-                numeroclasse = "Liases\n"
-            elif contador < 295:
-                numeroclasse = "Ligases\n"
-            elif contador < 372:
-                numeroclasse = "Oxidoredutases\n"
-            elif contador >= 372:
-                numeroclasse = "Transferases\n"
-
-            strValor = numeroclasse
-            arquivoSaida.write(strValor)
 
     def openDados(self, path, classe, extensao):
         caminho = os.path.join(path + "/" + classe + "/" + classe + extensao)

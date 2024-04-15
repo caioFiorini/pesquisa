@@ -66,4 +66,9 @@ Criei duas funções:
 	Essas duas funções são a ideia de o usuário informar ou não o nome da classe.
 
 
-Nota (10/04)
+Nota (12/04)
+
+estaou revendo as funções do MOGAToolbox, onde estou generalizando as funções para torná-las adapatáveis a qualquer problema.
+
+o próximo arquivo a ser modificado provavelmente é o FileManager, que eu irei retirar as funções de dentro dele e levar para o outro arquivo
+chmado arquivo.
