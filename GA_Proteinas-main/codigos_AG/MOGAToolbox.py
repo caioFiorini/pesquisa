@@ -20,15 +20,13 @@ class MOGAToolbox:
         CLASSIFIER_FILE_NAME,
         CLASSIFIER_PATH,
         SAMPLE_COUNT,
-        CLASSES_LIST, #classes de proteinas do arquivo csv
         TAMANHO_TRANSFORMADA,
-    ) -> None:
+    ):
         self.INDIVIDUAL_SIZE = INDIVIDUAL_SIZE
         self.MUTATION_RATE = MUTATION_RATE
         self.CLASSIFIER_FILE_NAME = CLASSIFIER_FILE_NAME
         self.CLASSIFIER_PATH = CLASSIFIER_PATH
         self.SAMPLE_COUNT = SAMPLE_COUNT
-        self.CLASSES_LIST = CLASSES_LIST
         self.TAMANHO_TRANSFORMADA = TAMANHO_TRANSFORMADA
         # self.DATABASE_PATH = DATABASE_PATH
         self.toolbox = self.setup_and_get_MOGA_toolbox()
@@ -145,7 +143,7 @@ class MOGAToolbox:
             attribute_count += 1
         return attributes
 
-    def create_file(self, attributes_of_individual: [str]): # type: ignore
+    def create_file(self, attributes_of_individual): 
         """_summary_ Gera um arquivo igual uma base de dados para testar na svm
 
         Args:

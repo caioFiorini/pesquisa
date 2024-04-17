@@ -34,20 +34,16 @@ class FileManager:
             + ","+Arquivo.retorna_nome_atributos()
             # + ",Hidrolases,Isomerases,Liases,Ligases,Oxidoredutases,Transferases\n" #retirar essa linha pegar a partir da classe Arquivo.
         )
-        self.CorpoArquivoCSV(
-            path_Base,
-            arquivoSaida,
-            listaCaracteristica,
-        )
+        self.CorpoArquivoCSV(path_Base,arquivoSaida,listaCaracteristica)
 
     def CorpoArquivoCSV(
         self,
         path_Base,
         arquivoSaida,
-        listaCaracteristica,
-        listaCaracteristicaExternas,
-        MATRIZ_PROTEINAS,
-        MATRIZ_PROTEINAS_EXTERNAS,
+        listaCaracteristica
+        # listaCaracteristicaExternas,
+        # MATRIZ_PROTEINAS,
+        # MATRIZ_PROTEINAS_EXTERNAS,
     ):
         matrizExternas = MATRIZ_PROTEINAS_EXTERNAS[0]
 
