@@ -39,21 +39,27 @@ CLASSIFIER_FILE_NAME = FILE_NAME + ".csv"
 # ELITISMO = int(sys.argv[7])
 
 # TODO: Comment when in production
-POPULATION_SIZE = 500
+POPULATION_SIZE = 100
 TOURNAMENT_SIZE = 2  # NOT used in this file; check tsp.py or tspNovo.py
 CROSSOVER = 0.7
 MUTATION_RATE = 0.01
-GENERATION_COUNT = 100
+GENERATION_COUNT = 10
 ELITISMO = 1  # TODO: rename when find out what this is
 HALL_OF_FAME_SIZE = 10
-SAMPLE_COUNT = 490
+# SAMPLE_COUNT = 490 agora é inicializado na main
 TAMANHO_TRANSFORMADA = 10  # TODO: rename when find out what this is
-INDIVIDUAL_SIZE = 104
+# INDIVIDUAL_SIZE = 104 agora é inicializado na main
 
 def main():
     start_time = time.time()
+    
+    Arquivo("Iris.csv")
+    
+    SAMPLE_COUNT = Arquivo.quantidade_linhas_colunas(0)
+    INDIVIDUAL_SIZE = Arquivo.quantidade_linhas_colunas(1)
 
     mt.setup_creator()
+    
     evolution_toolbox = mt.MOGAToolbox(
         INDIVIDUAL_SIZE,
         MUTATION_RATE,
@@ -71,20 +77,6 @@ def main():
 
     # inicializa uma lista com os indivíduos da população
     population = evolution_toolbox.population(n=POPULATION_SIZE)
-
-    for individual in population:
-        # Inicializa uma lista vazia para os pais dos indivíduos.
-        individual.pais = []
-
-    for individual in population:
-        # percorre cada indivíduo
-        for i in range(0, INDIVIDUAL_SIZE):
-            # Se o índice atual estiver entre os valores especificados no passo anterior, ele define
-            # o valor no índice i do indivíduo p como 1.
-            if i == 0 or i == 1 or i == 50 or i == 51 or i == 52 or i == 103:
-                individual[i] = 1
-            else:
-                individual[i] = 0
 
     stats1 = tools.Statistics(lambda individual: individual.fitness.values)
 

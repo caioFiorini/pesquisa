@@ -17,7 +17,17 @@ class Arquivo:
         self.dataset = pd.read_csv(self.localArquivo)
         # pega o nome dos atributos.
         self.atributos = self.dataset.columns.to_list()
+    
+    def quantidade_linhas_colunas(self, operador):
         
+        if operador == 1:
+            resposta = self.dataSet.shape[1] # pega a quantidade de colunas
+        elif operador == 0:
+            resposta = self.dataSet.shape[0] # pega a quantidade de linhas
+        
+        return resposta
+
+    
     def arquivo_csv(self, numero_amostras, lista_classes, tamanho_transformada):
         self.numero_amostras = numero_amostras
         self.lista_classes = lista_classes

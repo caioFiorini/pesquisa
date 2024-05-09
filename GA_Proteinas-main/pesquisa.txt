@@ -76,3 +76,31 @@ chmado arquivo.
 Nota (17/04)
 
 No arquivo FileManager tem uma função de CorpoArquivoCSV() dar uma olhada para cria-la no arquivo chamado Arquivo.
+
+Nota (30/04)
+
+pelo que eu entendi como o Bruno tratava várias bases, ele precisa de uma forma para unificá-las, como no nosso software 
+não iremos tratar isso (até então), eu vou considerar que o arquivo da pessoa já está montado da forma que deveria ser.
+
+Nota (07/05)
+
+modificação na classse File Manager, agora ela gera a mesma ideia de arquivo anterior, porém com a nossa base vindo abaixo dela.
+
+na linha 149 do arquivo mainT - tenho que mudar isso
+
+Nota (08/05)
+
+modificação no arquivo mainT.py, a ideia foi retirar o trecho do código pois ele fazia
+uma manipulação na população voltada para o problema específico do Bruno
+
+Nota (09/05)
+
+Arquivo mainT modificando a linha 79 -> buscar entender o que acontece naquele ponto 
+
+se o individuo ele é a representação da quantidade de colunas do nosso dataset, para falar o tamanho do nosso individuo
+podemos simplesmente trabalhar com a ideia de ler-mos o arquivo, pegamos a quantidade de colunas e enviamos para a main, após isso temos um valor 
+definido para o nosso individuo.
+
+SAMPLE_COUNT & INDIVIDUAL_SIZE -> agora são inicializados na main, vindo dos seus respectivos arquivos
+
+já podemos começar os testes de execução (até então quase nenhuma modificação adicional encotrada)

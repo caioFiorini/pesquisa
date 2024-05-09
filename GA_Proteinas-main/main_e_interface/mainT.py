@@ -142,20 +142,6 @@ def main():
     # inicializa uma lista com os indivíduos da população
     population = evolution_toolbox.population(n=POPULATION_SIZE)
 
-    for individual in population:
-        # Inicializa uma lista vazia para os pais dos indivíduos.
-        individual.pais = []
-
-    for individual in population:
-        # percorre cada indivíduo
-        for i in range(0, INDIVIDUAL_SIZE):
-            # Se o índice atual estiver entre os valores especificados no passo anterior, ele define
-            # o valor no índice i do indivíduo p como 1.
-            if i == 0 or i == 1 or i == 50 or i == 51 or i == 52 or i == 103:
-                individual[i] = 1
-            else:
-                individual[i] = 0
-
     stats1 = tools.Statistics(lambda individual: individual.fitness.values)
 
     stats1.register("1) Media   ", numpy.mean, axis=0)
