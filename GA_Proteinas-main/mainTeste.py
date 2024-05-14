@@ -53,20 +53,22 @@ TAMANHO_TRANSFORMADA = 10  # TODO: rename when find out what this is
 def main():
     start_time = time.time()
     
-    Arquivo("Iris.csv")
+    arquivo = Arquivo()
+    arquivo.le_arquivo("Iris.csv")
     
-    SAMPLE_COUNT = Arquivo.quantidade_linhas_colunas(0)
-    INDIVIDUAL_SIZE = Arquivo.quantidade_linhas_colunas(1)
+    SAMPLE_COUNT = arquivo.quantidade_linhas_colunas(0)
+    INDIVIDUAL_SIZE = arquivo.quantidade_linhas_colunas(1)
 
     mt.setup_creator()
     
-    evolution_toolbox = mt.MOGAToolbox(
+    evolution_toolbox = mt(
         INDIVIDUAL_SIZE,
         MUTATION_RATE,
         CLASSIFIER_FILE_NAME,
         CLASSIFIER_PATH,
         SAMPLE_COUNT,
         TAMANHO_TRANSFORMADA,
+        arquivo
     ).toolbox
 
     hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)

@@ -9,7 +9,8 @@ sys.path.insert(0, '../codigos_AG')
 from algoritmos_ML import AlgoritmosML
 
 class Arquivo:
-    def _init_(self, nomeArquivo):
+
+    def le_arquivo(self, nomeArquivo):
         if '.csv' not in nomeArquivo:
             print('Por favor envie um arquivo do tipo csv')
         
@@ -17,16 +18,18 @@ class Arquivo:
         self.dataset = pd.read_csv(self.localArquivo)
         # pega o nome dos atributos.
         self.atributos = self.dataset.columns.to_list()
+
+    def retorna_nome_atributos(self):
+        return self.atributos
     
     def quantidade_linhas_colunas(self, operador):
         
         if operador == 1:
-            resposta = self.dataSet.shape[1] # pega a quantidade de colunas
+            resposta = self.dataset.shape[1] # pega a quantidade de colunas
         elif operador == 0:
-            resposta = self.dataSet.shape[0] # pega a quantidade de linhas
+            resposta = self.dataset.shape[0] # pega a quantidade de linhas
         
         return resposta
-
     
     def arquivo_csv(self, numero_amostras, lista_classes, tamanho_transformada):
         self.numero_amostras = numero_amostras
@@ -44,11 +47,10 @@ class Arquivo:
             + Arquivo.retorna_nome_atributos()
         )
         self.corpo_arquivo_csv(path_base, arquivo_saida, lista_caracteristicas)
+        
     def dataSet(self):
         return self.dataset
 
-    def retorna_nome_atributos(self):
-        return self.atributos
 
     def classes(self):
         classes = self.dataset.columns    
@@ -95,10 +97,10 @@ class Arquivo:
         return dataset, classe
             
 # #teste
-algo = Arquivo()
-algo.arquivo('Iris.csv')
+# algo = Arquivo()
+# algo.arquivo('Iris.csv')
 
-# ml = Algoritmos_ML()
+# # ml = Algoritmos_ML()
 
-atributo_individuo = [0,1,0,1,0]
-str = algo.prepara_data_frame(atributo_individuo)
+# atributo_individuo = [0,1,0,1,0]
+# str = algo.prepara_data_frame(atributo_individuo)

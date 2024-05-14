@@ -21,6 +21,7 @@ class MOGAToolbox:
         CLASSIFIER_PATH,
         SAMPLE_COUNT,
         TAMANHO_TRANSFORMADA,
+        arquivo
     ):
         self.INDIVIDUAL_SIZE = INDIVIDUAL_SIZE
         self.MUTATION_RATE = MUTATION_RATE
@@ -30,6 +31,8 @@ class MOGAToolbox:
         self.TAMANHO_TRANSFORMADA = TAMANHO_TRANSFORMADA
         # self.DATABASE_PATH = DATABASE_PATH
         self.toolbox = self.setup_and_get_MOGA_toolbox()
+        self.arquivo = arquivo
+        
 
     def setup_creator():
         # O creator cria uma nova classe com o nome passado no parâmetro
@@ -151,8 +154,8 @@ class MOGAToolbox:
                 Quantidade listada de características, igual quando faz leitura em um csv
         """
         SVM_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
-        file_reader = FileManager(self.SAMPLE_COUNT, self.CLASSES_LIST, self.TAMANHO_TRANSFORMADA)
-        file_reader.BuildCSV(self.DATABASE_PATH,SVM_FILE,attributes_of_individual)
+        file_reader = FileManager(self.SAMPLE_COUNT, self.TAMANHO_TRANSFORMADA)
+        file_reader.BuildCSV(SVM_FILE,attributes_of_individual, self.arquivo)
         SVM_FILE.close()
         
     

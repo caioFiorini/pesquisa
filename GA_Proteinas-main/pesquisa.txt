@@ -104,3 +104,19 @@ definido para o nosso individuo.
 SAMPLE_COUNT & INDIVIDUAL_SIZE -> agora são inicializados na main, vindo dos seus respectivos arquivos
 
 já podemos começar os testes de execução (até então quase nenhuma modificação adicional encotrada)
+
+Nota (13/05)
+
+Começando os testes
+
+
+Nota (14/05)
+
+Continuando e resolvendo erros
+
+removendo pequenos resquícios que ficaram (7:54)
+
+mudamça na classe arquivo, vou ter que mudar alguns métodos, por entendimento errado
+
+entendi o erro, o erro se dá por na hora que eu crio uma nova instância, eu crio um novo objeto, ou seja, eu deixo de trabalhar com o que 
+já estava lá;

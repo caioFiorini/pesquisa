@@ -4,11 +4,10 @@ import os
 import numpy
 from Arquivo import Arquivo
 
-
 class FileManager:
-    def __init__(self, numeroAmostras, listaClasses, tamanhoTransformada):
+    def __init__(self, numeroAmostras, tamanhoTransformada):
         self.numeroAmostras = numeroAmostras
-        self.listaClasses = listaClasses
+        # self.listaClasses = listaClasses
         self.tamanhoTransformada = tamanhoTransformada
         self.arquivo = ""
 
@@ -22,16 +21,16 @@ class FileManager:
 
     def BuildCSV(
         self,
-        path_Base,
         arquivoSaida,
-        listaCaracteristica
+        listaCaracteristica,
+        arquivo
     ):
         features = (listaCaracteristica.__len__() * self.tamanhoTransformada).__str__()
         arquivoSaida.write(
-            self.numeroAmostras.__str__()
+            str(self.numeroAmostras)
             + ","
             + features
-            + ","+Arquivo.retorna_nome_atributos()
+            + ","+arquivo.retorna_nome_atributos()
         )
         arquivo = open(arquivoSaida, 'w')
         arquivo.write(features)
