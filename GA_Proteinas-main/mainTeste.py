@@ -60,6 +60,9 @@ def main():
     INDIVIDUAL_SIZE = arquivo.quantidade_linhas_colunas(1)
 
     mt.setup_creator()
+
+    # escolher o algoritmo de machine learning
+    algoritmo_ml = AlgoritmosML.KNN()
     
     evolution_toolbox = mt(
         INDIVIDUAL_SIZE,
@@ -68,7 +71,8 @@ def main():
         CLASSIFIER_PATH,
         SAMPLE_COUNT,
         TAMANHO_TRANSFORMADA,
-        arquivo
+        arquivo,
+        algoritmo_ml
     ).toolbox
 
     hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)

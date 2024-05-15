@@ -124,3 +124,4 @@ já estava lá;
 Nota (15/05)
 
 9:32 O erro está na chamada de função na linha 98
+15:07 Erro ao criar o CSV

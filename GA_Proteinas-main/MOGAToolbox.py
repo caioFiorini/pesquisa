@@ -21,7 +21,8 @@ class MOGAToolbox:
         CLASSIFIER_PATH,
         SAMPLE_COUNT,
         TAMANHO_TRANSFORMADA,
-        arquivo
+        arquivo,
+        algoritmo_ml
     ):
         self.INDIVIDUAL_SIZE = INDIVIDUAL_SIZE
         self.MUTATION_RATE = MUTATION_RATE
@@ -32,6 +33,7 @@ class MOGAToolbox:
         # self.DATABASE_PATH = DATABASE_PATH
         self.toolbox = self.setup_and_get_MOGA_toolbox()
         self.arquivo = arquivo
+        self.algoritmoML = algoritmo_ml
         
 
     def setup_creator():
@@ -86,7 +88,7 @@ class MOGAToolbox:
 
         return toolbox
 
-    def evaluate_fitness_of_individual(self, individual) -> (numpy.float64, int): # type: ignore
+    def evaluate_fitness_of_individual(self, individual): # type: ignore
         """Essa função retorna o fitness do indivíduo.
 
         Args:
@@ -99,15 +101,17 @@ class MOGAToolbox:
         """
         # dentro do cromossomo temos as características presentes no indivíduos [0,1,0,1,0,1]
         # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
+        print(individual)
         attributes_of_individual = self.get_attributes_of_individual(individual)
+        print(attributes_of_individual)
         self.create_file(attributes_of_individual)
-        fitness = self.get_fitness_of_individual(attributes_of_individual)
+        fitness = self.get_fitness_of_individual(self.algoritmoML,attributes_of_individual)
         # check whether this comment is really useful or not
         fitness = 1 - fitness
         individual_size = (attributes_of_individual.__len__())
         return fitness, individual_size
 
-    def get_fitness_of_individual(self, algoritmoML, attribute_list: [int]) -> numpy.float64: # type: ignore
+    def get_fitness_of_individual(self, algoritmoML, attribute_list) -> numpy.float64: # type: ignore
         """_summary_ Recebe uma lista de caracteristicas de apenas 1 indivíduo.
 
         Args:

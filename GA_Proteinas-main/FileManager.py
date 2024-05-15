@@ -26,14 +26,15 @@ class FileManager:
         arquivo
     ):
         features = (listaCaracteristica.__len__() * self.tamanhoTransformada).__str__()
-        
+        print(features)
         # arquivoSaida.write(
         #     "".join(self.numeroAmostras)
         #     + ","
         #     + features
         #     + ","+arquivo.retorna_nome_atributos()
         # )
-        
+        for i in listaCaracteristica:
+            print(i)
         arquivoSaida.write("{},{},{}".format(self.numeroAmostras, features, arquivo.retorna_nome_atributos())) 
         arquivo = open(arquivoSaida.name, 'w')
         arquivo.write(features)
