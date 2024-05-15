@@ -28,6 +28,7 @@ class Arquivo:
             resposta = self.dataset.shape[1] # pega a quantidade de colunas
         elif operador == 0:
             resposta = self.dataset.shape[0] # pega a quantidade de linhas
+            resposta = resposta.__str__()
         
         return resposta
     
@@ -39,8 +40,9 @@ class Arquivo:
         
     def monta_csv(self, path_base, arquivo_saida, lista_caracteristicas):
         features = (lista_caracteristicas.__len__() * self.tamanho_transformada).__str__()
+        
         arquivo_saida.write(
-            self.numero_amostras.__str__()
+            str(self.numero_amostras)
             + ","
             + features
             + ","

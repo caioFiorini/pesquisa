@@ -6,7 +6,7 @@ from Arquivo import Arquivo
 
 class FileManager:
     def __init__(self, numeroAmostras, tamanhoTransformada):
-        self.numeroAmostras = numeroAmostras
+        self.numeroAmostras = str(numeroAmostras)
         # self.listaClasses = listaClasses
         self.tamanhoTransformada = tamanhoTransformada
         self.arquivo = ""
@@ -26,19 +26,19 @@ class FileManager:
         arquivo
     ):
         features = (listaCaracteristica.__len__() * self.tamanhoTransformada).__str__()
-        arquivoSaida.write(
-            str(self.numeroAmostras)
-            + ","
-            + features
-            + ","+arquivo.retorna_nome_atributos()
-        )
-        arquivo = open(arquivoSaida, 'w')
+        
+        # arquivoSaida.write(
+        #     "".join(self.numeroAmostras)
+        #     + ","
+        #     + features
+        #     + ","+arquivo.retorna_nome_atributos()
+        # )
+        
+        arquivoSaida.write("{},{},{}".format(self.numeroAmostras, features, arquivo.retorna_nome_atributos())) 
+        arquivo = open(arquivoSaida.name, 'w')
         arquivo.write(features)
-        arquivo.write(listaCaracteristica)
+        arquivo.write(str(listaCaracteristica))
         arquivo.close
-        
-        
-        
         
     def openDados(self, path, classe, extensao):
         caminho = os.path.join(path + "/" + classe + "/" + classe + extensao)

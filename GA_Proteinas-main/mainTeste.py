@@ -78,6 +78,7 @@ def main():
     random.seed(1)
 
     # inicializa uma lista com os indivíduos da população
+
     population = evolution_toolbox.population(n=POPULATION_SIZE)
 
     stats1 = tools.Statistics(lambda individual: individual.fitness.values)
@@ -108,24 +109,24 @@ def main():
 
     multi_objective_genetic_algorithm.execute()
 
-    # guarda os melhores e escreve no arquivo.
-    print("\n\nSetting up hall of fame...")
-    best_individuals = open("melhores/" + FILE_NAME + ".txt", "a+")
-    best_individuals.write("\nHALL OF FAME:")
-    for top_individual in hall_of_fame:
-        best_individuals.write(
-            top_individual.__str__() + top_individual.fitness.values.__str__() + "\n"
-        )
+    # # guarda os melhores e escreve no arquivo.
+    # print("\n\nSetting up hall of fame...")
+    # best_individuals = open("melhores/" + FILE_NAME + ".txt", "a+")
+    # best_individuals.write("\nHALL OF FAME:")
+    # for top_individual in hall_of_fame:
+    #     best_individuals.write(
+    #         top_individual.__str__() + top_individual.fitness.values.__str__() + "\n"
+    #     )
 
-    print("\nDone!")
+    # print("\nDone!")
 
-    duration = time.time() - start_time
-    hours, remainder = divmod(duration, 3600)
-    minutes, seconds = divmod(remainder, 60)
+    # duration = time.time() - start_time
+    # hours, remainder = divmod(duration, 3600)
+    # minutes, seconds = divmod(remainder, 60)
 
-    print(
-        f"Total execution time: {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds."
-    )
+    # print(
+    #     f"Total execution time: {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds."
+    # )
 
 
 if __name__ == "__main__":

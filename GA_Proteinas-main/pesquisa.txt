@@ -120,3 +120,7 @@ mudamça na classe arquivo, vou ter que mudar alguns métodos, por entendimento 
 
 entendi o erro, o erro se dá por na hora que eu crio uma nova instância, eu crio um novo objeto, ou seja, eu deixo de trabalhar com o que 
 já estava lá;
+
+Nota (15/05)
+
+9:32 O erro está na chamada de função na linha 98
