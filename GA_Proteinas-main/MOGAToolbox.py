@@ -7,7 +7,7 @@ import numpy
 from deap import base, creator, tools
 
 # Local Imports
-from Classificador import Classificador
+from classificadorT import ClassificadorT
 from FileManager import FileManager
 from algoritmos_ML import AlgoritmosML
 
@@ -101,7 +101,6 @@ class MOGAToolbox:
         """
         # dentro do cromossomo temos as características presentes no indivíduos [0,1,0,1,0,1]
         # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
-        print(individual)
         attributes_of_individual = self.get_attributes_of_individual(individual)
         print(attributes_of_individual)
         self.create_file(attributes_of_individual)
@@ -123,7 +122,7 @@ class MOGAToolbox:
 
         if not attribute_list:
             return 0
-        model = Classificador(self.CLASSIFIER_PATH, self.CLASSIFIER_FILE_NAME)
+        model = ClassificadorT(self.CLASSIFIER_PATH, self.CLASSIFIER_FILE_NAME)
         # check which function we are really using and remove the comment
         # resultPrecision = svm.fitness()
         _FMeasure_result = model.fitness(algoritmoML)
@@ -158,8 +157,11 @@ class MOGAToolbox:
                 Quantidade listada de características, igual quando faz leitura em um csv
         """
         SVM_FILE = open("Individuos/" + self.CLASSIFIER_FILE_NAME, "w")
-        file_reader = FileManager(self.SAMPLE_COUNT, self.TAMANHO_TRANSFORMADA)
-        file_reader.BuildCSV(SVM_FILE,attributes_of_individual, self.arquivo)
+        # file_reader = FileManager(self.SAMPLE_COUNT, self.TAMANHO_TRANSFORMADA)
+        # file_reader.BuildCSV(SVM_FILE,attributes_of_individual, self.arquivo)
+        self.arquivo.arquivo_csv(self.SAMPLE_COUNT, attributes_of_individual, self.TAMANHO_TRANSFORMADA)
+        self.arquivo.monta_csv(SVM_FILE)
+        print("algo")
         SVM_FILE.close()
         
     

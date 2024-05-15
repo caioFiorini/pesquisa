@@ -10,6 +10,12 @@ from algoritmos_ML import AlgoritmosML
 
 class Arquivo:
 
+    def __init__(self):
+        self.numero_amostras = None
+        self.lista_classes = None
+        self.tamanho_transformada = None
+        self.arquivo = None
+
     def le_arquivo(self, nomeArquivo):
         if '.csv' not in nomeArquivo:
             print('Por favor envie um arquivo do tipo csv')
@@ -38,17 +44,12 @@ class Arquivo:
         self.tamanho_transformada = tamanho_transformada
         self.arquivo = ""
         
-    def monta_csv(self, path_base, arquivo_saida, lista_caracteristicas):
-        features = (lista_caracteristicas.__len__() * self.tamanho_transformada).__str__()
+    def monta_csv(self, arquivo_saida):
+        features = (self.lista_classes.__len__() * self.tamanho_transformada).__str__()
         
-        arquivo_saida.write(
-            str(self.numero_amostras)
-            + ","
-            + features
-            + ","
-            + Arquivo.retorna_nome_atributos()
-        )
-        self.corpo_arquivo_csv(path_base, arquivo_saida, lista_caracteristicas)
+        arquivo_saida.write("{},{},{}".format(self.numeroAmostras, features, self.retorna_nome_atributos())) 
+
+        # self.corpo_arquivo_csv(arquivo_saida, self.lista_classes)
         
     def dataSet(self):
         return self.dataset

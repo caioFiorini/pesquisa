@@ -125,3 +125,6 @@ Nota (15/05)
 
 9:32 O erro está na chamada de função na linha 98
 15:07 Erro ao criar o CSV
+15:21 Entendi o erro, o erro está que ao invés de usar a classe Arquivo, estou usando a classe
+FileManager, sendo que tem tudo criado na classe arquivo, falta só implementar um método lá e 
+está funcionando a parte de criação do arquivo.
