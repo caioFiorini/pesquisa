@@ -101,9 +101,10 @@ class MOGAToolbox:
         """
         # dentro do cromossomo temos as características presentes no indivíduos [0,1,0,1,0,1]
         # ele pega esses atributos e dentro de um svm ele testa para ver a qualidade dele.
+        print(individual)
         attributes_of_individual = self.get_attributes_of_individual(individual)
-        print(attributes_of_individual)
-        self.create_file(attributes_of_individual)
+        # print(attributes_of_individual)
+        self.create_file(individual)
         fitness = self.get_fitness_of_individual(self.algoritmoML,attributes_of_individual)
         # check whether this comment is really useful or not
         fitness = 1 - fitness

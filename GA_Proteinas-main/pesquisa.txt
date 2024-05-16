@@ -128,3 +128,7 @@ Nota (15/05)
 15:21 Entendi o erro, o erro está que ao invés de usar a classe Arquivo, estou usando a classe
 FileManager, sendo que tem tudo criado na classe arquivo, falta só implementar um método lá e 
 está funcionando a parte de criação do arquivo.
+
+Nota (16/05)
+
+pegar os dados conforme a colunas e montar o arquivo csv pulando uma linha

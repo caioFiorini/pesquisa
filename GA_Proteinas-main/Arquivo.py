@@ -45,19 +45,26 @@ class Arquivo:
         self.arquivo = ""
         
     def monta_csv(self, arquivo_saida):
+        # print(self.lista_classes)
         features = (self.lista_classes.__len__() * self.tamanho_transformada).__str__()
-        
-        arquivo_saida.write("{},{},{}".format(self.numeroAmostras, features, self.retorna_nome_atributos())) 
-
-        # self.corpo_arquivo_csv(arquivo_saida, self.lista_classes)
-        
-    def dataSet(self):
-        return self.dataset
-
-
-    def classes(self):
-        classes = self.dataset.columns    
-        return classes
+        # print(type(self.numero_amostras))
+        arquivo_saida.write("{},{},{}".format(self.numero_amostras, features, self.retorna_nome_atributos())) 
+        dataset, _ = self.dataframe_to_csv_test(self.lista_classes)
+        # arquivo_saida.write(dataset)
+        # varrer o dataset -> extrair o
+        print(dataset)
+        arquivo_saida.close()
+        # 
+    
+    def dataframe_to_csv_test(self, atributos_ind):
+        # print(atributos_ind)        
+        dataset, classe = self.prepara_data_frame()
+        # print(dataset)
+        # pega as colunas que tem 1
+        cols_para_manter = [dataset.columns[i] for i in range(len(dataset.columns)) if atributos_ind[i] != 0]
+        dataset = dataset[cols_para_manter]
+        # print(df)
+        return dataset, classe
     
     def prepara_data_frame(self, nomeClass = "class"):
         dataset = pd.read_csv('Iris.csv')
@@ -82,23 +89,19 @@ class Arquivo:
         # print(dataset)
         return dataset, classe
     
+    def dataSet(self):
+        return self.dataset
+
+
+    def classes(self):
+        classes = self.dataset.columns    
+        return classes
+    
     def retorna_quantidade_colunas(self):
         dataset, _ = self.prepara_data_frame()
         num_colunas = len(dataset.columns)
         return num_colunas
         
-    
-    def dataframe_to_csv_test(self, atributos_ind):
-        
-        dataset, classe = self.prepara_data_frame()
-        
-        # pega as colunas que tem 1
-        cols_para_manter = [dataset.columns[i] for i in range(len(dataset.columns)) if atributos_ind[i] != 0]
-        dataset = dataset[cols_para_manter]
-
-        # print(df)
-        return dataset, classe
-            
 # #teste
 # algo = Arquivo()
 # algo.arquivo('Iris.csv')
