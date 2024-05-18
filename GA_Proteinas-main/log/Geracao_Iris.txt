@@ -1,2 +1,12 @@
 Classificando geracao: 1 Hora: 2024-05-18 16:06:56.322806
 Classificando geracao: 2 Hora: 2024-05-18 16:07:03.051191
+Classificando geracao: 1 Hora: 2024-05-18 16:11:10.959190
+Classificando geracao: 2 Hora: 2024-05-18 16:11:13.752485
+Classificando geracao: 3 Hora: 2024-05-18 16:11:16.708263
+Classificando geracao: 4 Hora: 2024-05-18 16:11:19.026250
+Classificando geracao: 5 Hora: 2024-05-18 16:11:21.783768
+Classificando geracao: 6 Hora: 2024-05-18 16:11:24.500889
+Classificando geracao: 7 Hora: 2024-05-18 16:11:26.844445
+Classificando geracao: 8 Hora: 2024-05-18 16:11:28.819617
+Classificando geracao: 9 Hora: 2024-05-18 16:11:30.881011
+Classificando geracao: 10 Hora: 2024-05-18 16:11:33.153583
