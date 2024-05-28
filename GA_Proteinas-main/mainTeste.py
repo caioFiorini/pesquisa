@@ -21,11 +21,11 @@ from algoritmos_ML import AlgoritmosML
 # ====== MARK: Defining paths and file names ======
 CLASSIFIER_PATH = "Individuos/"
 
-# TODO: uncomment when in final product
-# FILE_NAME = sys.argv[1]
+# uncomment when in final product
+FILE_NAME = sys.argv[1]
 
-# TODO: comment when in final product
-FILE_NAME = "Iris"
+# comment when in final product
+# FILE_NAME = "Iris"
 
 CLASSIFIER_FILE_NAME = FILE_NAME + ".csv"
 
@@ -38,7 +38,7 @@ CROSSOVER = float(sys.argv[4])
 TAMANHO_TRANSFORMADA = int(sys.argv[5])
 MUTATION_RATE = float(sys.argv[6])
 ELITISMO = int(sys.argv[7])
-DIRETORIO_EXPERIMENTO = int(sys.argv[8])
+DIRETORIO_EXPERIMENTO = sys.argv[9]
 
 # POPULATION_SIZE = 16
 # GENERATION_COUNT = 20
@@ -116,8 +116,8 @@ def main():
     multi_objective_genetic_algorithm.execute()
 
     # guarda os melhores e escreve no arquivo.
-    print("\n\nSetting up hall of fame...")
-    best_individuals = open("melhores/" + FILE_NAME + ".txt", "a+")
+    # print("\n\nSetting up hall of fame...")
+    best_individuals = open(DIRETORIO_EXPERIMENTO + "Melhores_" + FILE_NAME + ".txt", "w")
     best_individuals.write("\nHALL OF FAME:")
     for top_individual in hall_of_fame:
         best_individuals.write(

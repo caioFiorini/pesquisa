@@ -161,10 +161,9 @@ class MOGAToolbox:
             attributes_of_individual : [str]
                 Quantidade listada de características, igual quando faz leitura em um csv
         """
-        nome_arquivo = "Melhores_seed_" + self.seed
-        nome_diretorio = self.experimento
-        print(nome_diretorio)
-        SVM_FILE = open(nome_diretorio + nome_arquivo, "w")
+        nome_arquivo = "Log_" + self.seed
+        nome_diretorio = self.experimento + nome_arquivo
+        SVM_FILE = open(nome_diretorio, "w")
         # file_reader = FileManager(self.SAMPLE_COUNT, self.TAMANHO_TRANSFORMADA)
         # file_reader.BuildCSV(SVM_FILE,attributes_of_individual, self.arquivo)
         self.arquivo.arquivo_csv(self.SAMPLE_COUNT, attributes_of_individual, self.TAMANHO_TRANSFORMADA)
