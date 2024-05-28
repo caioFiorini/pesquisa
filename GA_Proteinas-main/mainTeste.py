@@ -39,11 +39,11 @@ CLASSIFIER_FILE_NAME = FILE_NAME + ".csv"
 # ELITISMO = int(sys.argv[7])
 
 # TODO: Comment when in production
-POPULATION_SIZE = 100
+POPULATION_SIZE = 16
 TOURNAMENT_SIZE = 2  # NOT used in this file; check tsp.py or tspNovo.py
 CROSSOVER = 0.7
-MUTATION_RATE = 0.01
-GENERATION_COUNT = 10
+MUTATION_RATE = 0.2
+GENERATION_COUNT = 20
 ELITISMO = 1  # TODO: rename when find out what this is
 HALL_OF_FAME_SIZE = 10
 # SAMPLE_COUNT = 490 agora é inicializado na main
