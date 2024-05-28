@@ -30,25 +30,22 @@ FILE_NAME = "Iris"
 CLASSIFIER_FILE_NAME = FILE_NAME + ".csv"
 
 # ====== MARK: Algorithm's main parameters ======
-# TODO: Uncomment when in production
-# POPULATION_SIZE = int(sys.argv[2])
-# GENERATION_COUNT = int(sys.argv[3])
-# CROSSOVER = float(sys.argv[4])
-# TOURNAMENT_SIZE = int(sys.argv[5])
-# MUTATION_RATE = float(sys.argv[6])
-# ELITISMO = int(sys.argv[7])
-
-# TODO: Comment when in production
-POPULATION_SIZE = 16
-TOURNAMENT_SIZE = 2  # NOT used in this file; check tsp.py or tspNovo.py
-CROSSOVER = 0.7
-MUTATION_RATE = 0.2
-GENERATION_COUNT = 20
-ELITISMO = 1  # TODO: rename when find out what this is
 HALL_OF_FAME_SIZE = 10
-# SAMPLE_COUNT = 490 agora é inicializado na main
-TAMANHO_TRANSFORMADA = 10  # TODO: rename when find out what this is
-# INDIVIDUAL_SIZE = 104 agora é inicializado na main
+SEED = int(sys.argv[1])
+POPULATION_SIZE = int(sys.argv[2])
+GENERATION_COUNT = int(sys.argv[3])
+CROSSOVER = float(sys.argv[4])
+TAMANHO_TRANSFORMADA = int(sys.argv[5])
+MUTATION_RATE = float(sys.argv[6])
+ELITISMO = int(sys.argv[7])
+DIRETORIO_EXPERIMENTO = int(sys.argv[8])
+
+# POPULATION_SIZE = 16
+# GENERATION_COUNT = 20
+# CROSSOVER = 0.7
+# TAMANHO_TRANSFORMADA = 10 
+# MUTATION_RATE = 0.2
+# ELITISMO = 1  
 
 def main():
     start_time = time.time()
@@ -58,7 +55,7 @@ def main():
     
     SAMPLE_COUNT = arquivo.quantidade_linhas_colunas(0)
     INDIVIDUAL_SIZE = arquivo.quantidade_linhas_colunas(1)
-
+    INDIVIDUAL_SIZE = INDIVIDUAL_SIZE-1
     mt.setup_creator()
 
     # escolher o algoritmo de machine learning
@@ -72,14 +69,16 @@ def main():
         SAMPLE_COUNT,
         TAMANHO_TRANSFORMADA,
         arquivo,
-        algoritmo_ml
+        algoritmo_ml,
+        SEED.__str__(),
+        DIRETORIO_EXPERIMENTO
     ).toolbox
 
     hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)
 
     # gera uma semente aleatória
-    # random.seed(sys.argv[1])
-    random.seed(1)
+    random.seed(SEED)
+    # random.seed(1)
 
     # inicializa uma lista com os indivíduos da população
     population = evolution_toolbox.population(n=POPULATION_SIZE)

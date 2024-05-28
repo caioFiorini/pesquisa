@@ -132,3 +132,13 @@ está funcionando a parte de criação do arquivo.
 Nota (16/05)
 
 pegar os dados conforme a colunas e montar o arquivo csv pulando uma linha
+
+Notav  (28/05)
+
+modificando o arquivo mainTeste.py
+-> colocar para pegar o dado da encotrada
+modificando o arquivo teste.sh
+-> a ideia é adicionar loop, que irá rodar em cima dele para para ir fazendo os experimentos
+-> adicionar mais um termo ao final para poder pegar os experimentos
+modificando o arquivo MOGAToolbox
+-> na função create_file eu estou modificado o criador de melhores individuos 
