@@ -26,7 +26,7 @@ else
         experiment_dir="${current_out_folder}experiment_$i/"
         for ((j=0; j < tamanho; j++));do
             mkdir -p "$experiment_dir"
-            python3 mainTeste.py "${seed[$j]}" "${Population[$j]}" "${Generations[$j]}" "${CrossOverFactor[$j]}" "${TournamentSize[$j]}" "${MutationRate[$j]}" "${ElitismFactor[$j]}" "$i" "$experiment_dir" > "${experiment_dir}${seed[$j]}.txt" 
+            python3 mainTeste.py "${seed[$j]}" "${Population[$i-1]}" "${Generations[$i-1]}" "${CrossOverFactor[$i-1]}" "${TournamentSize[$i-1]}" "${MutationRate[$i-1]}" "${ElitismFactor[$i-1]}" "$i" "$experiment_dir" > "${experiment_dir}${seed[$j]}.txt" 
         done
         echo "Done experiment $i"
     done
