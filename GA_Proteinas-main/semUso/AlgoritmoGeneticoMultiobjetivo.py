@@ -224,7 +224,7 @@ def contaFilhos(pop):
         pop (list): lista de indivíduos.
 
     Returns:
-        numPiores, numMelhores int: Quantos indivíduos na população atual são piores ou melhores em relação à média da aptidão de seus pais.
+       numPiores, numMelhores int: Quantos indivíduos na população atual são piores ou melhores em relação à média da aptidão de seus pais.
     """
     numPiores = 0
     numMelhores = 0

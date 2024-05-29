@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from sklearn import datasets, svm
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import cross_val_score
 import csv
@@ -54,6 +55,7 @@ class Bunch(dict):
         pass
 
 class Classificador:
+    # contrutor
     def __init__(self, path, nomeArquivo):
         self.path = path
         self.nomeArquivo = nomeArquivo
@@ -63,8 +65,8 @@ class Classificador:
         with open(join(module_path, self.nomeArquivo)) as csv_file:
             data_file = csv.reader(csv_file)
             temp = next(data_file)
-            n_samples = int(temp[0])
-            n_features = int(temp[1])
+            n_samples = int(temp[0]) #amostras
+            n_features = int(temp[1])  #características
             target_names = np.array(temp[2:])
             data = np.empty((n_samples, n_features))
             target = np.empty((n_samples,), dtype=np.int64)
@@ -81,21 +83,26 @@ class Classificador:
                      DESCR='Proteinas - Cada Classe representa uma determinada funcao',
                      feature_names=['Hidrolases', 'Isomerases', 'Liases', 'Ligases', 'Oxidoredutases', 'Transferases'])
 
-    def fitness(self):
-        arquivo = self.load_proteina()
-        #parameters = {'kernel': ['rbf'], 'C': [1, 10, 100, 1000]}
-        parameters = {'kernel': ['rbf'], 'C': [1000]}
-        svr = svm.SVC()
+    # def fitness(self, algortimoML):
+    #     arquivo = self.load_proteina()
+    #     #parameters = {'kernel': ['rbf'], 'C': [1, 10, 100, 1000]}
+    #     parameters = {'kernel': ['rbf'], 'C': [1000]}
+    #     svr = svm.SVC()
 
-        clf = GridSearchCV(svr, parameters, cv=10, scoring="accuracy")
-        clf.fit(arquivo.data, arquivo.target)
-        return clf.best_score_
-        #return 45.01
+    #     clf = GridSearchCV(svr, parameters, cv=10, scoring="accuracy")
+    #     clf.fit(arquivo.data, arquivo.target)
+    #     return clf.best_score_
+        
+    
+    def fitness(self, algortimoML):
+        arquivo = self.load_proteina()
+        algortimoML.fit(arquivo.data, arquivo.target)
+        return algortimoML.best_score_
 
     def fitness1(self):
         arquivo = self.load_proteina()
 
         clf = svm.SVC(kernel='rbf', C=1000)
-        scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='accuracy')
-        #scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='f1_macro')
+        # scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='accuracy')
+        scores = cross_val_score(clf, arquivo.data, arquivo.target, cv=10, scoring='f1_macro')
         return scores.mean()
