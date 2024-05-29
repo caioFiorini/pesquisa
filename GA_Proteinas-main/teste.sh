@@ -1,6 +1,6 @@
 # Arguments for running this script:
 # Population Size, Nø of Generations, CrossOver Factor, Tournament Size, Mutation Size, Elitism Factor,Quantidade de Experimentos
-# ex: ./teste.sh 16 16 0.6 2 0.2 1 2
+# ex: ./teste.sh
 out_folder="./outputs/"
 experimentos_folder="Experimentos/"
 experimentos_out_folder=$out_folder$experimentos_folder$auxbar
@@ -30,9 +30,6 @@ else
         done
         echo "Done experiment $i"
     done
-
-    python3 avalia_Geracao.py $QuantidadedeExperimentos
-
-    wait
     echo "Done all experiments"
+    python3 avalia_Geracao.py $QuantidadedeExperimentos
 fi
