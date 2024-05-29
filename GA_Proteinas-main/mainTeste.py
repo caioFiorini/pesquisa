@@ -59,7 +59,7 @@ def main():
     mt.setup_creator()
 
     # escolher o algoritmo de machine learning
-    algoritmo_ml = AlgoritmosML.KNN()
+    algoritmo_ml = AlgoritmosML.DecisionTree()
     
     evolution_toolbox = mt(
         INDIVIDUAL_SIZE,
