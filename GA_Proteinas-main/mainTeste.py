@@ -118,8 +118,8 @@ def main():
     # guarda os melhores e escreve no arquivo.
     # print("\n\nSetting up hall of fame...")
     best_individuals = open(DIRETORIO_EXPERIMENTO + "Melhores_" + FILE_NAME + ".txt", "w")
-    best_individuals.write("\nHALL OF FAME:")
-    for top_individual in hall_of_fame:
+    # best_individuals.write("\nHALL OF FAME:")
+    for top_individual in hall_of_fame[1:]:
         best_individuals.write(
             top_individual.__str__() + top_individual.fitness.values.__str__() + "\n"
         )

@@ -106,4 +106,4 @@ Tamanho da população: 20
 Total de filhos repetidos: 19
 
 Done!
-Total execution time: 0 hours, 0 minutes, 11 seconds.
+Total execution time: 0 hours, 0 minutes, 35 seconds.
