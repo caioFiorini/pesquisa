@@ -31,6 +31,8 @@ else
         echo "Done experiment $i"
     done
 
+    python3 avalia_Geracao.py $QuantidadedeExperimentos
+
     wait
     echo "Done all experiments"
 fi
