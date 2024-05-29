@@ -3,33 +3,34 @@
 # ex: ./teste.sh 16 16 0.6 2 0.2 1 2
 out_folder="./outputs/"
 experimentos_folder="Experimentos/"
-direc="pop_$1_gen_$2_cx_$3_ts_$4_mut_$5_el_$6_exp_$7"
-auxbar="/"
 experimentos_out_folder=$out_folder$experimentos_folder$auxbar
-current_out_folder=$experimentos_out_folder$direc$auxbar
+current_out_folder=$experimentos_out_folder
 seed=(9529851295 45243)
-
-echo $current_out_folder
+Population=(16 20) 
+Generations=(16 20) 
+CrossOverFactor=(0.6 0.9)
+TournamentSize=(2 2)
+MutationRate=(0.2 0.4)
+ElitismFactor=(1 1)
+QuantidadedeExperimentos=2
+experimento_contador=1
+tamanho=${#seed[@]}
 
 if [ -d "$current_out_folder" ]; then
     echo "Experiment has already been done"
-fi
-
-if [ ! -d "$current_out_folder" ]; then
+else
     echo "Beginning run"
     mkdir -p "$current_out_folder"  # This will create all necessary directories
 
-    for i in $(seq 1 $7)
-    do
+    for ((i=1; i <= QuantidadedeExperimentos; i++ ));do
         experiment_dir="${current_out_folder}experiment_$i/"
-        mkdir -p "$experiment_dir"
-
-        for sd in "${seed[@]}"
-        do
-            python3 mainTeste.py $sd $1 $2 $3 $4 $5 $6 $i $experiment_dir > "${experiment_dir}${sd}.txt" 
+        for ((j=0; j < tamanho; j++));do
+            mkdir -p "$experiment_dir"
+            python3 mainTeste.py "${seed[$j]}" "${Population[$j]}" "${Generations[$j]}" "${CrossOverFactor[$j]}" "${TournamentSize[$j]}" "${MutationRate[$j]}" "${ElitismFactor[$j]}" "$i" "$experiment_dir" > "${experiment_dir}${seed[$j]}.txt" 
         done
+        echo "Done experiment $i"
     done
 
     wait
-    echo "Done"
+    echo "Done all experiments"
 fi
