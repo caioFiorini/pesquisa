@@ -26,22 +26,22 @@ def encontrar_arquivo(pasta, nome_arquivo):
     return experimentos
 
 def main():
-    media_experimentos = [quantidade_experimentos]
+    media_experimentos = []
     experimentos_media = []
     experimento = []
     media = 0
+    maior = 0
     melhor_experimento = 0
     iguais = 0
     contador = 0
     for i in range(1, quantidade_experimentos+1):
         diretorio = DIRETORIO+str(i)+'/'
         experimentos = encontrar_arquivo(diretorio, "Melhores_")
-        # print(caminho.__len__())
         for j in experimentos:
-            print(j)
+            # print(j)
             for k in j:        
                 with open(k, "r") as file:
-                    print(k)
+                    # print(k)
                     for line in file:
                         # print(line)
                         split_result = line.split('(')
@@ -50,30 +50,37 @@ def main():
                         erro = split_result[0]
                         media = media+float(erro)
                         contador = contador + 1
-                        media = media/contador
-                    print(contador)
+                    media = media/contador
                     contador = 0
                     experimentos_media.append(media)
-            media_experimentos.append(experimentos_media)
-                #     print('\n')
-                #     if(c > (caminho.__sizeof__()/quantidade_experimentos)):
-                #         media_experimentos.append(media)
-                #     with open(diretorio+"media_experimento"+str(i)+".txt", "w") as file:
-                #         file.write(media.__str__())
-                # experimentos.append(media_experimentos)
+                    media = 0
+            media_experimentos.append(experimentos_media.copy())
+            experimentos_media.clear()
+        
+    for i, j in enumerate(media_experimentos):
+        # print(str(i) +'' + str(j)) 
+        diretorio = DIRETORIO+str((i+1))+'/'
+        with open(diretorio+"media_experimento"+str((i+1))+".txt", "w") as file:
             
-    # for i,j in enumerate(experimentos):
-    #     if j > melhor_experimento:
-    #         melhor_experimento = i
-    #     elif j == melhor_experimento:
-    #         iguais = iguais + 1
-    
-    # print(experimentos.__len__())
-    
-    # if iguais == experimentos.__len__():
-    #     print("Os experimentos são iguais.")
-    # else:
-    #     print("Melhor experimento é o: " + str(melhor_experimento))
+            media = 0
+            for k in j:
+                media += k
+            experimento.append(media)
+            file.write(media.__str__())
+
+    for i,j in enumerate(experimento):
+        if j > maior:
+            maior = j
+            melhor_experimento = i+1
+        elif j == maior:
+            iguais = iguais + 1
+       
+    if iguais == experimento.__len__()-1:
+        print("Os experimentos deram a mesma média.")
+    else:
+        print("Melhor experimento é o: " + str(melhor_experimento))
     
 if __name__ == "__main__":
     main()
+
+    
