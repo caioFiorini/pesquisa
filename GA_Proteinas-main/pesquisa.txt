@@ -142,3 +142,9 @@ modificando o arquivo teste.sh
 -> adicionar mais um termo ao final para poder pegar os experimentos
 modificando o arquivo MOGAToolbox
 -> na função create_file eu estou modificado o criador de melhores individuos 
+
+
+Nota (06/06)
+
+retirar os arquivos de log e colocar na memoria, tentar trabalhar isso em memória para retirar a
+perda de tempo com escrita em memória secundária.
