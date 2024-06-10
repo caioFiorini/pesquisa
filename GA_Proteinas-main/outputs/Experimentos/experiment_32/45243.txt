@@ -8,22 +8,22 @@ Total de filhos repetidos: 9
 
 Número da geração: 1
 Tamanho da população: 20
-Total de filhos repetidos: 7
+Total de filhos repetidos: 11
 
 
 Número da geração: 2
 Tamanho da população: 20
-Total de filhos repetidos: 10
+Total de filhos repetidos: 11
 
 
 Número da geração: 3
 Tamanho da população: 20
-Total de filhos repetidos: 16
+Total de filhos repetidos: 12
 
 
 Número da geração: 4
 Tamanho da população: 20
-Total de filhos repetidos: 16
+Total de filhos repetidos: 15
 
 
 Número da geração: 5
@@ -38,12 +38,12 @@ Total de filhos repetidos: 15
 
 Número da geração: 7
 Tamanho da população: 20
-Total de filhos repetidos: 15
+Total de filhos repetidos: 16
 
 
 Número da geração: 8
 Tamanho da população: 20
-Total de filhos repetidos: 17
+Total de filhos repetidos: 16
 
 
 Número da geração: 9

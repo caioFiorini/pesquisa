@@ -8,12 +8,12 @@ Total de filhos repetidos: 5
 
 Número da geração: 1
 Tamanho da população: 16
-Total de filhos repetidos: 8
+Total de filhos repetidos: 9
 
 
 Número da geração: 2
 Tamanho da população: 16
-Total de filhos repetidos: 11
+Total de filhos repetidos: 9
 
 
 Número da geração: 3
@@ -48,7 +48,7 @@ Total de filhos repetidos: 13
 
 Número da geração: 9
 Tamanho da população: 16
-Total de filhos repetidos: 12
+Total de filhos repetidos: 13
 
 
 Número da geração: 10
@@ -58,22 +58,22 @@ Total de filhos repetidos: 12
 
 Número da geração: 11
 Tamanho da população: 16
-Total de filhos repetidos: 13
+Total de filhos repetidos: 12
 
 
 Número da geração: 12
 Tamanho da população: 16
-Total de filhos repetidos: 13
+Total de filhos repetidos: 12
 
 
 Número da geração: 13
 Tamanho da população: 16
-Total de filhos repetidos: 13
+Total de filhos repetidos: 12
 
 
 Número da geração: 14
 Tamanho da população: 16
-Total de filhos repetidos: 13
+Total de filhos repetidos: 15
 
 
 Número da geração: 15
@@ -85,5 +85,25 @@ Número da geração: 16
 Tamanho da população: 16
 Total de filhos repetidos: 15
 
+
+Número da geração: 17
+Tamanho da população: 16
+Total de filhos repetidos: 15
+
+
+Número da geração: 18
+Tamanho da população: 16
+Total de filhos repetidos: 15
+
+
+Número da geração: 19
+Tamanho da população: 16
+Total de filhos repetidos: 15
+
+
+Número da geração: 20
+Tamanho da população: 16
+Total de filhos repetidos: 15
+
 Done!
-Total execution time: 0 hours, 0 minutes, 6 seconds.
+Total execution time: 0 hours, 0 minutes, 7 seconds.

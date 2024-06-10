@@ -8,17 +8,17 @@ Total de filhos repetidos: 4
 
 Número da geração: 1
 Tamanho da população: 16
-Total de filhos repetidos: 7
+Total de filhos repetidos: 10
 
 
 Número da geração: 2
 Tamanho da população: 16
-Total de filhos repetidos: 10
+Total de filhos repetidos: 12
 
 
 Número da geração: 3
 Tamanho da população: 16
-Total de filhos repetidos: 11
+Total de filhos repetidos: 12
 
 
 Número da geração: 4
@@ -48,7 +48,7 @@ Total de filhos repetidos: 12
 
 Número da geração: 9
 Tamanho da população: 16
-Total de filhos repetidos: 12
+Total de filhos repetidos: 13
 
 
 Número da geração: 10
@@ -86,4 +86,4 @@ Tamanho da população: 16
 Total de filhos repetidos: 13
 
 Done!
-Total execution time: 0 hours, 0 minutes, 7 seconds.
+Total execution time: 0 hours, 0 minutes, 8 seconds.
