@@ -7,23 +7,10 @@
 import pandas as pd
 import sys 
 import os
+from Arquivo import Arquivo
 
 DIRETORIO = "./outputs/Experimentos/experiment_"
 quantidade_experimentos = int(sys.argv[1])
-
-def encontrar_arquivo(pasta, nome_arquivo):
-    # print(pasta)
-    caminho = []
-    experimentos = []
-    # Percorre todos os arquivos na pasta
-    for root, dirs, files in os.walk(pasta):
-        # print("passei aqui"+str(files))
-        for file in files:
-            # Verifica se o nome do arquivo corresponde ao nome procurado
-            if file.startswith(nome_arquivo):
-                caminho.append(str(os.path.join(root, file)))
-        experimentos.append(caminho)
-    return experimentos
 
 def main():
     media_experimentos = []
@@ -36,7 +23,7 @@ def main():
     contador = 0
     for i in range(1, quantidade_experimentos+1):
         diretorio = DIRETORIO+str(i)+'/'
-        experimentos = encontrar_arquivo(diretorio, "Melhores_")
+        experimentos = Arquivo.encontrar_arquivo(diretorio, "Melhores_")
         for j in experimentos:
             # print(j)
             for k in j:        
@@ -79,6 +66,20 @@ def main():
         print("Os experimentos deram a mesma média.")
     else:
         print("Melhor experimento é o: " + str(melhor_experimento))
+    
+    # abrir melhor experimento.
+    diretorio = DIRETORIO+str(melhor_experimento)+'/'
+    with open(diretorio+"", "w") as file:
+        
+    # extrair o indivíduo
+    # caso todos sejam iguais, abre o primeiro
+    # encontrar arquivo()
+    # fazer o undersampli da base de dados na classe arquivo
+    # testar em um KNN
+    # armazenar os dados da matriz
+    # plotar a curva
+    
+    
     
 if __name__ == "__main__":
     main()

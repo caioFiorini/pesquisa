@@ -5,8 +5,7 @@ from sklearn.neighbors import KNeighborsClassifier
 # from sklearn.model_selection import GridSearch
 from sklearn.model_selection import cross_val_score
 import sys
-sys.path.insert(0, '../Arquivo')
-import Arquivo
+# from Arquivo import Arquivo
 
 class ClassificadorT:
 

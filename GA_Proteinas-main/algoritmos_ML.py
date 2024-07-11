@@ -3,6 +3,25 @@ from sklearn.svm import SVC
 from sklearn import tree
 
 class AlgoritmosML:
+    
+    def __init__(self, nome_classificador, lista_parametros):
+        if (nome_classificador == 'SVM') :
+            self.SVM(C = lista_parametros[1],
+            kernel = lista_parametros[1],
+            degree = lista_parametros[1],
+            gamma = lista_parametros[1],
+            coef0 = lista_parametros[1],
+            shrinking = lista_parametros[1],
+            probability = lista_parametros[1],
+            tol = lista_parametros[1],
+            cache_size = lista_parametros[1],
+            class_weight = lista_parametros[1],
+            verbose = lista_parametros[1],
+            max_iter = lista_parametros[1],
+            decision_function_shape = lista_parametros[1],
+            break_ties = lista_parametros[1],
+            random_state = lista_parametros[1])
+    
     def KNN(
             n_neighbors=5, 
             weights='uniform', 

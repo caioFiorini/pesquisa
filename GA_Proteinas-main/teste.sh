@@ -19,6 +19,7 @@ experimento_contador=1
 quantidade_semente=${#seed[@]}
 flag="true" 
 contador_geracao_arquivo=0
+tempo_estimado=0
 
 
 if [ -d "$current_out_folder" ]; then
@@ -48,7 +49,7 @@ else
     done
 
     echo "A quantidade de experimetos é: "$QuantidadedeExperimentos
-    read -p "digite s para sim e n para não (minusculo)" input
+    read -p "digite s para continuar e n para sair (minusculo)" input
     if [ "$input" == "n" ];then
         exit 0
     fi
@@ -67,23 +68,23 @@ else
                         experiment_dir="${current_out_folder}experiment_${contador_geracao_arquivo}/"
                         # echo "$i" "$j" "$k" "$l" "${TournamentSize}" "$m" "${ElitismFactor}" "${contador_geracao_arquivo}" "$experiment_dir" "${experiment_dir}${contador_geracao_arquivo}"
                         mkdir -p "$experiment_dir"
+                        inicio=$(date +%s)
                         python3 mainTeste.py "$i" "$j" "$k" "$l" "${TournamentSize}" "$m" "${ElitismFactor}" "${contador_geracao_arquivo}" "$experiment_dir" > "${experiment_dir}$i.txt" 
+                        fim=$(date +%s)
+                        duracao=$((fim - inicio))
+                        tempo_estimado=$(($tempo_estimado+$duracao))
+                        experimentos_restantes=$(($QuantidadedeExperimentos-$contador_geracao_arquivo))
+                        estimativa=$(($tempo_estimado/$contador_geracao_arquivo*$QuantidadedeExperimentos))
+                        echo "O experimento $contador_geracao_arquivo levou $duracao segundos para execeutar"
+                        
+                        # modificar para minutos.
+                        echo "Estimativa de tempo até o término $estimativa segundos"
+
                     done
                 done
             done
         done
     done
-
     echo "Done all experiments"
     python3 avalia_Geracao.py $QuantidadedeExperimentos
 fi
-
-
-    # for ((i=0; i <= QuantidadedeExperimentos; i++ ));do
-    #     
-    #     for ((j=0; j < tamanho; j++));do
-    #         mkdir -p "$experiment_dir"
-    #         python3 mainTeste.py "${seed[$j]}" "${Population[$i-1]}" "${Generations[$i-1]}" "${CrossOverFactor[$i-1]}" "${TournamentSize[$i-1]}" "${MutationRate[$i-1]}" "${ElitismFactor[$i-1]}" "$i" "$experiment_dir" > "${experiment_dir}${seed[$j]}.txt" 
-    #     done
-    #     echo "Done experiment $i"
-    # done

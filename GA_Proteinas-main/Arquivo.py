@@ -17,6 +17,15 @@ class Arquivo:
         self.tamanho_transformada = None
         self.arquivo = None
 
+    def le_arquivo_teste(self):
+        with open("teste.txt", "r") as file:
+            linhas_arquivo = file.readlines()
+            
+        file.close()
+        return linhas_arquivo
+            
+    
+
     def le_arquivo(self, nomeArquivo):
         if '.csv' not in nomeArquivo:
             print('Por favor envie um arquivo do tipo csv')
@@ -66,8 +75,6 @@ class Arquivo:
                 linha = ', '.join(row.astype(str))
                 f.write(f"{linha}\n")
 
-    
-
     def dataframe_to_csv_test(self, atributos_ind, arquivo_saida):
         # print(atributos_ind)
         dataset, classe = self.prepara_data_frame(arquivo_saida)
@@ -113,7 +120,22 @@ class Arquivo:
         dataset, _ = self.prepara_data_frame()
         num_colunas = len(dataset.columns)
         return num_colunas
+    
+    def encontrar_arquivo(pasta, nome_arquivo):
+        # print(pasta)
+        caminho = []
+        experimentos = []
+        # Percorre todos os arquivos na pasta
+        for root, dirs, files in os.walk(pasta):
+            # print("passei aqui"+str(files))
+            for file in files:
+                # Verifica se o nome do arquivo corresponde ao nome procurado
+                if file.startswith(nome_arquivo):
+                    caminho.append(str(os.path.join(root, file)))
+            experimentos.append(caminho)
+        return experimentos
 
+    # def monta_arquivo_curva_roc(nome_arquivo_saida):
 # #teste
 # algo = Arquivo()
 # algo.arquivo('Iris.csv')
