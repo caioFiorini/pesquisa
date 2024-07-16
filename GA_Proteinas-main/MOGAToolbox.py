@@ -23,8 +23,7 @@ class MOGAToolbox:
         TAMANHO_TRANSFORMADA,
         arquivo,
         algoritmo_ml,
-        SEED,
-        EXPERIMENTO
+        SEED
     ):
         self.INDIVIDUAL_SIZE = INDIVIDUAL_SIZE
         self.MUTATION_RATE = MUTATION_RATE
@@ -37,7 +36,6 @@ class MOGAToolbox:
         self.arquivo = arquivo
         self.algoritmoML = algoritmo_ml
         self.seed = SEED
-        self.experimento = EXPERIMENTO
         
 
     def setup_creator():
@@ -150,7 +148,7 @@ class MOGAToolbox:
         
         for attribute in individual:
             if attribute == 1:
-                attributes.append(attribute_count)  # why?
+                attributes.append(attribute_count) 
             attribute_count += 1
         return attributes
 
@@ -162,7 +160,7 @@ class MOGAToolbox:
                 Quantidade listada de características, igual quando faz leitura em um csv
         """
         nome_arquivo = "Log_" + self.seed
-        nome_diretorio = self.experimento + nome_arquivo
+        nome_diretorio = + nome_arquivo #pegar da classe diretório.
         SVM_FILE = open(nome_diretorio, "w")
         # file_reader = FileManager(self.SAMPLE_COUNT, self.TAMANHO_TRANSFORMADA)
         # file_reader.BuildCSV(SVM_FILE,attributes_of_individual, self.arquivo)

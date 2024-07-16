@@ -11,12 +11,12 @@ import numpy
 from deap import base, creator, tools
 
 # Local Imports
-# from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
+from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
 from MOGAToolbox import MOGAToolbox as mt
 # from FileManager import FileManager
 from Arquivo import Arquivo
-# from algoritmo_Genetico import Algoritmo_Genetico
-from algoritmos_ML import AlgoritmosML as am
+from algoritmo_Genetico import Algoritmo_Genetico
+from algoritmos_ML import AlgoritmosML
 
 # ====== MARK: Defining paths and file names ======
 CLASSIFIER_PATH = "Individuos/"
@@ -24,7 +24,7 @@ CLASSIFIER_PATH = "Individuos/"
 # CLASSIFIER_FILE_NAME = FILE_NAME + ".csv"
 
 # ====== MARK: Algorithm's main parameters ======
-# HALL_OF_FAME_SIZE = 10
+HALL_OF_FAME_SIZE = 10
 # SEED = int(sys.argv[1])
 # POPULATION_SIZE = int(sys.argv[2])
 # GENERATION_COUNT = int(sys.argv[3])
@@ -43,8 +43,7 @@ CLASSIFIER_PATH = "Individuos/"
 
 def main():
     start_time = time.time()
-    
-    
+
     # Leitura dos arquivos
     arquivo = Arquivo()
     linhas_arquivo = arquivo.le_arquivo_teste()
@@ -66,7 +65,7 @@ def main():
     MutationRate = linhas_arquivo[6].strip("\n").split(" ")
     ElitismFactor = linhas_arquivo[7].strip("\n").split(" ")
     ElitismFactor.pop(0)
-    algoritmo_ml = linhas_arquivo[8].strip("\n").split(" ")
+    algoritmo_Ml = linhas_arquivo[8].strip("\n").split(" ")
     population_min = Population[1].strip()
     population_max = Population[2].strip()
     population_ite = Population[3].strip()
@@ -79,16 +78,32 @@ def main():
     mutation_min = MutationRate[1].strip()
     mutation_max = MutationRate[2].strip()
     mutation_ite = MutationRate[3].strip()
-    
-    print(algoritmo_ml[0])
-    
+    nome_classificador = algoritmo_Ml[0]
+
+    # pega o algoritmo de machine learning
+    algoritmo_ml = AlgoritmosML(nome_classificador, algoritmo_Ml)
+    modelo_ml = algoritmo_ml.get_model()
+    hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)
+
     # For onde os testes irão acontecer, dentro dele acontecerá a criação das pastas e a escrita dos testes.
-    # for i in seed:
-    #     for j in range(population_min, population_max, population_ite):
-    #         for k in range(generations_min, generation_max, generation_ite):
-    #             for l in range(crossover_min, crossover_max, crossover_ite):
-    #                 for m in range(mutation_min, mutation_max, mutation_ite):
-                        
+    for i in seed:
+        CLASSIFIER_FILE_NAME = i + ".csv"
+        for j in range(population_min, population_max, population_ite):
+            for k in range(generations_min, generation_max, generation_ite):
+                for l in range(crossover_min, crossover_max, crossover_ite):
+                    for m in range(mutation_min, mutation_max, mutation_ite):
+                        random.seed(i)
+                        evolution_toolbox = mt(
+                            INDIVIDUAL_SIZE,
+                            m,
+                            CLASSIFIER_FILE_NAME,
+                            CLASSIFIER_PATH,
+                            SAMPLE_COUNT,
+                            TournamentSize[0],
+                            arquivo,
+                            modelo_ml,
+                            i.__str__()
+                        ).toolbox
     
 if __name__ == "__main__":
     main()
