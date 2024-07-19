@@ -1,0 +1,10 @@
+array
+random
+numpy
+deap
+sklearn
+pandas
+numpy
+deap
+scikit-learn
+pandas

@@ -80,7 +80,6 @@ def main():
     # plotar a curva
     
     
-    
 if __name__ == "__main__":
     main()
 

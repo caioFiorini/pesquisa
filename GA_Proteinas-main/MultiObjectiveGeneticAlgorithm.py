@@ -12,23 +12,27 @@ from MOGATerminalLogger import MOGATerminalLogger
 class MultiObjectiveGeneticAlgorithm:
     def __init__(
         self,
+        seed,
         population,
         evolution_toolbox,
         crossover_probability,
         mutation_probability,
         generation_count,
         population_size,
+        diretorio,
         stats=None,
         hall_of_fame=None,
         verbose=__debug__,
-        FILE_NAME="TESTE",
+        FILE_NAME="TESTE"
     ):
         self.population = population
+        self.seed = seed
         self.evolution_toolbox = evolution_toolbox
         self.crossover_probability = crossover_probability
         self.mutation_probability = mutation_probability
         self.generation_count = generation_count
         self.population_size = population_size
+        self.diretorio = diretorio
         self.stats = stats
         self.hall_of_fame = hall_of_fame
         self.verbose = verbose
@@ -170,7 +174,7 @@ class MultiObjectiveGeneticAlgorithm:
         record = self.stats.compile(self.population) if self.stats else {}
         # salva as estatísticas das gerações no logbook.
         logbook.record(gen=0, nevals=len(invalid_individuals), **record)
-        MOGATerminalLogger.print_generation_results(0, len(self.population), record)
+        MOGATerminalLogger.print_generation_results(0, len(self.population), record, self.diretorio, self.FILE_NAME)
 
         # if verbose:
         #     print(logbook.stream)
@@ -232,7 +236,7 @@ class MultiObjectiveGeneticAlgorithm:
             )
 
             MOGATerminalLogger.print_generation_results(
-                generation_number, len(self.population), record
+                generation_number, len(self.population), record, self.diretorio, self.FILE_NAME
             )
             # if verbose:
             #    print logbook.stream

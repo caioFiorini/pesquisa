@@ -1,6 +1,7 @@
 # Standard Library Imports
 import array
 import random
+import os
 
 # Third-party Library Imports
 import numpy
@@ -23,7 +24,8 @@ class MOGAToolbox:
         TAMANHO_TRANSFORMADA,
         arquivo,
         algoritmo_ml,
-        SEED
+        SEED,
+        diretorio
     ):
         self.INDIVIDUAL_SIZE = INDIVIDUAL_SIZE
         self.MUTATION_RATE = MUTATION_RATE
@@ -36,6 +38,7 @@ class MOGAToolbox:
         self.arquivo = arquivo
         self.algoritmoML = algoritmo_ml
         self.seed = SEED
+        self.diretorio = diretorio
         
 
     def setup_creator():
@@ -160,7 +163,7 @@ class MOGAToolbox:
                 Quantidade listada de características, igual quando faz leitura em um csv
         """
         nome_arquivo = "Log_" + self.seed
-        nome_diretorio = + nome_arquivo #pegar da classe diretório.
+        nome_diretorio = self.diretorio.constroi_caminho(self.diretorio.get_path(), nome_arquivo)
         SVM_FILE = open(nome_diretorio, "w")
         # file_reader = FileManager(self.SAMPLE_COUNT, self.TAMANHO_TRANSFORMADA)
         # file_reader.BuildCSV(SVM_FILE,attributes_of_individual, self.arquivo)

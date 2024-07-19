@@ -3,6 +3,7 @@ import array
 import csv
 import os
 import random
+import numpy as np
 import time
 import sys
 
@@ -17,9 +18,12 @@ from MOGAToolbox import MOGAToolbox as mt
 from Arquivo import Arquivo
 from algoritmo_Genetico import Algoritmo_Genetico
 from algoritmos_ML import AlgoritmosML
+from diretorio import Diretorio
 
 # ====== MARK: Defining paths and file names ======
 CLASSIFIER_PATH = "Individuos/"
+DIRETORIO_PATH = "D:\PUC\pesquisa\pesquisa\GA_Proteinas-main\outputs"
+EXPERIMENTO_PATH = "Experimentos"
 # FILE_NAME = sys.argv[1]
 # CLASSIFIER_FILE_NAME = FILE_NAME + ".csv"
 
@@ -43,6 +47,9 @@ HALL_OF_FAME_SIZE = 10
 
 def main():
     start_time = time.time()
+    contador = 0
+    diretorio = Diretorio(DIRETORIO_PATH)
+    diretorio.create_folder(EXPERIMENTO_PATH)
 
     # Leitura dos arquivos
     arquivo = Arquivo()
@@ -84,15 +91,28 @@ def main():
     algoritmo_ml = AlgoritmosML(nome_classificador, algoritmo_Ml)
     modelo_ml = algoritmo_ml.get_model()
     hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)
+    numero_experimento = 0
+
+    for i in seed:
+        for j in np.arange(int(population_min), int(population_max), int(population_ite)):
+            for k in np.arange(int(generations_min), int(generation_max), int(generation_ite)):
+                for l in np.arange(float(crossover_min), float(crossover_max), float(crossover_ite)):
+                    for m in np.arange(float(mutation_min), float(mutation_max), float(mutation_ite)):
+                        numero_experimento = numero_experimento+1
 
     # For onde os testes irão acontecer, dentro dele acontecerá a criação das pastas e a escrita dos testes.
     for i in seed:
         CLASSIFIER_FILE_NAME = i + ".csv"
-        for j in range(population_min, population_max, population_ite):
-            for k in range(generations_min, generation_max, generation_ite):
-                for l in range(crossover_min, crossover_max, crossover_ite):
-                    for m in range(mutation_min, mutation_max, mutation_ite):
+        for j in np.arange(int(population_min), int(population_max), int(population_ite)):
+            if j % 4 != 0:
+                continue
+            for k in np.arange(int(generations_min), int(generation_max), int(generation_ite)):
+                for l in np.arange(float(crossover_min), float(crossover_max), float(crossover_ite)):
+                    for m in np.arange(float(mutation_min), float(mutation_max), float(mutation_ite)):
                         random.seed(i)
+                        path = "Experimento_"+ contador.__str__()
+                        diretorio.create_folder_in_folder(path)
+                        FILE_NAME = "seed_"+i.__str__()+"pop_"+j.__str__()+"gen_"+k.__str__()+"cross_"+l.__str__()+"muta_"+m.__str__() 
                         evolution_toolbox = mt(
                             INDIVIDUAL_SIZE,
                             m,
@@ -102,8 +122,67 @@ def main():
                             TournamentSize[0],
                             arquivo,
                             modelo_ml,
-                            i.__str__()
+                            FILE_NAME,
+                            diretorio
                         ).toolbox
+                        # inicializa uma lista com os indivíduos da população
+                        population = evolution_toolbox.population(n=j)
+                        # Inicializa uma lista vazia para os pais dos indivíduos.
+                        for individual in population:
+                            individual.pais = []
+                        
+                        stats1 = tools.Statistics(lambda individual: individual.fitness.values)
+
+                        stats1.register("1) Media   ", np.mean, axis=0)
+                        stats1.register("2) Desvio Padrao   ", np.std, axis=0)
+                        stats1.register("3) Minimo  ", np.min, axis=0)
+                        stats1.register("4) Maximo  ", np.max, axis=0)
+
+                        stats2 = tools.Statistics(lambda individual: individual)
+                        stats2.register("Piores / Melhores  ", Algoritmo_Genetico.count_individuals_relative_to_parent_average)
+                        stats2.register("Ind. Repetidos	 ", Algoritmo_Genetico.get_duplicate_individuals_count)
+
+                        stats = tools.MultiStatistics(Fitness=stats1, Filhos=stats2)
+
+                        print("Starting algorithm...")
+                        multi_objective_genetic_algorithm = MultiObjectiveGeneticAlgorithm(
+                            i,
+                            population,
+                            evolution_toolbox,
+                            l,
+                            m,
+                            k,
+                            j,
+                            diretorio,
+                            stats=stats,
+                            hall_of_fame=hall_of_fame,
+                            FILE_NAME=FILE_NAME
+                        )
+
+                        multi_objective_genetic_algorithm.execute()
+
+                        # guarda os melhores e escreve no arquivo.
+                        # print("\n\nSetting up hall of fame...")
+                        melhores_path = "Melhores_" + FILE_NAME + ".txt"
+                        diretorio_melhores = diretorio.constroi_caminho(diretorio.get_path(), melhores_path)
+                        best_individuals = open(diretorio_melhores, "w")
+                        # best_individuals.write("\nHALL OF FAME:")
+                        for top_individual in hall_of_fame[1:]:
+                            best_individuals.write(
+                                top_individual.__str__() + top_individual.fitness.values.__str__() + "\n"
+                            )
+
+                        print("\nDone!")
+
+                        duration = time.time() - start_time
+                        hours, remainder = divmod(duration, 3600)
+                        minutes, seconds = divmod(remainder, 60)
+
+                        print(
+                            f"Total execution time: {int(hours)} hours, {int(minutes)} minutes, {int(seconds)} seconds."
+                        )
+                        contador = contador + 1
+
     
 if __name__ == "__main__":
     main()
