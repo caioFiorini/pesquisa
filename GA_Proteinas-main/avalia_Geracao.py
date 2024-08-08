@@ -9,8 +9,10 @@ import sys
 import os
 from Arquivo import Arquivo
 
-DIRETORIO = "./outputs/Experimentos/experiment_"
-quantidade_experimentos = int(sys.argv[1])
+DIRETORIO = "./outputs/Experimentos/Experimento_"
+with open("numero_experimento.txt", 'r') as file:
+    quantidade_experimentos = file.readlines()
+quantidade_experimentos = int(quantidade_experimentos[0])    
 
 def main():
     media_experimentos = []
@@ -68,8 +70,8 @@ def main():
         print("Melhor experimento é o: " + str(melhor_experimento))
     
     # abrir melhor experimento.
-    diretorio = DIRETORIO+str(melhor_experimento)+'/'
-    with open(diretorio+"", "w") as file:
+    # diretorio = DIRETORIO+str(melhor_experimento)+'/'
+    # with open(diretorio+"", "w") as file:
         
     # extrair o indivíduo
     # caso todos sejam iguais, abre o primeiro
