@@ -36,8 +36,11 @@ def main():
     # Leitura dos arquivos
     arquivo = Arquivo()
     linhas_arquivo = arquivo.le_arquivo_teste()
-    arquivo_csv = linhas_arquivo[0].strip("\n")
-    arquivo.le_arquivo(arquivo_csv.strip())    
+    arquivo_csv = linhas_arquivo[0].strip("\n").split(' ')
+    nome_arquivo_teste = arquivo_csv[0]
+    nome_classe_arquivo_teste = arquivo_csv[1]
+    arquivo.le_arquivo(nome_arquivo_teste)    
+    arquivo.set_nome_classe_arquivo_teste(nome_classe_arquivo_teste)
     SAMPLE_COUNT = arquivo.quantidade_linhas_colunas(0)
     INDIVIDUAL_SIZE = arquivo.quantidade_linhas_colunas(1)
     INDIVIDUAL_SIZE = INDIVIDUAL_SIZE-1
@@ -75,24 +78,21 @@ def main():
     hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)
     numero_experimento = 0
 
-    # Pode trocar com calculadora_de_iteracoes
+    with open("numero_experimento.txt", 'r') as file:
+        line = file.readline()
+        line = int(line)
 
-    # for i in seed:
-    #     for j in np.arange(int(population_min), int(population_max), int(population_ite)):
-    #         for k in np.arange(int(generations_min), int(generation_max), int(generation_ite)):
-    #             if j % 4 != 0:
-    #                 continue
-    #             for l in np.arange(float(crossover_min), float(crossover_max), float(crossover_ite)):
-    #                 for m in np.arange(float(mutation_min), float(mutation_max), float(mutation_ite)):
-    #                     numero_experimento = numero_experimento+1
-    
-    # print(f"Numero experimentos = {numero_experimento}")
-    # resp = input("Deseja utilizar essa quantidade de experimentos? s para (sim) n para (não)\n")
-    # if (resp == 'n' or resp == 'nao' or resp == 'não'):
-    #     sys.exit()
-    
-    with open("numero_experimento.txt", 'w') as file:
-        file.write(str(numero_experimento))
+    if numero_experimento == line:
+        for i in seed:
+            for j in np.arange(int(population_min), int(population_max), int(population_ite)):
+                for k in np.arange(int(generations_min), int(generation_max), int(generation_ite)):
+                    if j % 4 != 0:
+                        continue
+                    for l in np.arange(float(crossover_min), float(crossover_max), float(crossover_ite)):
+                        for m in np.arange(float(mutation_min), float(mutation_max), float(mutation_ite)):
+                            numero_experimento = numero_experimento+1
+        with open("numero_experimento.txt", 'w') as file:
+            file.write(str(numero_experimento))
     
     # For onde os testes irão acontecer, dentro dele acontecerá a criação das pastas e a escrita dos testes.
     for i in seed:

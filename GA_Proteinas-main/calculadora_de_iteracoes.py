@@ -1,14 +1,21 @@
 import numpy as np
 
+BARRA_N = '\n'
+
 saida = False
 while(saida != True):    
     print("Bem vindo a Caluculadora de Experimentos")
-    seed = input("Digite os valores para as Sementes: \n Pode seguir o exemplo: 12354 45879 5632 (Quantas voce desejar utilizar! :)\n").split(' ')
-    population = input("Digite os valores para Populacao min, max e o iterador:\n Pode seguir o exemplo: 15 30 9\n").split(' ')
-    geracoes = input("Digite os valores para as Geracoes min, max e o iterador:\n Pode seguir o exemplo: 15 30 9\n").split(' ')
-    cross_Over_Factor = input("Digite o valor do CrossOverFactor min, max e o iterador: \n Pode seguir o exemplo: 0.6 0.9 0.2\n").split(' ')
+    seed_str = input("Digite os valores para as Sementes: \n Pode seguir o exemplo: 12354 45879 5632 (Quantas voce desejar utilizar! :)\n")
+    seed = seed_str.split(' ')
+    population_str = input("Digite os valores para Populacao min, max e o iterador:\n Pode seguir o exemplo: 15 30 9\n")
+    population = population_str.split(' ')
+    geracoes_str = input("Digite os valores para as Geracoes min, max e o iterador:\n Pode seguir o exemplo: 15 30 9\n")
+    geracoes = geracoes_str.split(' ')
+    cross_Over_Factor_str = input("Digite o valor do CrossOverFactor min, max e o iterador: \n Pode seguir o exemplo: 0.6 0.9 0.2\n")
+    cross_Over_Factor = cross_Over_Factor_str.split(' ')
     tournamentSize = input("Digite o valor do Torneio: (Somente 1 valor)\n")
-    mutation_rate = input("Digite o valor da Mutacao min, max e o iterador:\n Pode seguit o exemplo 0.2 0.4 0.1\n").split(' ')
+    mutation_rate_str = input("Digite o valor da Mutacao min, max e o iterador:\n Pode seguit o exemplo 0.2 0.4 0.1\n")
+    mutation_rate = mutation_rate_str.split(' ')
     elitismo = input("Digite o valor do Elitismo: (somente 1 valor)\n")
     
     population_min = population[0].strip()
@@ -38,5 +45,23 @@ while(saida != True):
     resp = input("Deseja calcular novamente a quantidade de experimentos? s para (sim) n para (não)\n")
     if (resp == 'n' or resp == 'nao' or resp == 'não'):
         saida = True
-print("Se o valor das execuções foram 0, provavelmente é pq o número das iterações\n da popupalação não foram divisiveis por 4;")
+
+with(open('numero_experimento.txt', 'w')) as file:
+    file.write(numero_experimento.__str__())
+
+with(open('teste.txt', 'r')) as file:
+    line = file.readlines()
+
+with(open('teste.txt', 'w')) as file:
+    # file.write(line[0])
+    file.write(f"seed {seed_str}\n")
+    file.write(f"Population {population_str}\n")
+    file.write(f"Generations {geracoes_str}\n")
+    file.write(f"CrossOverFactor {cross_Over_Factor_str}\n")
+    file.write(f"TournamentSize {tournamentSize.__str__()}\n")
+    file.write(f"MutationRate {mutation_rate_str}\n")
+    file.write(f"ElitismFactor {elitismo.__str__()}\n")
+    # file.write(line[8])
+
+print("Se o valor das execuções foi 0, provavelmente é porque o número das iterações\n da popupalação não é divisível por 4;")
 print("Agradecemos por poupar tempo de processamento ;)")

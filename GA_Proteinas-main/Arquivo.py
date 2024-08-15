@@ -17,6 +17,9 @@ class Arquivo:
         self.tamanho_transformada = None
         self.arquivo = None
 
+    def set_nome_classe_arquivo_teste(self, nome_classe_arquivo_teste):
+        self.nome_classe_arquivo_teste = nome_classe_arquivo_teste
+
     def le_arquivo_teste(self):
         with open("teste.txt", "r") as file:
             linhas_arquivo = file.readlines()
@@ -77,7 +80,7 @@ class Arquivo:
 
     def dataframe_to_csv_test(self, atributos_ind, arquivo_saida):
         # print(atributos_ind)
-        dataset, classe = self.prepara_data_frame(arquivo_saida)
+        dataset, classe = self.prepara_data_frame(arquivo_saida, self.nome_classe_arquivo_teste)
         # print(dataset)
         # pega as colunas que tem 1
         cols_para_manter = [dataset.columns[i] for i in range(
@@ -95,16 +98,11 @@ class Arquivo:
             nome_ultima_coluna = dataset.columns[dataset.columns.__len__()-1]
             classe = dataset[nome_ultima_coluna]
             dataset = dataset.drop(nome_ultima_coluna, axis=1)
-
-            #  classe = dataset[nomeClass]
-            # print(classe)
-            # dataset = dataset.drop(nomeClass, axis=1)
-            # print(dataset)
-
-        classe = dataset[nomeClass]
+        else:
+            classe = dataset[nomeClass]
         # print(classe)
 
-        dataset = dataset.drop(nomeClass, axis=1)
+            dataset = dataset.drop(nomeClass, axis=1)
         # dataset=dataset.drop(dataset.index[0])
         # print(dataset)
         return dataset, classe
@@ -134,13 +132,3 @@ class Arquivo:
                     caminho.append(str(os.path.join(root, file)))
             experimentos.append(caminho)
         return experimentos
-
-    # def monta_arquivo_curva_roc(nome_arquivo_saida):
-# #teste
-# algo = Arquivo()
-# algo.arquivo('Iris.csv')
-
-# # ml = Algoritmos_ML()
-
-# atributo_individuo = [0,1,0,1,0]
-# str = algo.prepara_data_frame(atributo_individuo)

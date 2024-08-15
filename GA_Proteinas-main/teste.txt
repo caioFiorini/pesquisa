@@ -1,9 +1,9 @@
-Iris.csv
-seed 9529851295 45243
-Population 15 30 9
-Generations 15 30 9
-CrossOverFactor 0.6 0.9 0.2
+base_adultos.csv Freq.Etnia
+seed 12345
+Population 10 14 2
+Generations 10 14 2
+CrossOverFactor 0.6 0.8 0.2
 TournamentSize 2
-MutationRate 0.2 0.4 0.1
+MutationRate 0.6 0.8 0.2
 ElitismFactor 1
 DecisionTree min_samples_leaf:6
