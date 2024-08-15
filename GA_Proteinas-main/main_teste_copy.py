@@ -93,13 +93,25 @@ def main():
     hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)
     numero_experimento = 0
 
-    for i in seed:
-        for j in np.arange(int(population_min), int(population_max), int(population_ite)):
-            for k in np.arange(int(generations_min), int(generation_max), int(generation_ite)):
-                for l in np.arange(float(crossover_min), float(crossover_max), float(crossover_ite)):
-                    for m in np.arange(float(mutation_min), float(mutation_max), float(mutation_ite)):
-                        numero_experimento = numero_experimento+1
+    # Pode trocar com calculadora_de_iteracoes
 
+    # for i in seed:
+    #     for j in np.arange(int(population_min), int(population_max), int(population_ite)):
+    #         for k in np.arange(int(generations_min), int(generation_max), int(generation_ite)):
+    #             if j % 4 != 0:
+    #                 continue
+    #             for l in np.arange(float(crossover_min), float(crossover_max), float(crossover_ite)):
+    #                 for m in np.arange(float(mutation_min), float(mutation_max), float(mutation_ite)):
+    #                     numero_experimento = numero_experimento+1
+    
+    # print(f"Numero experimentos = {numero_experimento}")
+    # resp = input("Deseja utilizar essa quantidade de experimentos? s para (sim) n para (não)\n")
+    # if (resp == 'n' or resp == 'nao' or resp == 'não'):
+    #     sys.exit()
+    
+    with open("numero_experimento.txt", 'w') as file:
+        file.write(str(numero_experimento))
+    
     # For onde os testes irão acontecer, dentro dele acontecerá a criação das pastas e a escrita dos testes.
     for i in seed:
         CLASSIFIER_FILE_NAME = i + ".csv"
@@ -109,6 +121,8 @@ def main():
             for k in np.arange(int(generations_min), int(generation_max), int(generation_ite)):
                 for l in np.arange(float(crossover_min), float(crossover_max), float(crossover_ite)):
                     for m in np.arange(float(mutation_min), float(mutation_max), float(mutation_ite)):
+                        l = round(l,1)
+                        m = round(m,1)
                         random.seed(i)
                         path = "Experimento_"+ contador.__str__()
                         diretorio.create_folder_in_folder(path)

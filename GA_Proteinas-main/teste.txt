@@ -1,9 +1,9 @@
 Iris.csv
 seed 9529851295 45243
-Population 16 20 2 
-Generations 16 20 2
+Population 15 30 9
+Generations 15 30 9
 CrossOverFactor 0.6 0.9 0.2
 TournamentSize 2
 MutationRate 0.2 0.4 0.1
 ElitismFactor 1
-SVM 1.0 rbf 3 scale 0.0 True False 1e-3 200 None False -1 ovr False None
+DecisionTree min_samples_leaf:6
