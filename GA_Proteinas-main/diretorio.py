@@ -3,6 +3,7 @@ import os
 class Diretorio :
     def __init__(self, caminho) :
         self.caminho = caminho
+        self.novo_caminho = None
 
     def create_folder(self, nome_diretorio):
         path = os.path.join(self.caminho, nome_diretorio)
