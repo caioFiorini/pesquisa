@@ -53,7 +53,7 @@ with(open('teste.txt', 'r')) as file:
     line = file.readlines()
 
 with(open('teste.txt', 'w')) as file:
-    # file.write(line[0])
+    file.write(line[0])
     file.write(f"seed {seed_str}\n")
     file.write(f"Population {population_str}\n")
     file.write(f"Generations {geracoes_str}\n")
@@ -61,7 +61,7 @@ with(open('teste.txt', 'w')) as file:
     file.write(f"TournamentSize {tournamentSize.__str__()}\n")
     file.write(f"MutationRate {mutation_rate_str}\n")
     file.write(f"ElitismFactor {elitismo.__str__()}\n")
-    # file.write(line[8])
+    file.write(line[8])
 
 print("Se o valor das execuções foi 0, provavelmente é porque o número das iterações\n da popupalação não é divisível por 4;")
 print("Agradecemos por poupar tempo de processamento ;)")

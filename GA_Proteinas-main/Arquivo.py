@@ -20,6 +20,9 @@ class Arquivo:
     def set_nome_classe_arquivo_teste(self, nome_classe_arquivo_teste):
         self.nome_classe_arquivo_teste = nome_classe_arquivo_teste
 
+    def get_nome_classe_arquivo_teste(self):
+        return self.nome_classe_arquivo_teste
+
     def le_arquivo_teste(self):
         with open("teste.txt", "r") as file:
             linhas_arquivo = file.readlines()
@@ -60,48 +63,43 @@ class Arquivo:
 
     def monta_csv(self, arquivo_saida):
         # print(self.lista_classes)
-        features = (self.lista_classes.__len__() *
-                    self.tamanho_transformada).__str__()
         # print(type(self.numero_amostras))
-        arquivo_saida.write("{},{},{}".format(
-            self.numero_amostras, features, self.retorna_nome_atributos()))
+        arquivo_saida.write("{},{}".format(
+            self.numero_amostras,self.retorna_nome_atributos()))
         arquivo_saida.write("\n")
-        dataset, classe = self.dataframe_to_csv_test(self.lista_classes, arquivo_saida.name)
+        dataset, classe = self.dataframe_to_csv_test(self.lista_classes)
         dataframe = pd.concat([dataset,classe], axis=1)
         arquivo_saida.close()
 
         # print(arquivo_saida.name)
-        # varrer o dataset -> extrair o
         # a variável index recebe os índices e a row recebe as linhas
         with open(arquivo_saida.name, 'a') as f:
             for index, row in dataframe.iterrows():
                 linha = ', '.join(row.astype(str))
                 f.write(f"{linha}\n")
 
-    def dataframe_to_csv_test(self, atributos_ind, arquivo_saida):
+    def dataframe_to_csv_test(self, atributos_ind):
         # print(atributos_ind)
-        dataset, classe = self.prepara_data_frame(arquivo_saida, self.nome_classe_arquivo_teste)
+        dataset, classe = self.prepara_data_frame(self.nome_classe_arquivo_teste)
         # print(dataset)
         # pega as colunas que tem 1
-        cols_para_manter = [dataset.columns[i] for i in range(
-            len(dataset.columns)) if atributos_ind[i] != 0]
+        cols_para_manter = [dataset.columns[i] for i in range(len(dataset.columns)) if atributos_ind[i] != 0]
         dataset = dataset[cols_para_manter]
-        # print(df)
         return dataset, classe
 
-    def prepara_data_frame(self, arquivo_saida="none",nomeClass="class"):
+    def prepara_data_frame(self, nomeClass):
         dataset = self.dataset_clone
 
         # A ideia é que o usuário informe o nome da classe ou simplesmente pegamos a última coluna.
         if "class" not in nomeClass:
+            # print("entrei aqui_1")
             # pego a última coluna e removo ela!
             nome_ultima_coluna = dataset.columns[dataset.columns.__len__()-1]
             classe = dataset[nome_ultima_coluna]
             dataset = dataset.drop(nome_ultima_coluna, axis=1)
         else:
+            # print("entrei aqui_2")
             classe = dataset[nomeClass]
-        # print(classe)
-
             dataset = dataset.drop(nomeClass, axis=1)
         # dataset=dataset.drop(dataset.index[0])
         # print(dataset)
@@ -115,7 +113,7 @@ class Arquivo:
         return classes
 
     def retorna_quantidade_colunas(self):
-        dataset, _ = self.prepara_data_frame()
+        dataset, _ = self.prepara_data_frame(self.nome_classe_arquivo_teste)
         num_colunas = len(dataset.columns)
         return num_colunas
     

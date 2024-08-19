@@ -15,6 +15,6 @@ class ClassificadorT:
 
     #receber a variável arquivo
     def fitness(self, algoritmoML, arquivo):
-        dataset, classe = arquivo.prepara_data_frame()
+        dataset, classe = arquivo.prepara_data_frame(arquivo.get_nome_classe_arquivo_teste())
         scores = cross_val_score(algoritmoML, dataset, classe, cv=10, scoring='f1_macro')
         return scores.mean()

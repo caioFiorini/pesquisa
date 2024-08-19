@@ -1,9 +1,9 @@
 base_adultos.csv Freq.Etnia
-seed 12345
+seed 21586554 896523174 25698745 3654178 45698712
 Population 10 14 2
 Generations 10 14 2
-CrossOverFactor 0.6 0.8 0.2
+CrossOverFactor 0.2 0.8 0.2
 TournamentSize 2
-MutationRate 0.6 0.8 0.2
+MutationRate 0.2 0.8 0.2
 ElitismFactor 1
 DecisionTree min_samples_leaf:6

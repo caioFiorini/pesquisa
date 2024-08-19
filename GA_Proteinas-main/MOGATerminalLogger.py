@@ -13,10 +13,10 @@ class MOGATerminalLogger:
                 + "\n"
                 + "Total de filhos repetidos: "
                 + record["Filhos"]["Ind. Repetidos\t "].__str__()
-                # + "\n"
-                # + "(Filhos abaixo da média, Filhos acima da média) = "
-                # + record["Filhos"]["Piores / Melhores  "].__str__()
-                # + "\n"
+                + "\n"
+                + "(Filhos abaixo da média, Filhos acima da média) = "
+                + record["Filhos"]["Piores / Melhores  "].__str__()
+                + "\n"
                 # + "1) Media  "
                 # + record["Fitness"]["1) Media   "][0].__str__()
                 # + "\n"
@@ -40,7 +40,8 @@ class MOGATerminalLogger:
                 # + "\n"
                 # + "4) Maximo "
                 # + record["Fitness"]["4) Maximo  "][1].__str__()
-                +"\n"
+                # +"\n"
             )
             file.write(log)
             file.close()
+            print(log)
