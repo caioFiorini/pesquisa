@@ -1,9 +1,9 @@
-base_adultos.csv Freq.Etnia
-seed 21586554 896523174 25698745 3654178 45698712
-Population 10 14 2
-Generations 10 14 2
-CrossOverFactor 0.2 0.8 0.2
+AVCBalanceado-AG.csv AVC
+seed 7632105
+Population 1000 1001 2
+Generations 300 301 2
+CrossOverFactor 0.9 0.91 0.2
 TournamentSize 2
-MutationRate 0.2 0.8 0.2
+MutationRate 0.1 0.11 0.2
 ElitismFactor 1
-DecisionTree min_samples_leaf:6
+DecisionTree max_depth=5

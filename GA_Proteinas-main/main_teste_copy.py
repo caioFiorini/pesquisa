@@ -103,8 +103,8 @@ def main():
             for k in np.arange(int(generations_min), int(generation_max), int(generation_ite)):
                 for l in np.arange(float(crossover_min), float(crossover_max), float(crossover_ite)):
                     for m in np.arange(float(mutation_min), float(mutation_max), float(mutation_ite)):
-                        l = round(l,1)
-                        m = round(m,1)
+                        l = round(l,3)
+                        m = round(m,3)
                         random.seed(i)
                         path = "Experimento_"+ contador.__str__()
                         diretorio.create_folder_in_folder(path)
