@@ -26,7 +26,8 @@ class MOGAToolbox:
         algoritmo_ml,
         SEED,
         diretorio,
-        todos_fitness
+        todos_fitness,
+        num_geracao
     ):
         self.INDIVIDUAL_SIZE = INDIVIDUAL_SIZE
         self.MUTATION_RATE = MUTATION_RATE
@@ -41,6 +42,7 @@ class MOGAToolbox:
         self.seed = SEED
         self.diretorio = diretorio
         self.todos_fitness = todos_fitness
+        self.num_geracao = num_geracao
         
 
     def setup_creator():
@@ -166,7 +168,7 @@ class MOGAToolbox:
             attributes_of_individual : [str]
                 Quantidade listada de características, igual quando faz leitura em um csv
         """
-        nome_arquivo = "Log_" + self.seed
+        nome_arquivo = "Log_" + self.seed + str(self.num_geracao)
         nome_diretorio = self.diretorio.constroi_caminho(self.diretorio.get_path(), nome_arquivo)
         SVM_FILE = open(nome_diretorio, "w")
         # file_reader = FileManager(self.SAMPLE_COUNT, self.TAMANHO_TRANSFORMADA)

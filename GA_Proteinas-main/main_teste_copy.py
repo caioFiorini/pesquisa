@@ -122,7 +122,8 @@ def main():
                             modelo_ml,
                             FILE_NAME,
                             diretorio,
-                            todos_fitness
+                            todos_fitness,
+                            k
                         ).toolbox
                         # inicializa uma lista com os indivíduos da população
                         population = evolution_toolbox.population(n=j)
@@ -171,8 +172,9 @@ def main():
                                 top_individual.__str__() + top_individual.fitness.values.__str__() + "\n"
                             )
                         
-                        for i in todos_fitness:
-                            print(i)
+                        with open("todos_individuos.txt", "w") as file:
+                            for i in todos_fitness:
+                                file.write(i+"\n")
 
                         print("\nDone!")
 

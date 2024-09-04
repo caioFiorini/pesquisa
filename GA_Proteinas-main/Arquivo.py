@@ -64,9 +64,6 @@ class Arquivo:
     def monta_csv(self, arquivo_saida):
         # print(self.lista_classes)
         # print(type(self.numero_amostras))
-        arquivo_saida.write("{},{}".format(
-            self.numero_amostras,self.retorna_nome_atributos()))
-        arquivo_saida.write("\n")
         dataset, classe = self.dataframe_to_csv_test(self.lista_classes)
         dataframe = pd.concat([dataset,classe], axis=1)
         arquivo_saida.close()
