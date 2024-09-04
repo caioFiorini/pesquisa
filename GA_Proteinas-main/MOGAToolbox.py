@@ -25,7 +25,8 @@ class MOGAToolbox:
         arquivo,
         algoritmo_ml,
         SEED,
-        diretorio
+        diretorio,
+        todos_fitness
     ):
         self.INDIVIDUAL_SIZE = INDIVIDUAL_SIZE
         self.MUTATION_RATE = MUTATION_RATE
@@ -39,6 +40,7 @@ class MOGAToolbox:
         self.algoritmoML = algoritmo_ml
         self.seed = SEED
         self.diretorio = diretorio
+        self.todos_fitness = todos_fitness
         
 
     def setup_creator():
@@ -111,8 +113,10 @@ class MOGAToolbox:
         self.create_file(individual)
         fitness = self.get_fitness_of_individual(self.algoritmoML,attributes_of_individual)
         # check whether this comment is really useful or not
-        fitness = 1 - fitness
+        # fitness = 1 - fitness
         individual_size = (attributes_of_individual.__len__())
+        str_fitness =  (str(individual) + " " + str(fitness))
+        self.todos_fitness.append(str_fitness)
         return fitness, individual_size
 
     def get_fitness_of_individual(self, algoritmoML, attribute_list) -> numpy.float64: # type: ignore

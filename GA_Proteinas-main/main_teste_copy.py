@@ -25,7 +25,7 @@ CLASSIFIER_PATH = "Individuos/"
 DIRETORIO_PATH = "D:\PUC\pesquisa\pesquisa\GA_Proteinas-main\outputs"
 EXPERIMENTO_PATH = "Experimentos"
 
-HALL_OF_FAME_SIZE = 10
+HALL_OF_FAME_SIZE = 100
 
 def main():
     start_time = time.time()
@@ -78,6 +78,8 @@ def main():
     hall_of_fame = tools.HallOfFame(HALL_OF_FAME_SIZE)
     numero_experimento = 0
 
+    todos_fitness = []
+
     with open("numero_experimento.txt", 'r') as file:
         line = file.readline()
         line = int(line)
@@ -119,7 +121,8 @@ def main():
                             arquivo,
                             modelo_ml,
                             FILE_NAME,
-                            diretorio
+                            diretorio,
+                            todos_fitness
                         ).toolbox
                         # inicializa uma lista com os indivíduos da população
                         population = evolution_toolbox.population(n=j)
@@ -167,6 +170,9 @@ def main():
                             best_individuals.write(
                                 top_individual.__str__() + top_individual.fitness.values.__str__() + "\n"
                             )
+                        
+                        for i in todos_fitness:
+                            print(i)
 
                         print("\nDone!")
 
