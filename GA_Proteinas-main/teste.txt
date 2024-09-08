@@ -1,7 +1,7 @@
 AVCBalanceado-AG.csv AVC
 seed 7632105
-Population 100 101 2
-Generations 300 301 2
+Population 1000 1001 2
+Generations 500 501 2
 CrossOverFactor 0.9 0.91 0.2
 TournamentSize 2
 MutationRate 0.1 0.11 0.2

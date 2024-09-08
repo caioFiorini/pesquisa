@@ -7,9 +7,10 @@ from deap import tools
 
 # Local Imports
 from MOGATerminalLogger import MOGATerminalLogger
-
+from classificadorT import ClassificadorT
 
 class MultiObjectiveGeneticAlgorithm:
+
     def __init__(
         self,
         seed,
@@ -62,6 +63,9 @@ class MultiObjectiveGeneticAlgorithm:
             copy_of_individual = population[seed]
             population.insert(len(population), copy_of_individual)
         return population
+
+    def get_num_generations(self):
+        return self.num_generation
 
     def apply_variation_crossover_mutation(
         self, population, evolution_toolbox, crossover_probability, mutation_probability
@@ -135,8 +139,10 @@ class MultiObjectiveGeneticAlgorithm:
         Returns:
             _type_: _description_
         """
+        clt = ClassificadorT()
         logbook = tools.Logbook()
-
+        self.num_generation = 0
+        clt.set_num_geracao(self.num_generation)
         # gen A geração atual
         # nevals número de avaliações
         # ele concatena a lista de gerações e números de avaliações com as colunas que estão dentro de stats.
@@ -188,6 +194,8 @@ class MultiObjectiveGeneticAlgorithm:
 
         # Begin the generational process
         for generation_number in range(1, self.generation_count + 1):
+            self.num_generation = self.num_generation + 1
+            clt.set_num_geracao(self.num_generation)
             # Select the next generation individuals
 
             # offspring = toolbox.select(population, len(population))

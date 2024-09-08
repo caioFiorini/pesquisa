@@ -134,10 +134,9 @@ class MOGAToolbox:
         if not attribute_list:
             _FMeasure_result = 0
         else:
-            model = ClassificadorT(self.CLASSIFIER_PATH, self.CLASSIFIER_FILE_NAME)
-            # check which function we are really using and remove the comment
-            # resultPrecision = svm.fitness()
-            _FMeasure_result = model.fitness(algoritmoML, self.arquivo)
+            model = ClassificadorT()
+            model.ClassificadorT(self.CLASSIFIER_PATH, self.CLASSIFIER_FILE_NAME)
+            _FMeasure_result = model.fitness(algoritmoML, self.arquivo, self.num_geracao)
         return _FMeasure_result
 
     def get_attributes_of_individual(self, individual) -> [str]: # type: ignore

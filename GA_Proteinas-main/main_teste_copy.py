@@ -95,7 +95,7 @@ def main():
                             numero_experimento = numero_experimento+1
         with open("numero_experimento.txt", 'w') as file:
             file.write(str(numero_experimento))
-    
+    contador = 0
     # For onde os testes irão acontecer, dentro dele acontecerá a criação das pastas e a escrita dos testes.
     for i in seed:
         CLASSIFIER_FILE_NAME = i + ".csv"
