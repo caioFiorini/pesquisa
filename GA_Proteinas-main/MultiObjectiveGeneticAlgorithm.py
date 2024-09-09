@@ -64,9 +64,6 @@ class MultiObjectiveGeneticAlgorithm:
             population.insert(len(population), copy_of_individual)
         return population
 
-    def get_num_generations(self):
-        return self.num_generation
-
     def apply_variation_crossover_mutation(
         self, population, evolution_toolbox, crossover_probability, mutation_probability
     ):
@@ -141,8 +138,8 @@ class MultiObjectiveGeneticAlgorithm:
         """
         clt = ClassificadorT()
         logbook = tools.Logbook()
-        self.num_generation = 0
-        clt.set_num_geracao(self.num_generation)
+        num_generation_atual = 0
+        clt.set_num_geracao(num_generation_atual)
         # gen A geração atual
         # nevals número de avaliações
         # ele concatena a lista de gerações e números de avaliações com as colunas que estão dentro de stats.
@@ -194,11 +191,9 @@ class MultiObjectiveGeneticAlgorithm:
 
         # Begin the generational process
         for generation_number in range(1, self.generation_count + 1):
-            self.num_generation = self.num_generation + 1
-            clt.set_num_geracao(self.num_generation)
+            num_generation_atual = generation_number
+            clt.set_num_geracao(num_generation_atual)
             # Select the next generation individuals
-
-            # offspring = toolbox.select(population, len(population))
 
             # Seleção do torneio baseada na dominância (D) entre dois indivíduos, caso os dois indivíduos
             # não interdominem a seleção é feita com base na distância de aglomeração (CD).

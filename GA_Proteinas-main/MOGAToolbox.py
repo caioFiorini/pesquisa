@@ -43,6 +43,8 @@ class MOGAToolbox:
         self.diretorio = diretorio
         self.todos_fitness = todos_fitness
         self.num_geracao = num_geracao
+        self.model = ClassificadorT()
+        self.model.ClassificadorT(self.CLASSIFIER_PATH, self.CLASSIFIER_FILE_NAME)
         
 
     def setup_creator():
@@ -134,9 +136,7 @@ class MOGAToolbox:
         if not attribute_list:
             _FMeasure_result = 0
         else:
-            model = ClassificadorT()
-            model.ClassificadorT(self.CLASSIFIER_PATH, self.CLASSIFIER_FILE_NAME)
-            _FMeasure_result = model.fitness(algoritmoML, self.arquivo, self.num_geracao)
+            _FMeasure_result = self.model.fitness(algoritmoML, self.arquivo, self.num_geracao)
         return _FMeasure_result
 
     def get_attributes_of_individual(self, individual) -> [str]: # type: ignore

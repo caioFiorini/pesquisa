@@ -12,18 +12,17 @@ import pickle
 
 class ClassificadorT:
 
-    contador = 0
-    
+    num_geracao = 0
+
     def __init__(self) -> None:
         pass
 
     def ClassificadorT(self, path, nomeArquivo):
         self.path = path
         self.nomeArquivo = nomeArquivo
-        self.num_geracao = 0
 
     def set_num_geracao(self, num_geracao):
-        self.num_geracao = num_geracao
+        ClassificadorT.num_geracao = num_geracao
 
     def evaluate_model_with_cross_validation(self, model, X_rus, y_rus, cv=10, scoring='accuracy'):    
         melhor = 0
@@ -116,7 +115,8 @@ class ClassificadorT:
     def fitness(self, algoritmoML, arquivo, num_geracao):
         aux = 0
         dataset, classe = arquivo.prepara_data_frame(arquivo.get_nome_classe_arquivo_teste())
-        if (self.num_geracao < (int(num_geracao)-2)):
+
+        if (ClassificadorT.num_geracao < (int(num_geracao)-1)):
             f1_score = cross_val_score(algoritmoML, dataset, classe, cv=10, scoring='f1_macro')
             for i in f1_score:
                 if aux < i:
