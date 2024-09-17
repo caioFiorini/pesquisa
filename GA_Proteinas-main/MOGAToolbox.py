@@ -8,7 +8,7 @@ import numpy
 from deap import base, creator, tools
 
 # Local Imports
-from classificadorT import ClassificadorT
+from Resultado_experimentos.classificadorT import ClassificadorT
 from FileManager import FileManager
 from algoritmos_ML import AlgoritmosML
 

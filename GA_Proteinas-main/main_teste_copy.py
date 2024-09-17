@@ -25,7 +25,7 @@ CLASSIFIER_PATH = "Individuos/"
 DIRETORIO_PATH = "D:\PUC\pesquisa\pesquisa\GA_Proteinas-main\outputs"
 EXPERIMENTO_PATH = "Experimentos"
 
-HALL_OF_FAME_SIZE = 100
+HALL_OF_FAME_SIZE = 10
 
 def main():
     start_time = time.time()
@@ -172,9 +172,9 @@ def main():
                                 top_individual.__str__() + top_individual.fitness.values.__str__() + "\n"
                             )
                         
-                        with open("todos_individuos.txt", "w") as file:
-                            for i in todos_fitness:
-                                file.write(i+"\n")
+                        # with open("todos_individuos.txt", "w") as file:
+                        #     for i in todos_fitness:
+                        #         file.write(i+"\n")
 
                         print("\nDone!")
 

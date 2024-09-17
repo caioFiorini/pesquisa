@@ -148,3 +148,6 @@ Nota (06/06)
 
 retirar os arquivos de log e colocar na memoria, tentar trabalhar isso em memória para retirar a
 perda de tempo com escrita em memória secundária.
+
+
+0.9879691345653963

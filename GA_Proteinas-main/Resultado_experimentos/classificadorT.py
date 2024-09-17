@@ -113,20 +113,25 @@ class ClassificadorT:
 
     #receber a variável arquivo
     def fitness(self, algoritmoML, arquivo, num_geracao):
-        aux = 0
         dataset, classe = arquivo.prepara_data_frame(arquivo.get_nome_classe_arquivo_teste())
+        score = cross_val_score(algoritmoML, dataset, classe, cv=10, scoring='f1_macro')
+        return score.mean()
 
-        if (ClassificadorT.num_geracao < (int(num_geracao)-1)):
-            f1_score = cross_val_score(algoritmoML, dataset, classe, cv=10, scoring='f1_macro')
-            for i in f1_score:
-                if aux < i:
-                    aux = i
-            score = aux
-        else:
-            score, model = self.evaluate_model_with_cross_validation(algoritmoML, dataset, classe, cv=10, scoring='f1_score')
-            self.selec_best_model(model, score)
+    # def fitness(self, algoritmoML, arquivo, num_geracao):
+    #     aux = 0
+    #     dataset, classe = arquivo.prepara_data_frame(arquivo.get_nome_classe_arquivo_teste())
+
+    #     if (ClassificadorT.num_geracao < (int(num_geracao)-1)):
+    #         f1_score = cross_val_score(algoritmoML, dataset, classe, cv=10, scoring='f1_macro')
+    #         for i in f1_score:
+    #             if aux < i:
+    #                 aux = i
+    #         score = aux
+    #     else:
+    #         score, model = self.evaluate_model_with_cross_validation(algoritmoML, dataset, classe, cv=10, scoring='f1_score')
+    #         self.selec_best_model(model, score)
 
 
-        return score 
+    #     return score 
 
 
