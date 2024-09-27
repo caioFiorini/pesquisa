@@ -11,7 +11,7 @@ dataset = pd.read_csv("AVCBalanceado-AG.csv")
 # print(dataset.columns)
 
 dataset_classe = dataset["AVC"]
-dataset_sem_classe = dataset[["Freq.Etnia", "Categoria_AtividadeM", "Categoria_IMC", "Diabetes", "Colesterol_Alto"]]
+dataset_sem_classe = dataset[["Gênero", "Categoria_Alcool_Semanal", "Diabetes", "Categoria_AtividadeI", "classificacao_alimentacao", "Categoria_Fumantes", "Categoria_Fumantes", "Doenças Mentais", "Trabalho Doméstico Pesado", "Categoria_AtividadeM", "Consumo_Sal", "Colesterol_Alto", "Depressão", "Doença_Cardíaca", "Hipertensão"]]
 # print(dataset_sem_classe)
 # dadosTreino, dadosTeste, respostaTreino, respostaTeste = train_test_split(dadosSemResposta, dadosComResposta, test_size = 0.20, random_state = 0)
 
