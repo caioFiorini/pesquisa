@@ -22,7 +22,7 @@ from diretorio import Diretorio
 
 # ====== MARK: Defining paths and file names ======
 CLASSIFIER_PATH = "Individuos/"
-DIRETORIO_PATH = "./outputs"
+DIRETORIO_PATH = "D:\PUC\pesquisa\pesquisa\GA_Proteinas-main\outputs"
 EXPERIMENTO_PATH = "Experimentos"
 
 HALL_OF_FAME_SIZE = 10
@@ -97,8 +97,6 @@ def main():
             file.write(str(numero_experimento))
     contador = 0
     # For onde os testes irão acontecer, dentro dele acontecerá a criação das pastas e a escrita dos testes.
-    
-    print("Entrei aqui")
     for i in seed:
         CLASSIFIER_FILE_NAME = i + ".csv"
         for j in np.arange(int(population_min), int(population_max), int(population_ite)):
