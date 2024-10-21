@@ -9,7 +9,7 @@ import sys
 import os
 from Arquivo import Arquivo
 
-DIRETORIO = "./outputs/Experimentos/Experimento_"
+DIRETORIO = ".\Resultado_experimentos"
 with open("numero_experimento.txt", 'r') as file:
     quantidade_experimentos = file.readlines()
 quantidade_experimentos = int(quantidade_experimentos[0])    

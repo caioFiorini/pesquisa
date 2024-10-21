@@ -88,7 +88,7 @@ class Arquivo:
         dataset = self.dataset_clone
 
         # A ideia é que o usuário informe o nome da classe ou simplesmente pegamos a última coluna.
-        if "class" not in nomeClass:
+        if "class" in nomeClass:
             # print("entrei aqui_1")
             # pego a última coluna e removo ela!
             nome_ultima_coluna = dataset.columns[dataset.columns.__len__()-1]
