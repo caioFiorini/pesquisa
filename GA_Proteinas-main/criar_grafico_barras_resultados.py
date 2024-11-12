@@ -14,7 +14,6 @@ plt.bar(atributos, precisao, color='skyblue')
 plt.xticks(rotation=90)
 
 # Adicionando título e rótulos
-plt.title('Attribute Precision')
 plt.xlabel('Attributes')
 plt.ylabel('F1 Score')
 
