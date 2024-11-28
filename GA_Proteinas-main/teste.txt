@@ -1,5 +1,5 @@
-BaseColesterol_posprocessFinal.csv Colesterol_Alto
-seed 134823916307688 122466519533640 11816952573039 58264536736136 6213547046596
+Iris.csv class
+seed 30 20 10 5 1
 Population 204 504 200
 Generations 200 300 200
 CrossOverFactor 0.7 0.99 0.2

@@ -140,6 +140,8 @@ class MultiObjectiveGeneticAlgorithm:
         logbook = tools.Logbook()
         num_generation_atual = 0
         clt.set_num_geracao(num_generation_atual)
+        ind_repetidos = []
+        fitness_medio = []
         # gen A geração atual
         # nevals número de avaliações
         # ele concatena a lista de gerações e números de avaliações com as colunas que estão dentro de stats.
@@ -178,6 +180,8 @@ class MultiObjectiveGeneticAlgorithm:
         # salva as estatísticas das gerações no logbook.
         logbook.record(gen=0, nevals=len(invalid_individuals), **record)
         MOGATerminalLogger.print_generation_results(0, len(self.population), record, self.diretorio, self.FILE_NAME)
+        ind_repetidos.append(record["Filhos"]["Ind. Repetidos\t "])
+        fitness_medio.append(record["Fitness"]["1) Media   "][0])
 
         # if verbose:
         #     print(logbook.stream)
@@ -241,6 +245,12 @@ class MultiObjectiveGeneticAlgorithm:
             MOGATerminalLogger.print_generation_results(
                 generation_number, len(self.population), record, self.diretorio, self.FILE_NAME
             )
+            ind_repetidos.append(record["Filhos"]["Ind. Repetidos\t "])
+            fitness_medio.append(record['Fitness']['1) Media   '][0])
+            derivada_Filhos_Repetidos = ind_repetidos[generation_number]-ind_repetidos[generation_number-1]
+            if(derivada_Filhos_Repetidos <= 0.1):
+                if(fitness_medio[generation_number] == fitness_medio[generation_number-1]):
+                    break
             # if verbose:
             #    print logbook.stream
 
