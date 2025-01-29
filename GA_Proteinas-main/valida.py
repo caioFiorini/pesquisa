@@ -10,9 +10,11 @@ import pickle
 class valida_experimento:
     
     # Função para realizar cross-validation e avaliar o modelo
-    def evaluate_model_with_cross_validation(model, X_rus, y_rus, cv=10, scoring='accuracy'):    
+    # model = algoritmoML, X_rus = dataset_sem_classe, y_rus = dataset_classe, labels = respostas array
+    def evaluate_model_with_cross_validation(model, X_rus, y_rus, respostas, cv=10, scoring='accuracy'):    
         melhor = 0
-        labels = ['1', '2']  # respostas
+        # labels = ['1', '2']  # respostas
+        labels = respostas
         modelos = []
         
         # Definir os scorers
@@ -24,7 +26,7 @@ class valida_experimento:
         }
         
         # Preparar validação cruzada
-        kf = KFold(n_splits=cv)
+        kf = KFold(n_splits=cv, shuffle=True, random_state=42)
         
         # Inicializar listas para armazenar os resultados
         results = []
@@ -43,17 +45,17 @@ class valida_experimento:
             # Armazenar os modelos
             modelos.append(cloned_model)
             # Calcular as métricas no conjunto de treino
-            y_pred_train = cloned_model.predict(X_train)
+            y_pred_test = cloned_model.predict(X_test)
             
             # Calcular as métricas no conjunto de treino
-            accuracy = accuracy_score(y_train, y_pred_train)
-            f1 = f1_score(y_train, y_pred_train, average='weighted', zero_division=1)
-            recall = recall_score(y_train, y_pred_train, average='weighted', zero_division=1)
-            precision = precision_score(y_train, y_pred_train, average='weighted', zero_division=1)
+            accuracy = accuracy_score(y_test, y_pred_test)
+            f1 = f1_score(y_test, y_pred_test, average='weighted', zero_division=1)
+            recall = recall_score(y_test, y_pred_test, average='weighted', zero_division=1)
+            precision = precision_score(y_test, y_pred_test, average='weighted', zero_division=1)
             
             # Armazenar a matriz de confusão e o relatório de classificação
-            cm = confusion_matrix(y_train, y_pred_train)
-            cr = classification_report(y_train, y_pred_train, target_names=labels)
+            cm = confusion_matrix(y_test, y_pred_test)
+            cr = classification_report(y_test, y_pred_test, target_names=labels)
             
             # Armazenar os resultados formatados
             fold_result = {
