@@ -7,7 +7,8 @@ class Rankeamento:
     def processa_arquivos_teste(self, diretorio_teste, diretorio_resultados, quantidade_columns):
         individuos = []
         # pega a quantidade de colunas menos a classe.
-        colunas = [0] * quantidade_columns-1 
+        # print(quantidade_columns)
+        colunas = [0] * (int(quantidade_columns)) 
 
         self.junta_arquivos(diretorio_resultados, diretorio_teste)
 
@@ -22,6 +23,8 @@ class Rankeamento:
                             if match:
                                 individuo = list(map(int, match.group(1).split(',')))
                                 individuos.append(individuo)
+
+        
 
         # Atualiza a contagem de 1's em cada coluna
         for i in individuos:
@@ -42,7 +45,7 @@ class Rankeamento:
             
         return colunas_ordenadas
 
-    def junta_arquivos (diretorio_testes, diretorio_resultados):
+    def junta_arquivos (self, diretorio_testes, diretorio_resultados):
         os.makedirs(diretorio_resultados, exist_ok=True)
         
         for subpasta in os.listdir(diretorio_testes):

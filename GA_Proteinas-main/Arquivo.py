@@ -44,6 +44,9 @@ class Arquivo:
 
     def retorna_nome_atributos(self):
         return self.atributos
+    
+    def retorna_dataset(self):
+        return self.dataset
 
     def quantidade_linhas_colunas(self, operador):
 

@@ -19,5 +19,12 @@ class Diretorio :
         path = os.path.join(nome_diretorio, nome_arquivo)
         return path
 
+    def remove_arquivos(self, path):
+        for arquivo in os.listdir(path):
+            caminho_arquivo = os.path.join(path, arquivo)
+            if os.path.isfile(caminho_arquivo):
+                os.remove(caminho_arquivo)
+        
+
     def get_path(self):
         return self.caminho_modelo

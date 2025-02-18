@@ -19,11 +19,15 @@ from Arquivo import Arquivo
 from algoritmo_Genetico import Algoritmo_Genetico
 from algoritmos_ML import AlgoritmosML
 from diretorio import Diretorio
+from rankeamento import Rankeamento
+from valida import Validacao
 
 # ====== MARK: Defining paths and file names ======
 CLASSIFIER_PATH = "Individuos/"
-DIRETORIO_PATH = "D:\PUC\pesquisa\pesquisa\GA_Proteinas-main\outputs"
+DIRETORIO_PATH = "C:/Users/Caio/Documents/PUC/pesquisa/pesquisa/GA_Proteinas-main/outputs"
 EXPERIMENTO_PATH = "Experimentos"
+EXPERIMENTO_PATH_ = "C:/Users/Caio/Documents/PUC/pesquisa/pesquisa/GA_Proteinas-main/outputs/Experimentos"
+RESULTADOS_PATH = "C:/Users/Caio/Documents/PUC/pesquisa/pesquisa/GA_Proteinas-main/Resultados_teste/"
 
 HALL_OF_FAME_SIZE = 10
 
@@ -187,6 +191,18 @@ def main():
                         )
                         contador = contador + 1
 
+    # # início do processo de rankeamento
+    rank = Rankeamento()
+    diretorio.remove_arquivos(RESULTADOS_PATH)
+    rank.junta_arquivos(EXPERIMENTO_PATH_, RESULTADOS_PATH)
+    colunas = rank.processa_arquivos_teste(EXPERIMENTO_PATH_, RESULTADOS_PATH, INDIVIDUAL_SIZE)
+    colunas_para_filtrar = [item[0] for item in colunas]  
+    # O -1 é para pegar o ultimo elemento do split, no caso vai ser o número da coluna
+    colunas_tratadas = [int(coluna.split(" ")[-1].strip()) for coluna in colunas_para_filtrar]
+    validacao = Validacao()
+    dataset = arquivo.retorna_dataset()
+    validacao.valida_sem_salvar_modelo(dataset,nome_classe_arquivo_teste, colunas_tratadas)
+    
     
 if __name__ == "__main__":
     main()
