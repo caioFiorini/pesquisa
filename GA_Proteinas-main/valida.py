@@ -11,7 +11,7 @@ class valida_experimento:
     
     # Função para realizar cross-validation e avaliar o modelo
     # model = algoritmoML, X_rus = dataset_sem_classe, y_rus = dataset_classe, labels = respostas array
-    def evaluate_model_with_cross_validation(model, X_rus, y_rus, respostas, cv=10, scoring='accuracy'):    
+    def evaluate_model_with_cross_validation(self, model, X_rus, y_rus, respostas, cv=10, scoring='accuracy'):    
         melhor = 0
         # labels = ['1', '2']  # respostas
         labels = respostas
@@ -86,7 +86,7 @@ class valida_experimento:
 
         
     # recebe um objeto do tipo dataset, com o dataset aberto, puxa da casse arquivo
-    def valida_sem_salvar_modelo(dataset, nome_classe, colums_list):
+    def valida_sem_salvar_modelo(self, dataset, nome_classe, colums_list):
         score = []
         print(nome_classe)
         min_count = dataset_[nome_classe].value_counts().min()

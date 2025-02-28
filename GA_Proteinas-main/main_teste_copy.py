@@ -20,7 +20,7 @@ from algoritmo_Genetico import Algoritmo_Genetico
 from algoritmos_ML import AlgoritmosML
 from diretorio import Diretorio
 from rankeamento import Rankeamento
-from valida import Validacao
+from valida import valida_experimento
 
 # ====== MARK: Defining paths and file names ======
 CLASSIFIER_PATH = "Individuos/"
@@ -199,7 +199,7 @@ def main():
     colunas_para_filtrar = [item[0] for item in colunas]  
     # O -1 é para pegar o ultimo elemento do split, no caso vai ser o número da coluna
     colunas_tratadas = [int(coluna.split(" ")[-1].strip()) for coluna in colunas_para_filtrar]
-    validacao = Validacao()
+    validacao = valida_experimento()
     dataset = arquivo.retorna_dataset()
     validacao.valida_sem_salvar_modelo(dataset,nome_classe_arquivo_teste, colunas_tratadas)
     
