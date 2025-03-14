@@ -88,15 +88,13 @@ class valida_experimento:
     # recebe um objeto do tipo dataset, com o dataset aberto, puxa da casse arquivo
     def valida_sem_salvar_modelo(self, dataset, nome_classe, colums_list):
         score = []
-        print(nome_classe)
-        min_count = dataset_[nome_classe].value_counts().min()
-        dataset_ = dataset_.groupby(nome_classe).sample(n=min_count, random_state=4)
+        dataset_ = dataset
         # a princípio vou utilizar as colunas conforme o algoritmo genético soltar
         dataset_classe = dataset_[nome_classe]
         dataset_ = dataset_.drop(columns = [nome_classe])
         colunas_iniciais  = colums_list
         
-        for i in range(1, len(colunas_iniciais)):
+        for i in range(1, len(colunas_iniciais)+1):
             colunas_atualizadas = colunas_iniciais[:i]  # Seleciona as primeiras i colunas
             
             dataset_sem_classe = dataset_.iloc[:, :i] # Seleciona o dataset_ com as colunas atualizadas

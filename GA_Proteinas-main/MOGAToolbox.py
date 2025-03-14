@@ -8,8 +8,7 @@ import numpy
 from deap import base, creator, tools
 
 # Local Imports
-from Resultado_experimentos.classificadorT import ClassificadorT
-from FileManager import FileManager
+from classificadorT import ClassificadorT
 from algoritmos_ML import AlgoritmosML
 
 
@@ -170,8 +169,6 @@ class MOGAToolbox:
         nome_arquivo = "Log_" + self.seed + str(self.num_geracao)
         nome_diretorio = self.diretorio.constroi_caminho(self.diretorio.get_path(), nome_arquivo)
         SVM_FILE = open(nome_diretorio, "w")
-        # file_reader = FileManager(self.SAMPLE_COUNT, self.TAMANHO_TRANSFORMADA)
-        # file_reader.BuildCSV(SVM_FILE,attributes_of_individual, self.arquivo)
         self.arquivo.arquivo_csv(self.SAMPLE_COUNT, attributes_of_individual, self.TAMANHO_TRANSFORMADA)
         self.arquivo.monta_csv(SVM_FILE)
         # print("algo")

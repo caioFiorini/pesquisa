@@ -15,7 +15,7 @@ from deap import creator
 from deap import tools
 #from deap import dtm
 
-from Classificador import Classificador
+from semUso.Classificador import Classificador
 # from IOArquivo import LeituraArquivo
 
 NUMERO_AMOSTRAS = 490
@@ -224,7 +224,7 @@ def contaFilhos(pop):
         pop (list): lista de indivíduos.
 
     Returns:
-       numPiores, numMelhores int: Quantos indivíduos na população atual são piores ou melhores em relação à média da aptidão de seus pais.
+        numPiores, numMelhores int: Quantos indivíduos na população atual são piores ou melhores em relação à média da aptidão de seus pais.
     """
     numPiores = 0
     numMelhores = 0

@@ -10,7 +10,7 @@ from deap import tools
 
 # Local Imports
 from MOGATerminalLogger import MOGATerminalLogger
-from Resultado_experimentos.classificadorT import ClassificadorT
+from classificadorT import ClassificadorT
 
 class MultiObjectiveGeneticAlgorithm:
 

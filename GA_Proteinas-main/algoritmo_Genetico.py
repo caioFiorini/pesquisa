@@ -1,6 +1,5 @@
 from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
 from MOGAToolbox import MOGAToolbox
-from FileManager import FileManager
 from Arquivo import Arquivo 
 from deap import base, creator, tools
 import array
