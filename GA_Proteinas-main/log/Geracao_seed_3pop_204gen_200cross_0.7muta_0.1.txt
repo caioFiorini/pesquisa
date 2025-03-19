@@ -446,6 +446,7 @@ Classificando geração: 3 Hora: 2025-03-13 23:52:08.350062
 Classificando geração: 1 Hora: 2025-03-13 23:52:53.497386
 Classificando geração: 2 Hora: 2025-03-13 23:52:59.679927
 Classificando geração: 3 Hora: 2025-03-13 23:53:05.365552
+<<<<<<< HEAD
 Classificando geração: 1 Hora: 2025-03-17 14:19:21.205188
 Classificando geração: 2 Hora: 2025-03-17 14:19:37.490698
 Classificando geração: 3 Hora: 2025-03-17 14:19:53.340705
@@ -455,3 +456,7 @@ Classificando geração: 3 Hora: 2025-03-17 14:21:49.768153
 Classificando geração: 1 Hora: 2025-03-17 14:34:08.636858
 Classificando geração: 2 Hora: 2025-03-17 14:34:23.944852
 Classificando geração: 3 Hora: 2025-03-17 14:34:38.749854
+=======
+Classificando geração: 1 Hora: 2025-03-14 00:03:31.419555
+Classificando geração: 2 Hora: 2025-03-14 00:08:03.352345
+>>>>>>> a05eff37794e6960f0b9a35ecf0bbfa9fa06fcfd
