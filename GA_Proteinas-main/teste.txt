@@ -1,9 +1,10 @@
 Iris.csv class
+0 backup_geracao.txt
 seed 3
-Population 204 504 500
-Generations 200 501 500
-CrossOverFactor 0.7 0.91 0.3
+Population 204 504 100
+Generations 200 501 100
+CrossOverFactor 0.7 0.91 0.1
 TournamentSize 2
-MutationRate 0.1 0.41 0.4
+MutationRate 0.1 0.41 0.1
 ElitismFactor 1
 DecisionTree max_depth=5

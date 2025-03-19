@@ -37,6 +37,12 @@ def main():
     diretorio = Diretorio(DIRETORIO_PATH)
     diretorio.create_folder(EXPERIMENTO_PATH)
 
+    # parte do sistema de backup.
+    
+
+    
+    
+    
     # Leitura dos arquivos
     arquivo = Arquivo()
     linhas_arquivo = arquivo.le_arquivo_teste()
@@ -51,17 +57,18 @@ def main():
     mt.setup_creator()
         
     # Preparando os elementos para entrar no teste
-    seed = linhas_arquivo[1].strip("\n").split(" ")
+    backup = linhas_arquivo[1].strip("\n").split(" ")
+    seed = linhas_arquivo[2].strip("\n").split(" ")
     seed.pop(0)
-    Population = linhas_arquivo[2].strip("\n").split(" ")
-    Generations = linhas_arquivo[3].strip("\n").split(" ")
-    CrossOverFactor = linhas_arquivo[4].strip("\n").split(" ")
-    TournamentSize = linhas_arquivo[5].strip("\n").split(" ")
+    Population = linhas_arquivo[3].strip("\n").split(" ")
+    Generations = linhas_arquivo[4].strip("\n").split(" ")
+    CrossOverFactor = linhas_arquivo[5].strip("\n").split(" ")
+    TournamentSize = linhas_arquivo[6].strip("\n").split(" ")
     TournamentSize.pop(0)
-    MutationRate = linhas_arquivo[6].strip("\n").split(" ")
-    ElitismFactor = linhas_arquivo[7].strip("\n").split(" ")
+    MutationRate = linhas_arquivo[7].strip("\n").split(" ")
+    ElitismFactor = linhas_arquivo[8].strip("\n").split(" ")
     ElitismFactor.pop(0)
-    algoritmo_Ml = linhas_arquivo[8].strip("\n").split(" ")
+    algoritmo_Ml = linhas_arquivo[9].strip("\n").split(" ")
     population_min = Population[1].strip()
     population_max = Population[2].strip()
     population_ite = Population[3].strip()
@@ -99,7 +106,25 @@ def main():
                             numero_experimento = numero_experimento+1
         with open("numero_experimento.txt", 'w') as file:
             file.write(str(numero_experimento))
-    contador = 0
+            
+    # parte que decide se irá começar a partir do ponto de parada do BACKUP, ou se começa uma nova.
+    if int(backup[0]) == 0:
+        conteudo = Arquivo.le_arquivo_txt(backup[1])
+        conteudo = conteudo.split("\n")
+        i = conteudo[0].split(":")
+        i = float(i[1])
+        j = conteudo[1].split(":")
+        j = float(j[1])
+        k = conteudo[2].split(":")
+        k = float(k[1])
+        l = conteudo[3].split(":")
+        l = float(l[1])
+        m = conteudo[4].split(":")
+        m = float(m[1])
+        contador = conteudo[5].split(":")
+        contador = float(contador[1]) 
+    else:
+        contador = 0
     # For onde os testes irão acontecer, dentro dele acontecerá a criação das pastas e a escrita dos testes.
     for i in seed:
         CLASSIFIER_FILE_NAME = i + ".csv"
@@ -109,6 +134,11 @@ def main():
             for k in np.arange(int(generations_min), int(generation_max), int(generation_ite)):
                 for l in np.arange(float(crossover_min), float(crossover_max), float(crossover_ite)):
                     for m in np.arange(float(mutation_min), float(mutation_max), float(mutation_ite)):
+                        
+                        # Ideia futura de Backup
+                        parametros = f"i:{i}\nj:{j}\nk:{k}\nl:{l}\nm:{m}\ncontador:{contador}"
+                        Arquivo.escreve_arquivo_backup(backup[1], parametros)
+                            
                         l = round(l,3)
                         m = round(m,3)
                         random.seed(i)

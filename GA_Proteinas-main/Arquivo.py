@@ -42,6 +42,17 @@ class Arquivo:
         # pega o nome dos atributos.
         self.atributos = self.dataset.columns.to_list()
 
+    def le_arquivo_txt(nomeArquivo):
+        with open(nomeArquivo, mode='r')as f:
+            arquivo = f.read()
+            f.close()
+        return arquivo
+    
+    def escreve_arquivo_backup(nome_arquivo, linha):
+        with open(nome_arquivo, mode='w') as f:
+            f.write(linha)
+            f.close()
+
     def retorna_nome_atributos(self):
         return self.atributos
     
