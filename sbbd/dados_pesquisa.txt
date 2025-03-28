@@ -1,0 +1,94 @@
+Contagens ordenadas das colunas (decrescente):
+Coluna 16: 261
+Coluna 29: 259
+Coluna 12: 238
+Coluna 21: 236
+Coluna 27: 229
+Coluna 25: 228
+Coluna 22: 227
+Coluna 38: 227
+Coluna 39: 225
+Coluna 15: 221
+Coluna 20: 219
+Coluna 6: 218
+Coluna 33: 216
+Coluna 19: 212
+Coluna 7: 211
+Coluna 11: 207
+Coluna 17: 200
+Coluna 37: 197
+Coluna 35: 191
+Coluna 13: 189
+Coluna 24: 188
+Coluna 28: 188
+Coluna 34: 187
+Coluna 36: 185
+Coluna 30: 182
+Coluna 9: 175
+Coluna 10: 174
+Coluna 1: 171
+Coluna 5: 169
+Coluna 14: 168
+Coluna 8: 166
+Coluna 18: 165
+Coluna 32: 165
+Coluna 0: 149
+Coluna 31: 147
+Coluna 23: 143
+Coluna 2: 124
+Coluna 3: 121
+Coluna 4: 121
+Coluna 26: 115
+Quantidade de atributos: 1, F1_score: 0.6292918357198856
+Quantidade de atributos: 2, F1_score: 0.6292918357198856
+Quantidade de atributos: 3, F1_score: 0.6283685751021799
+Quantidade de atributos: 4, F1_score: 0.6292309495937909
+Quantidade de atributos: 5, F1_score: 0.6216573912298767
+Quantidade de atributos: 6, F1_score: 0.6724077941492335
+Quantidade de atributos: 7, F1_score: 0.6716905038114762
+Quantidade de atributos: 8, F1_score: 0.6712259782642367
+Quantidade de atributos: 9, F1_score: 0.6878132530716294
+Quantidade de atributos: 10, F1_score: 0.7254939392668864
+Quantidade de atributos: 11, F1_score: 0.7261761676539917
+Quantidade de atributos: 12, F1_score: 0.7252313271101738
+Quantidade de atributos: 13, F1_score: 0.7249428075279198
+Quantidade de atributos: 14, F1_score: 0.7230666973240834
+Quantidade de atributos: 15, F1_score: 0.7257913567895524
+Quantidade de atributos: 16, F1_score: 0.7250677416017653
+Quantidade de atributos: 17, F1_score: 0.8071341232735785
+Quantidade de atributos: 18, F1_score: 0.8066305881917616
+Quantidade de atributos: 19, F1_score: 0.8068774341044188
+Quantidade de atributos: 20, F1_score: 0.8066305881917616
+Quantidade de atributos: 21, F1_score: 0.8066303483477194
+Quantidade de atributos: 22, F1_score: 0.8065076548371554
+Quantidade de atributos: 23, F1_score: 0.8067663074194629
+Quantidade de atributos: 24, F1_score: 0.8064178841354588
+Quantidade de atributos: 25, F1_score: 0.8062923164454743
+Quantidade de atributos: 26, F1_score: 0.8058183188206668
+Quantidade de atributos: 27, F1_score: 0.8059322255138243
+Quantidade de atributos: 28, F1_score: 0.8067888361321088
+Quantidade de atributos: 29, F1_score: 0.8067888361321088
+Quantidade de atributos: 30, F1_score: 0.8067835049502955
+Quantidade de atributos: 31, F1_score: 0.8066619031798389
+Quantidade de atributos: 32, F1_score: 0.8063253461180263
+Quantidade de atributos: 33, F1_score: 0.8065725155784674
+Quantidade de atributos: 34, F1_score: 0.8064509138080108
+Quantidade de atributos: 35, F1_score: 0.8067909954391549
+Quantidade de atributos: 36, F1_score: 0.8067909954391549
+Quantidade de atributos: 37, F1_score: 0.8078915749817135
+Quantidade de atributos: 38, F1_score: 0.8078937943742754
+Quantidade de atributos: 39, F1_score: 0.8080178375480436
+Quantidade de atributos: 27, F1_score: 0.8059322255138243
+Quantidade de atributos: 28, F1_score: 0.8067888361321088
+Quantidade de atributos: 29, F1_score: 0.8067888361321088
+Quantidade de atributos: 30, F1_score: 0.8067835049502955
+Quantidade de atributos: 31, F1_score: 0.8066619031798389
+Quantidade de atributos: 32, F1_score: 0.8063253461180263
+Quantidade de atributos: 33, F1_score: 0.8065725155784674
+Quantidade de atributos: 34, F1_score: 0.8064509138080108
+Quantidade de atributos: 35, F1_score: 0.8067909954391549
+Quantidade de atributos: 36, F1_score: 0.8067909954391549
+Quantidade de atributos: 37, F1_score: 0.8078915749817135
+Quantidade de atributos: 38, F1_score: 0.8078937943742754
+Quantidade de atributos: 39, F1_score: 0.8080178375480436
+Quantidade de atributos: 40, F1_score: 0.8075199315779411

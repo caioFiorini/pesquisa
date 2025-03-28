@@ -46,7 +46,7 @@ class MultiObjectiveGeneticAlgorithm:
         self.prev_pareto = []
         self.no_change_count = 0
         self.stop_threshold = 0.1  # Limiar para considerar a convergência
-        self.patience = 2 
+        self.patience = 10
 
     def remove_individuals_with_zero_fitness_and_adjust_population(self, population: list, original_population_size: int):
         """Remove indivíduos com fitness igual a zero e ajusta a população."""
