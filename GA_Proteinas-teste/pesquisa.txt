@@ -1,0 +1,153 @@
+Termos para eu não esquecer:
+-Em um problema de regressão, o target pode ser uma variável contínua, como o preço de uma casa. Em um problema de classificação, o target seria a classe que estamos tentando prever, como identificar se um e-mail é spam ou não.
+
+- Então, em resumo, o “target” é o resultado que seu modelo de aprendizado de máquina está tentando prever com base nas features (características) do seu conjunto de dados.
+
+
+Arquivo:
+- arquivo() -> recebe o diretório e pega o arquivo.
+
+- dataSet() -> retorna o dataset.
+
+- classes() -> retorna as classes do dataset.
+
+Arquivo AG:
+- _init_() -> retorna um objeto da Classe MultiObjectiveGeneticAlgorithm()
+- count_individuals_relative_to_parent_average() -> Quantos indivíduos na população atual são piores ou melhores em relação à média da aptidão de seus pais.
+
+- get_duplicate_individuals_count() -> Returns the count of duplicate individuals.
+
+Arquivo: 
+- KNN() -> retorna um objeto para o algoritm do KNN.
+- SVM() -> retorna um objeto do tipo SVM - lembrando que o svm ele é trocado pelo SVC onde ele é um classificador.
+
+Arquivo Classificador:
+
+_initi_(path, nomeArquivo) -> Recebe o caminho do arquivo e recebe o nome do arquivo
+load_proteina() -> 
+
+
+
+Notas:
+
+1- Em primeiro momento estou comentando as funções de create_KNN_file e create_SVM_file, pois como estou generalizando o problema, tenho em mente que o usuário está entrando com uma base de dados que atendam aos padrões exigidos.
+
+No arquivo MOGAtoolbox.py:
+
+-> temos duas funções get_fitness, onde elas trabalham com um objeto para a classe AlgoritosML que puxa o que algoritmo que o usuário desejar.
+
+-> na linha 138 mode.fitness(algoritmoML), nesse ponto eu mando para a classe Classificador o objeto algoritmoML. Dentro da classe Classificador, temos uma função chamada fitness
+
+-> vamos continuar usando o gridSearch??????????
+
+Planejamento da função fitness:
+
+-> recebe um objeto da classe AlgoritmoML
+-> pode receber um parâmetro para usar gridsearch ou não
+-> abre o arquivo
+-> faz o fit
+-> retorna o fitness
+
+//a princípio acho que isso serve para coletar o fitness
+
+//função load_proteina() -> mudança de nome para load_arquivo() e mudou de local, agora ela está no arquivo que trabalha com o arquivo em específicamente.
+Load proteinas não será uma boa ideia para trabalhar em um caso geral, pelo fato dessa função ela é específica para tratar um certo tipo de problema específico então acho que uma abordagem mais genérica pode ser uma boa ideia para a princípio, devo comentar isso com o Zarate para que a gente possa acertar esses detalhes
+-> tenho que identificar a classe? Posso colocar como requisito para o usuário que ele coloque a coluna com as respostas como class, assim eu posso identificar as respostas e tratar bonitinho dentro do escopo do problema. Uma resolução simples para o problema.
+-> Ou eu posso testar tipo, pegar a quantidade de colunas e fazer colunas-1 para receber separar a última coluna do dataframe
+-> devo proceder como?
+
+
+Nota (06/03):
+
+Criei duas funções:
+    	def load_Arquivo_Nome_Nao_Passa_Por_Parametro(self)
+    	def load_Arquivo_Nome_Passado_Por_Parametro(self, nomeClass)
+
+	Essas duas funções são a ideia de o usuário informar ou não o nome da classe.
+
+
+Nota (12/04)
+
+estaou revendo as funções do MOGAToolbox, onde estou generalizando as funções para torná-las adapatáveis a qualquer problema.
+
+o próximo arquivo a ser modificado provavelmente é o FileManager, que eu irei retirar as funções de dentro dele e levar para o outro arquivo
+chmado arquivo.
+
+Nota (17/04)
+
+No arquivo FileManager tem uma função de CorpoArquivoCSV() dar uma olhada para cria-la no arquivo chamado Arquivo.
+
+Nota (30/04)
+
+pelo que eu entendi como o Bruno tratava várias bases, ele precisa de uma forma para unificá-las, como no nosso software 
+não iremos tratar isso (até então), eu vou considerar que o arquivo da pessoa já está montado da forma que deveria ser.
+
+Nota (07/05)
+
+modificação na classse File Manager, agora ela gera a mesma ideia de arquivo anterior, porém com a nossa base vindo abaixo dela.
+
+na linha 149 do arquivo mainT - tenho que mudar isso
+
+Nota (08/05)
+
+modificação no arquivo mainT.py, a ideia foi retirar o trecho do código pois ele fazia
+uma manipulação na população voltada para o problema específico do Bruno
+
+Nota (09/05)
+
+Arquivo mainT modificando a linha 79 -> buscar entender o que acontece naquele ponto 
+
+se o individuo ele é a representação da quantidade de colunas do nosso dataset, para falar o tamanho do nosso individuo
+podemos simplesmente trabalhar com a ideia de ler-mos o arquivo, pegamos a quantidade de colunas e enviamos para a main, após isso temos um valor 
+definido para o nosso individuo.
+
+SAMPLE_COUNT & INDIVIDUAL_SIZE -> agora são inicializados na main, vindo dos seus respectivos arquivos
+
+já podemos começar os testes de execução (até então quase nenhuma modificação adicional encotrada)
+
+Nota (13/05)
+
+Começando os testes
+
+
+Nota (14/05)
+
+Continuando e resolvendo erros
+
+removendo pequenos resquícios que ficaram (7:54)
+
+mudamça na classe arquivo, vou ter que mudar alguns métodos, por entendimento errado
+
+entendi o erro, o erro se dá por na hora que eu crio uma nova instância, eu crio um novo objeto, ou seja, eu deixo de trabalhar com o que 
+já estava lá;
+
+Nota (15/05)
+
+9:32 O erro está na chamada de função na linha 98
+15:07 Erro ao criar o CSV
+15:21 Entendi o erro, o erro está que ao invés de usar a classe Arquivo, estou usando a classe
+FileManager, sendo que tem tudo criado na classe arquivo, falta só implementar um método lá e 
+está funcionando a parte de criação do arquivo.
+
+Nota (16/05)
+
+pegar os dados conforme a colunas e montar o arquivo csv pulando uma linha
+
+Notav  (28/05)
+
+modificando o arquivo mainTeste.py
+-> colocar para pegar o dado da encotrada
+modificando o arquivo teste.sh
+-> a ideia é adicionar loop, que irá rodar em cima dele para para ir fazendo os experimentos
+-> adicionar mais um termo ao final para poder pegar os experimentos
+modificando o arquivo MOGAToolbox
+-> na função create_file eu estou modificado o criador de melhores individuos 
+
+
+Nota (06/06)
+
+retirar os arquivos de log e colocar na memoria, tentar trabalhar isso em memória para retirar a
+perda de tempo com escrita em memória secundária.
+
+
+0.9879691345653963

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCC Caio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Logo</div>
+        <div class="arquivo">Arquivo
+
+            <div id = "drop-area">
+                Arraste e solte o arquivo CSV aqui ou clique para selecionar.
+                <input type="file" id="file-input" accept=".csv">
+            </div>
+            <p id="file-info"></p>
+        </div>
+        <div class="algoritmo">
+            <label for="algoritmo-select">Escolha um Algoritmo:</label>
+            <select id="algoritmo-select">
+                <option value="">-- Selecione --</option>
+                <option value="decision_tree">Decision Tree</option>
+                <option value="knn">KNN</option>
+            </select>
+        
+            <div id="parametros-container">
+                <!-- Inputs dinâmicos aparecerão aqui -->
+            </div>
+
+            <button id="set-params-btn">Set</button>
+        </div>        
+        <div class="otimizacao">Otimização
+            <label>
+                <input type="checkbox" class="checkbox-opcao" id="opcao1">
+                Clássica
+            </label>
+        
+            <label>
+                <input type="checkbox" class="checkbox-opcao" id="opcao2">
+                Otimizada
+            </label>
+        
+        </div>
+        <div class="grafico">Gráficos</div>
+        <div class="ag">
+            <h2>Algoritmo Genético</h2>
+            <label>Seed</label>
+            <input type="text" class="input_group" placeholder="3">
+            
+            <label>Population</label>
+            <input type="text" class="input_group" placeholder="204">
+            <input type="text" class="input_group" placeholder="504">
+            <input type="text" class="input_group" placeholder="200">
+            
+            <label>Generations</label>
+            <input type="text" class="input_group" placeholder="200">
+            <input type="text" class="input_group" placeholder="501">
+            <input type="text" class="input_group" placeholder="200">
+            
+            <label>CrossOver Factor</label>
+            <input type="text" class="input_group" placeholder="0.7">
+            <input type="text" class="input_group" placeholder="0.91">
+            <input type="text" class="input_group" placeholder="0.2">
+            
+            <label>Tournament Size</label>
+            <input type="text" class="input_group" placeholder="2">
+            
+            <label>Mutation Rate</label>
+            <input type="text" class="input_group" placeholder="0.1">
+            <input type="text" class="input_group" placeholder="0.41">
+            <input type="text" class="input_group" placeholder="0.2">
+            
+            <label>Elitism Factor</label>
+            <input type="text" class="input_group" placeholder="1">
+            
+            <label>Decision Tree</label>
+            <input type="text" class="input_group" placeholder="max_depth=5">
+
+            <button id="button_set_AG" >Set</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

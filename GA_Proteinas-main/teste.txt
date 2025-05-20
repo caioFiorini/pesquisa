@@ -1,6 +1,6 @@
-BaseHipertensao.csv diagnostico_hipertensao
-0 backup_geracao.txt
-seed 2156 548 2 789325 885463215
+dataset_balanceado_final.csv classe
+0backup_geracao.txt
+seed 2156 2 885463215
 Population 204 504 200
 Generations 200 504 200
 CrossOverFactor 0.7 0.91 0.2

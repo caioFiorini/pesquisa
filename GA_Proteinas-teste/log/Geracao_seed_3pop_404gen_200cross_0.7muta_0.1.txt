@@ -1,0 +1,15 @@
+Classificando geracao: 1 Hora: 2025-02-04 09:28:02.780922
+Classificando geracao: 2 Hora: 2025-02-04 09:28:37.079386
+Classificando geracao: 3 Hora: 2025-02-04 09:29:07.367438
+Classificando geracao: 4 Hora: 2025-02-04 09:29:45.714397
+Classificando geracao: 1 Hora: 2025-02-13 11:50:10.901997
+Classificando geracao: 2 Hora: 2025-02-13 11:50:44.918993
+Classificando geracao: 3 Hora: 2025-02-13 11:51:13.805186
+Classificando geracao: 4 Hora: 2025-02-13 11:51:48.649375
+Classificando geracao: 1 Hora: 2025-02-13 14:49:15.419688
+Classificando geracao: 2 Hora: 2025-02-13 14:49:47.543455
+Classificando geracao: 3 Hora: 2025-02-13 14:50:17.951642
+Classificando geracao: 4 Hora: 2025-02-13 14:50:47.278823
+Classificando geração: 1 Hora: 2025-02-19 17:10:02.084756
+Classificando geração: 2 Hora: 2025-02-19 17:10:49.985055
+Classificando geração: 3 Hora: 2025-02-19 17:11:35.374002

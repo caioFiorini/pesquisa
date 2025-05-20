@@ -46,23 +46,23 @@ while(saida != True):
     if (resp == 'n' or resp == 'nao' or resp == 'não'):
         saida = True
 
-with(open('numero_experimento.txt', 'w')) as file:
-    file.write(numero_experimento.__str__())
+# with(open('numero_experimento.txt', 'w')) as file:
+#     file.write(numero_experimento.__str__())
 
-with(open('teste.txt', 'r')) as file:
-    line = file.readlines()
+# with(open('teste.txt', 'r')) as file:
+#     line = file.readlines()
 
-with(open('teste.txt', 'w')) as file:
-    file.write(line[0])
-    file.write(line[1])
-    file.write(f"seed {seed_str}\n")
-    file.write(f"Population {population_str}\n")
-    file.write(f"Generations {geracoes_str}\n")
-    file.write(f"CrossOverFactor {cross_Over_Factor_str}\n")
-    file.write(f"TournamentSize {tournamentSize.__str__()}\n")
-    file.write(f"MutationRate {mutation_rate_str}\n")
-    file.write(f"ElitismFactor {elitismo.__str__()}\n")
-    file.write(line[9])
+# with(open('teste.txt', 'w')) as file:
+#     file.write(line[0])
+#     file.write(line[1])
+#     file.write(f"seed {seed_str}\n")
+#     file.write(f"Population {population_str}\n")
+#     file.write(f"Generations {geracoes_str}\n")
+#     file.write(f"CrossOverFactor {cross_Over_Factor_str}\n")
+#     file.write(f"TournamentSize {tournamentSize.__str__()}\n")
+#     file.write(f"MutationRate {mutation_rate_str}\n")
+#     file.write(f"ElitismFactor {elitismo.__str__()}\n")
+#     file.write(line[9])
 
 print("Se o valor das execuções foi 0, provavelmente é porque o número das iterações\n da popupalação não é divisível por 4;")
 print("Agradecemos por poupar tempo de processamento ;)")

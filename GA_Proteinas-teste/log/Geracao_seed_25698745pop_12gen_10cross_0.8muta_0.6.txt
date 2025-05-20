@@ -1,0 +1,10 @@
+Classificando geracao: 1 Hora: 2024-08-16 17:41:42.011616
+Classificando geracao: 2 Hora: 2024-08-16 17:42:10.823248
+Classificando geracao: 3 Hora: 2024-08-16 17:42:42.005463
+Classificando geracao: 4 Hora: 2024-08-16 17:43:13.033138
+Classificando geracao: 5 Hora: 2024-08-16 17:43:36.340528
+Classificando geracao: 6 Hora: 2024-08-16 17:44:04.688598
+Classificando geracao: 7 Hora: 2024-08-16 17:44:32.982566
+Classificando geracao: 8 Hora: 2024-08-16 17:45:01.397281
+Classificando geracao: 9 Hora: 2024-08-16 17:45:27.102823
+Classificando geracao: 10 Hora: 2024-08-16 17:45:57.774667
