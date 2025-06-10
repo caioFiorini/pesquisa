@@ -1,6 +1,7 @@
 import os
 import time
 import numpy as np
+from mpi4py import MPI
 from Arquivo import Arquivo
 from diretorio import Diretorio
 from MOGAToolbox import MOGAToolbox as mt
