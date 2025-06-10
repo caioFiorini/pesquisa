@@ -94,20 +94,20 @@ class ExperimentExec:
             "output_path": output_path
         }
     
-    def execute_experiment(self, config: ExperimentConfig):
-        random.seed(config.seed)
+    def execute_experiment(self):
+        random.seed(self.experiment_configuration.seed)
         
-        components = self._prepare_experiment_components(config)
+        components = self._prepare_experiment_components()
         
         print("Starting algorithm...")
         ga = MultiObjectiveGeneticAlgorithm(
-            seed=config.seed,
+            seed=self.experiment_configuration.seed,
             population=components["population"],
             toolbox=components["toolbox"],
-            cross_rate=config.cross_rate,
-            mut_rate=config.mut_rate,
-            num_gen=config.num_gen,
-            pop_size=config.pop_size,
+            cross_rate=self.experiment_configuration.cross_rate,
+            mut_rate=self.experiment_configuration.mut_rate,
+            num_gen=self.experiment_configuration.num_gen,
+            pop_size=self.experiment_configuration.pop_size,
             diretorio=components["diretorio"],
             stats=components["stats"],
             hall_of_fame=components["hall_of_fame"],
