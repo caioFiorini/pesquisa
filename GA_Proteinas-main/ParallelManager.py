@@ -127,7 +127,7 @@ class ParallelManager:
             if tag == TAG_TASK:
                 print(f"[Slave {self.rank_parallel}] Executing experiment {task_data.experiment_count}")
                 executor = ExperimentExec(task_data, self.start_time)
-                executor.execute_experiment(task_data)
+                executor.execute_experiment()
                 
                 melhores = self.read_best_individuals("./Experimentos")
                 serialized = self.serialize_individuals(melhores)

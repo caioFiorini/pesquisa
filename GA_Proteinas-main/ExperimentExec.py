@@ -6,7 +6,6 @@ from Arquivo import Arquivo
 from diretorio import Diretorio
 from algoritmos_ML import AlgoritmosML
 from MOGAToolbox import MOGAToolbox as mt
-from ExperimentConfig import ExperimentConfig
 from algoritmo_Genetico import Algoritmo_Genetico
 from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
 
