@@ -25,7 +25,7 @@ class ExperimentsGen:
         classifier_name,
         ml_model_params,
         name_test_file,
-        name_class_test_file
+        class_name_test_file
     ):
         """
         Inicializa com as listas ou ranges de parâmetros a serem combinados.
@@ -42,7 +42,7 @@ class ExperimentsGen:
         self.classifier_name = classifier_name
         self.ml_model_params = ml_model_params
         self.name_test_file = name_test_file,
-        self.name_class_test_file = name_class_test_file
+        self.class_name_test_file = class_name_test_file
         
     def generate_all_experiments(self, backup) -> list:
         params_extracter = ParamsExtracter()
@@ -139,7 +139,7 @@ class ExperimentsGen:
                                                                 CLASSIFIER_PATH,
                                                                 self.tournament_size,
                                                                 self.name_test_file,
-                                                                self.name_class_test_file,
+                                                                self.class_name_test_file,
                                                                 self.classifier_name,
                                                                 self.ml_model_params,
                                                                 DIRETORIO_PATH

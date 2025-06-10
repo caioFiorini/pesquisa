@@ -33,12 +33,9 @@ class ExperimentExec:
         diretorio.create_folder_in_folder(path)
         output_path = diretorio.constroi_caminho(diretorio.get_path(), path)
 
-        # Setup arquivo (dados)
-        # add name_test_file and substitute data_file_name
-        # add name_class_test_file and subtitute classifier_name
         arquivo = Arquivo()
-        arquivo.le_arquivo(self.experiment_configuration.data_file_name)
-        arquivo.set_nome_classe_arquivo_teste(self.experiment_configuration.classifier_name)
+        arquivo.le_arquivo(self.experiment_configuration.name_test_file)
+        arquivo.set_nome_classe_arquivo_teste(self.experiment_configuration.class_name_test_file)
 
         # Setup ML
         mt.setup_creator()

@@ -15,7 +15,7 @@ class ExperimentConfig:
     classifier_path: str
     tournament_size: int
     name_test_file: str
-    name_class_test_file: str
+    class_name_test_file: str
     # Need info for ML model and data files
     classifier_name: str
     ml_model_params: list # Or dict
