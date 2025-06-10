@@ -49,7 +49,7 @@ class ParallelManager:
         experiment_evaluator.exec_final_ranking()
     
 
-    def read_best_individuals(experiments_folder):
+    def read_best_individuals(self, experiments_folder):
         """
         Busca automaticamente o primeiro arquivo contendo 'melhores' no nome dentro da experiments_folder,
         lê os indivíduos e os reconstrói com genótipo e fitness.
@@ -79,7 +79,7 @@ class ParallelManager:
         print("[WARN] Nenhum arquivo com 'melhores' encontrado em:", experiments_folder)
         return []
 
-    def serialize_individuals(individuals):
+    def serialize_individuals(self, individuals):
         serialized = []
         for ind in individuals:
             serialized.append({
@@ -88,7 +88,7 @@ class ParallelManager:
             })
         return serialized
     
-    def deserialize_individuals(serialized_individuals):
+    def deserialize_individuals(self, serialized_individuals):
         reconstructed = []
         for data in serialized_individuals:
             ind = creator.Individual(data["genotype"])
