@@ -109,6 +109,7 @@ class ExperimentExec:
             population_size=self.experiment_configuration.pop_size,
             diretorio=components["diretorio"],
             stats=components["stats"],
+            hall_of_fame=components["hall_of_fame"],
             FILE_NAME=components["file_name"],
         )
 
@@ -119,6 +120,7 @@ class ExperimentExec:
         out_path = components["diretorio"].constroi_caminho(
             components["diretorio"].get_path(), melhores_path
         )
+        print("returned hall of fame: ", components["hall_of_fame"])
         with open(out_path, "w") as best_individuals:
             for top_individual in components["hall_of_fame"][1:]:
                 best_individuals.write(str(top_individual) + str(top_individual.fitness.values) + "\n")

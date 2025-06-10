@@ -10,6 +10,9 @@ from ExperimentExec import ExperimentExec
 TAG_TASK = 1  # A mensagem contém uma tarefa
 TAG_RESULT = 2 # A mensagem contém um resultado
 TAG_STOP = 0   # Não há mais tarefas (sinal de parada)
+
+DIRETORIO_PATH = os.path.abspath(".outputs")
+EXPERIMENTO_PATH = os.path.abspath("./Experimentos")
     
 class ParallelManager:    
     def __init__(
@@ -178,6 +181,7 @@ class ParallelManager:
             serialized_results = self.comm_parallel.recv(source=MPI.ANY_SOURCE, tag=TAG_RESULT, status=status)
             worker_rank = status.Get_source() # Descobre qual escravo enviou
             print(f"Mestre: Recebeu resultado da tarefa {serialized_results['task_id']} do escravo {worker_rank}")
+            print(f"\nO conteúdo retornado foi: ", serialized_results["result"])
             best_individuals = self.deserialize_individuals(serialized_results["result"])
             task_id = serialized_results["task_id"]
             experiment_config = next(exp for exp in self.experiments if exp.experiment_count == task_id)
