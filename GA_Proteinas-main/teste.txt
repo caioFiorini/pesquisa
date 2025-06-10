@@ -1,5 +1,5 @@
 dataset_balanceado_final.csv classe
-0backup_geracao.txt
+1 backup_geracao.txt
 seed 2156 2 885463215
 Population 204 504 200
 Generations 200 504 200
