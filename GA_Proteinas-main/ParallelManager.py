@@ -1,5 +1,5 @@
-import re
 import os
+import re
 from mpi4py import MPI
 from deap import creator
 from ExperimentEval import ExperimentEval
@@ -57,27 +57,30 @@ class ParallelManager:
         Busca automaticamente o primeiro arquivo contendo 'melhores' no nome dentro da experiments_folder,
         lê os indivíduos e os reconstrói com genótipo e fitness.
         """
+        print(f"[DEBUG][Rank {self.rank_parallel}] Pasta atual: {os.getcwd()}")
         padrao = r"Individual\('i',\s*\[(.*?)\]\)\((.*?)\)"
         individuos = []
 
-        # Busca arquivo com "melhores" no nome
-        for nome_arquivo in os.listdir(experiments_folder):
-            if "melhores" in nome_arquivo.lower() and nome_arquivo.endswith(".txt"):
-                caminho_arquivo = os.path.join(experiments_folder, nome_arquivo)
+        for subpasta in os.listdir(experiments_folder):
+            caminho_subpasta = os.path.join(experiments_folder, subpasta)
+            if os.path.isdir(caminho_subpasta):
+                for nome_arquivo in os.listdir(caminho_subpasta):
+                    if "melhores" in nome_arquivo.lower() and nome_arquivo.endswith(".txt"):
+                        caminho_arquivo = os.path.join(caminho_subpasta, nome_arquivo)
 
-                with open(caminho_arquivo, 'r') as f:
-                    for linha in f:
-                        match = re.search(padrao, linha)
-                        if match:
-                            bits = list(map(int, match.group(1).split(',')))
-                            fitness = tuple(map(float, match.group(2).split(',')))
+                        with open(caminho_arquivo, 'r') as f:
+                            for linha in f:
+                                match = re.search(padrao, linha)
+                                if match:
+                                    bits = list(map(int, match.group(1).split(',')))
+                                    fitness = tuple(map(float, match.group(2).split(',')))
 
-                            ind = creator.Individual(bits)
-                            ind.fitness.values = fitness
-                            individuos.append(ind)
+                                    ind = creator.Individual(bits)
+                                    ind.fitness.values = fitness
+                                    individuos.append(ind)
 
-                print(f"[INFO] Leu {len(individuos)} indivíduos de '{nome_arquivo}'")
-                return individuos  # Para o primeiro arquivo encontrado
+                        print(f"[INFO] Leu {len(individuos)} indivíduos de '{nome_arquivo}'")
+                        return individuos  # Retorna após encontrar o primeiro arquivo válido
 
         print("[WARN] Nenhum arquivo com 'melhores' encontrado em:", experiments_folder)
         return []
