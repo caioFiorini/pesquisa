@@ -1,6 +1,6 @@
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
 from sklearn import tree
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
 
 class AlgoritmosML:
 

@@ -1,15 +1,12 @@
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-from sklearn.model_selection import cross_val_score
-import sys
-import numpy as np
-from sklearn.metrics import make_scorer, accuracy_score, f1_score, recall_score, precision_score, confusion_matrix, classification_report
-from sklearn.base import clone
-from sklearn.model_selection import KFold
-import pickle
 import os
+import sys
+import pickle
+import numpy as np
+import pandas as pd
+from sklearn.base import clone
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, f1_score, make_scorer, recall_score, accuracy_score, precision_score, confusion_matrix, classification_report
 
 # Função para realizar cross-validation e avaliar o modelo
 def evaluate_model_with_cross_validation(model, X_rus, y_rus, cv=10, scoring='accuracy'):    

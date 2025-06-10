@@ -1,10 +1,9 @@
 import sys
-import numpy as np
-from sklearn.metrics import make_scorer, accuracy_score, f1_score, recall_score, precision_score, confusion_matrix, classification_report
-from sklearn.base import clone
-from sklearn.base import clone
-from sklearn.model_selection import KFold, cross_val_score
 import pickle
+import numpy as np
+from sklearn.base import clone, clone
+from sklearn.model_selection import KFold, cross_val_score
+from sklearn.metrics import f1_score, make_scorer, recall_score, accuracy_score, precision_score, confusion_matrix, classification_report
 
 
 class ClassificadorT:

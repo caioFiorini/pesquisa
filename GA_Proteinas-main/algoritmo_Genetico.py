@@ -1,8 +1,4 @@
 from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
-from MOGAToolbox import MOGAToolbox
-from Arquivo import Arquivo 
-from deap import base, creator, tools
-import array
 
 class Algoritmo_Genetico:
     def __init__(self, 

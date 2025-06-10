@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Simulando dados para o gráfico
 generations = np.arange(1, 604)

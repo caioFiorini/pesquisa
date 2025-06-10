@@ -1,13 +1,9 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-from sklearn import datasets, svm
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import cross_val_score
 import csv
 import numpy as np
-from os.path import dirname
-from os.path import join
+from os.path import dirname, join
+from sklearn import svm, datasets
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV, cross_val_score
 
 class Bunch(dict):
     """Container object for datasets

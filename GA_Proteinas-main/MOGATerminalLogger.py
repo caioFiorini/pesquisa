@@ -1,3 +1,4 @@
+
 class MOGATerminalLogger:
     @staticmethod
     def print_generation_results(generation_count: int, population_size: int, record, diretorio, FILE_NAME):

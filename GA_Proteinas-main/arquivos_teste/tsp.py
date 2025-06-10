@@ -10,18 +10,15 @@
 #    You should have received a copy of the GNU Lesser General Public
 #    License along with DEAP. If not, see <http://www.gnu.org/licenses/>.
 
-import array
-import random
-import json
-from time import gmtime, strftime
-import datetime
-import pickle
-import numpy
 import sys
-from deap import algorithms
-from deap import base
-from deap import creator
-from deap import tools
+import json
+import array
+import numpy
+import pickle
+import random
+import datetime
+from time import gmtime, strftime
+from deap import algorithms, base, creator, tools
 
 #import matplotlib.pyplot as plt
 #import networkx

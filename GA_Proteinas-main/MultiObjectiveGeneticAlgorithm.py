@@ -1,16 +1,11 @@
-# Standard Library Imports
-import datetime
 import random
-from deap.tools.emo import sortNondominated
+import datetime
 import numpy as np
-from scipy.spatial import distance
-
-# Third-party Library Imports
 from deap import tools
-
-# Local Imports
-from MOGATerminalLogger import MOGATerminalLogger
+from scipy.spatial import distance
 from classificadorT import ClassificadorT
+from deap.tools.emo import sortNondominated
+from MOGATerminalLogger import MOGATerminalLogger
 
 class MultiObjectiveGeneticAlgorithm:
 

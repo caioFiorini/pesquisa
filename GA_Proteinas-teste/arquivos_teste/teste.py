@@ -1,3 +1,4 @@
+
 class MyClass:
     def my_method(self, param1, param2=10, param3="default"):
         print("param1:", param1)

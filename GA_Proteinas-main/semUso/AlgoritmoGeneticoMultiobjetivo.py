@@ -1,21 +1,13 @@
-import random
-import array
-import datetime
-import numpy
-import sys
-import csv
 import os
-import numpy
+import csv
+import sys
 import copy
-# import arrow
-
-from deap import algorithms
-from deap import base
-from deap import creator
-from deap import tools
-#from deap import dtm
-
+import array
+import random
+import datetime
+import numpy, numpy
 from semUso.Classificador import Classificador
+from deap import algorithms, base, creator, tools
 # from IOArquivo import LeituraArquivo
 
 NUMERO_AMOSTRAS = 490

@@ -1,11 +1,11 @@
-import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, f1_score, recall_score, precision_score, make_scorer
-from sklearn.base import clone
-from sklearn.model_selection import KFold, cross_val_score
-from sklearn import tree
-import matplotlib.pyplot as plt
 import pickle
+import pandas as pd
+from sklearn import tree
+from sklearn.base import clone
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import KFold, cross_val_score
+from sklearn.metrics import f1_score, make_scorer, recall_score, accuracy_score, precision_score, confusion_matrix, classification_report
 
 class valida_experimento:
     

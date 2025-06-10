@@ -1,8 +1,8 @@
 import os
 import re
-from sklearn.model_selection import cross_val_score
-from sklearn.tree import DecisionTreeClassifier
 from Arquivo import Arquivo
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score
 
 
 class Encontra_melhor:

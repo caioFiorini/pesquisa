@@ -1,15 +1,10 @@
-# Standard Library Imports
-import array
-import random
 import os
-
-# Third-party Library Imports
+import array
 import numpy
-from deap import base, creator, tools
-
-# Local Imports
-from classificadorT import ClassificadorT
+import random
+from deap import base, tools, creator
 from algoritmos_ML import AlgoritmosML
+from classificadorT import ClassificadorT
 
 
 class MOGAToolbox:

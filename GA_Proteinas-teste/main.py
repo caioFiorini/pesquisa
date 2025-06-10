@@ -1,24 +1,16 @@
-# Standard Library Imports
-import array
-import csv
 import os
+import time
 import random
 import numpy as np
-import time
-import sys
-
-# Third-party Library Imports
-from deap import base, creator, tools
-
-# Local Imports
-from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
-from MOGAToolbox import MOGAToolbox as mt
 from Arquivo import Arquivo
-from algoritmo_Genetico import Algoritmo_Genetico
-from algoritmos_ML import AlgoritmosML
 from diretorio import Diretorio
 from rankeamento import Rankeamento
+from deap import tools
 from valida import valida_experimento
+from algoritmos_ML import AlgoritmosML
+from MOGAToolbox import MOGAToolbox as mt
+from algoritmo_Genetico import Algoritmo_Genetico
+from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
 
 # ====== MARK: Defining paths and file names ======
 CLASSIFIER_PATH = os.path.abspath("Individuos")
@@ -196,7 +188,6 @@ def main():
     validacao = valida_experimento()
     dataset = arquivo.retorna_dataset()
     validacao.valida_sem_salvar_modelo(dataset, nome_classe_arquivo_teste, colunas_tratadas)
-
 
 if __name__ == "__main__":
     main()

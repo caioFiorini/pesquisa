@@ -1,6 +1,6 @@
 import weka.core.jvm as jvm
-from weka.core.converters import Loader
 from weka.classifiers import Classifier
+from weka.core.converters import Loader
 
 jvm.start()
 help(jvm.start)

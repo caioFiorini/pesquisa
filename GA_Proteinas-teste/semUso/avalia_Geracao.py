@@ -1,12 +1,6 @@
-# ideia do algoritmo
-# ler os arquivos melhores 
-# armazenar em alguma estrutura de dados
-# calcular a média dos experimentos e guardar em um vetor
-# comparar todos os experimentos
-# printar o que for melhor
-import pandas as pd
-import sys 
 import os
+import sys
+import pandas as pd
 from Arquivo import Arquivo
 
 DIRETORIO = ".\Resultado_experimentos"

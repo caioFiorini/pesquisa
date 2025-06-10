@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import StratifiedKFold, cross_val_score
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.metrics import f1_score, recall_score, accuracy_score, precision_score, confusion_matrix
 
 # Carregar o dataset
 dataset = pd.read_csv("AVCBalanceado-AG.csv")

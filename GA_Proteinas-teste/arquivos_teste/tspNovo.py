@@ -1,26 +1,11 @@
-#    This file is part of DEAP.
-#    DEAP is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Lesser General Public License as
-#    published by the Free Software Foundation, either version 3 of
-#    the License, or (at your option) any later version.
-#    DEAP is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#    GNU Lesser General Public License for more details.
-#    You should have received a copy of the GNU Lesser General Public
-#    License along with DEAP. If not, see <http://www.gnu.org/licenses/>.
-import array
-import random
-import json
-from time import gmtime, strftime
-import datetime
 import sys
+import json
+import array
 import numpy
-
-from deap import algorithms
-from deap import base
-from deap import creator
-from deap import tools
+import random
+import datetime
+from time import gmtime, strftime
+from deap import algorithms, base, creator, tools
 
 #import matplotlib.pyplot as plt
 #import networkx

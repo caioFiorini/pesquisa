@@ -1,9 +1,9 @@
-import csv
-import glob
 import os
-import matplotlib.pyplot as plt
-import numpy as np
+import csv
 import sys
+import glob
+import numpy as np
+import matplotlib.pyplot as plt
 
 path = sys.argv[1]
 # print(path)

@@ -1,22 +1,17 @@
-# Standard Library Imports
-import array
-import csv
 import os
-import random
-import time
+import csv
 import sys
-
-# Third-party Library Imports
+import time
+import array
 import numpy
-from deap import base, creator, tools
-
-# Local Imports
-from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
-from MOGAToolbox import MOGAToolbox as mt
-from FileManager import FileManager
+import random
 from Arquivo import Arquivo
-from algoritmo_Genetico import Algoritmo_Genetico
+from FileManager import FileManager
+from deap import base, tools, creator
 from algoritmos_ML import AlgoritmosML
+from MOGAToolbox import MOGAToolbox as mt
+from algoritmo_Genetico import Algoritmo_Genetico
+from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
 
 # ====== MARK: Defining paths and file names ======
 CLASSIFIER_PATH = "Individuos/"

@@ -1,11 +1,8 @@
 import numpy as np
-from sklearn.model_selection import StratifiedKFold
 import matplotlib.pyplot as plt
-from sklearn.metrics import make_scorer, accuracy_score, f1_score, recall_score, precision_score, confusion_matrix, classification_report
-from sklearn.metrics import ConfusionMatrixDisplay
-from sklearn.base import clone
-from sklearn.base import clone
-from sklearn.model_selection import KFold
+from sklearn.base import clone, clone
+from sklearn.model_selection import StratifiedKFold, KFold
+from sklearn.metrics import f1_score, make_scorer, recall_score, accuracy_score, precision_score, confusion_matrix, classification_report, ConfusionMatrixDisplay
 
 def evaluate_model_with_cross_validation(model, X_rus, y_rus, cv=10, metric='accuracy'):
     

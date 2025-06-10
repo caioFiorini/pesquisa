@@ -1,13 +1,8 @@
-from algoritmos_ML import AlgoritmosML
-import pandas as pd
 import os
-import os.path as dirname
-import os.path as join
-import numpy as np
 import sys
+import pandas as pd
 # Pega o diretório onde o arquivo Classificador está alocado.
 sys.path.insert(0, '../codigos_AG')
-
 
 class Arquivo:
 
