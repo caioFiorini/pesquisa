@@ -39,7 +39,7 @@ def main():
 
     # Configura o arquivo e nome da classe
     arquivo.le_arquivo(name_test_file)
-    arquivo.set_class_name_test_file(class_name_test_file)
+    arquivo.set_nome_classe_arquivo_teste(class_name_test_file)
 
     # Define constantes relacionadas ao conjunto de dados
     SAMPLE_COUNT = arquivo.quantidade_linhas_colunas(0)
