@@ -125,7 +125,7 @@ class ParallelManager:
             tag = status.Get_tag()
             
             if tag == TAG_TASK:
-                print(f"[Slave {self.rank}] Executing experiment {task_data.experiment_count}")
+                print(f"[Slave {self.rank_parallel}] Executing experiment {task_data.experiment_count}")
                 executor = ExperimentExec(task_data, self.start_time)
                 executor.execute_experiment(task_data)
                 
