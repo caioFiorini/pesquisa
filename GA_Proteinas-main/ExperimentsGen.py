@@ -1,7 +1,7 @@
 import os
 from Arquivo import Arquivo
 from ExperimentConfig import ExperimentConfig
-from ParamsExtracter import ParamsExtracter
+from utils.ParamsExtracter import ParamsExtracter
 
 CLASSIFIER_PATH = os.path.abspath("Individuos")
 DIRETORIO_PATH = os.path.abspath(".outputs")

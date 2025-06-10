@@ -6,7 +6,7 @@ from diretorio import Diretorio
 from MOGAToolbox import MOGAToolbox as mt
 from ExperimentsGen import ExperimentsGen
 from ParallelManager import ParallelManager
-from ParamsExtracter import ParamsExtracter
+from utils.ParamsExtracter import ParamsExtracter
 
 # ====== MARK: Defining paths and file names ======
 DIRETORIO_PATH = os.path.abspath(".outputs")

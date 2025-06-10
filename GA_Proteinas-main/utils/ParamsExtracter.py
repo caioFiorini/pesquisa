@@ -1,6 +1,3 @@
-
-from Arquivo import Arquivo
-
 class ParamsExtracter:
     
     def extract_param_values(param_list):
