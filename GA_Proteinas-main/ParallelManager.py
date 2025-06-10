@@ -54,11 +54,11 @@ class ParallelManager:
 
     def read_best_individuals(self, experiments_folder):
         """
-        Busca automaticamente o primeiro arquivo contendo 'melhores' no nome dentro da experiments_folder,
-        lê os indivíduos e os reconstrói com genótipo e fitness.
+        Lê os arquivos que contenham 'melhores' no nome dentro da pasta experiments_folder,
+        reconstrói os indivíduos com genótipo e fitness.
         """
         print(f"[DEBUG][Rank {self.rank_parallel}] Pasta atual: {os.getcwd()}")
-        padrao = r"Individual\('i',\s*\[(.*?)\]\)\((.*?)\)"
+        padrao = r"Individual\('i',\s*\[(.*?)\]\)\(np\.float64\((.*?)\),\s*(.*?)\)"
         individuos = []
 
         for subpasta in os.listdir(experiments_folder):
@@ -73,14 +73,16 @@ class ParallelManager:
                                 match = re.search(padrao, linha)
                                 if match:
                                     bits = list(map(int, match.group(1).split(',')))
-                                    fitness = tuple(map(float, match.group(2).split(',')))
+                                    fit1 = float(match.group(2))
+                                    fit2 = float(match.group(3))
+                                    fitness = (fit1, fit2)
 
                                     ind = creator.Individual(bits)
                                     ind.fitness.values = fitness
                                     individuos.append(ind)
 
                         print(f"[INFO] Leu {len(individuos)} indivíduos de '{nome_arquivo}'")
-                        return individuos  # Retorna após encontrar o primeiro arquivo válido
+                        return individuos  # Para o primeiro arquivo encontrado
 
         print("[WARN] Nenhum arquivo com 'melhores' encontrado em:", experiments_folder)
         return []
