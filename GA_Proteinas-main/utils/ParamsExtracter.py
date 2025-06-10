@@ -1,6 +1,6 @@
 class ParamsExtracter:
     
-    def extract_param_values(param_list):
+    def extract_param_values(self, param_list):
         """
         Extrai os valores min, max e ite de uma lista de parâmetros,
         removendo espaços em branco nas bordas.
@@ -21,14 +21,14 @@ class ParamsExtracter:
             param_list[3].strip()
         )
         
-    def parse_line(line, skip_first=False):
+    def parse_line(self, line, skip_first=False):
         """
         Remove o caractere de nova linha, divide por espaço e, se necessário, remove o primeiro elemento.
         """
         parts = line.strip().split()
         return parts[1:] if skip_first else parts
     
-    def extrair_valor(linha, tipo):
+    def extrair_valor(self, linha, tipo):
         return tipo(linha.split(":")[1].strip())
     
     def parse_backup_file(self, caminho):
