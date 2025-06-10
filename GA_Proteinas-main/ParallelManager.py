@@ -121,88 +121,72 @@ class ParallelManager:
 
             
     def slave_parallel_loop(self):
-
         while True:
             status = MPI.Status()
-            task_data = self.comm_parallel.recv(source=0, tag=MPI.ANY_TAG, status=status)
+            task_list = self.comm_parallel.recv(source=0, tag=MPI.ANY_TAG, status=status)
             tag = status.Get_tag()
-            
+
             if tag == TAG_TASK:
-                print(f"[Slave {self.rank_parallel}] Executing experiment {task_data.experiment_count}")
-                executor = ExperimentExec(task_data, self.start_time)
-                executor.execute_experiment()
-                
-                melhores = self.read_best_individuals("./Experimentos")
-                serialized = self.serialize_individuals(melhores)
-                                
-                # Cria um resultado
-                result = {"task_id": task_data.experiment_count, "result": serialized, "worker_rank": self.rank_parallel}
-                print(f"Escravo {self.rank_parallel}: Enviando resultado para tarefa {task_data}: {serialized}")
-                # Envia o resultado para o mestre
-                self.comm_parallel.send(result, dest=0, tag=TAG_RESULT)
+                all_serialized = []
+                for task_data in task_list:
+                    print(f"[Slave {self.rank_parallel}] Executing experiment {task_data.experiment_count}")
+                    executor = ExperimentExec(task_data, self.start_time)
+                    executor.execute_experiment()
+
+                    melhores = self.read_best_individuals("./Experimentos")
+                    serialized = self.serialize_individuals(melhores)
+                    print(f"Escravo {self.rank_parallel}: Enviando resultado para tarefa {task_data}: {serialized}")
+                    all_serialized.append({
+                        "task_id": task_data.experiment_count,
+                        "data": serialized[0] if serialized else {"genotype": [], "fitness": []}
+                    })
+
+                # Envia todos os resultados de uma vez
+                self.comm_parallel.send({"worker_rank": self.rank_parallel, "result": all_serialized}, dest=0, tag=TAG_RESULT)
+
             elif tag == TAG_STOP:
                 print(f"Escravo {self.rank_parallel}: Recebeu sinal de parada. Encerrando.")
                 break
             else:
                 print(f"Escravo {self.rank_parallel}: Recebeu tag inesperada {tag}. Ignorando.")
-            
+
         print(f"Escravo {self.rank_parallel}: Finalizado.")
     
     def master_parallel_loop(self):
         """Função executada pelo processo mestre."""
         num_workers = self.size_parallel - 1
-
-        # 1. Gerar a lista de tarefas
         tasks = self.experiments
         num_tasks = len(tasks)
-        task_index = 0
-        results = []
-        active_workers = 0 # Contador de escravos atualmente trabalhando
+        print(f"[Master] Dividindo {num_tasks} tarefas entre {num_workers} workers")
 
-        print(f"[Master] Enviando {num_tasks} tarefas para {num_workers} workers")
+        # Divisão equilibrada de tarefas entre os escravos
+        task_chunks = [[] for _ in range(num_workers)]
+        for i, task in enumerate(tasks):
+            worker_index = i % num_workers
+            task_chunks[worker_index].append(task)
 
-        # 2. Distribuição inicial de tarefas para todos os escravos disponíveis
-        # Envia uma tarefa para cada escravo (se houver tarefas suficientes)
-        for worker_rank in range(1, min(self.size_parallel, num_tasks + 1)):
-            if task_index < num_tasks:
-                task_to_send = tasks[task_index]
-                print(f"Mestre: Enviando tarefa inicial {task_to_send} para escravo {worker_rank}")
-                self.comm_parallel.send(task_to_send, dest=worker_rank, tag=TAG_TASK)
-                task_index += 1
-                active_workers += 1
-            else:
-                # Caso haja mais escravos que tarefas iniciais
-                pass
+        # Envia todas as tarefas para cada escravo
+        for i, worker_rank in enumerate(range(1, self.size_parallel)):
+            print(f"Mestre: Enviando {len(task_chunks[i])} tarefas para escravo {worker_rank}")
+            self.comm_parallel.send(task_chunks[i], dest=worker_rank, tag=TAG_TASK)
 
-        # 3. Loop principal: receber resultados e enviar novas tarefas
-        while active_workers > 0:
+        # Recebe os resultados de cada escravo
+        for _ in range(num_workers):
             status = MPI.Status()
-            # Mestre espera por um resultado de QUALQUER escravo
             serialized_results = self.comm_parallel.recv(source=MPI.ANY_SOURCE, tag=TAG_RESULT, status=status)
-            worker_rank = status.Get_source() # Descobre qual escravo enviou
-            print(f"Mestre: Recebeu resultado da tarefa {serialized_results['task_id']} do escravo {worker_rank}")
-            print(f"\nO conteúdo retornado foi: ", serialized_results["result"])
-            best_individuals = self.deserialize_individuals(serialized_results["result"])
-            task_id = serialized_results["task_id"]
-            experiment_config = next(exp for exp in self.experiments if exp.experiment_count == task_id)
+            worker_rank = status.Get_source()
+            print(f"Mestre: Recebeu resultado do escravo {worker_rank}")
+            print(f"O conteúdo retornado foi: ", serialized_results["result"])
 
-            self.save_best_individuals(best_individuals, experiment_config)
-            active_workers -= 1 # Escravo terminou uma tarefa
+            for serialized_ind in serialized_results["result"]:
+                best_individuals = self.deserialize_individuals(serialized_ind["data"])
+                experiment_config = next(exp for exp in self.experiments if exp.experiment_count == serialized_ind["task_id"])
+                self.save_best_individuals(best_individuals, experiment_config)
 
-            # Verificar se ainda há tarefas para enviar
-            if task_index < num_tasks:
-                # Enviar a próxima tarefa para o escravo que acabou de ficar livre
-                task_to_send = tasks[task_index]
-                print(f"Mestre: Enviando próxima tarefa {task_to_send} para escravo {worker_rank}")
-                self.comm_parallel.send(task_to_send, dest=worker_rank, tag=TAG_TASK)
-                task_index += 1
-                active_workers += 1 # Escravo começou uma nova tarefa
-            else:
-                # Não há mais tarefas, enviar sinal de parada para este escravo
-                print(f"Mestre: Não há mais tarefas. Enviando sinal de parada para escravo {worker_rank}")
-                self.comm_parallel.send(None, dest=worker_rank, tag=TAG_STOP)
-                
+            # Envia sinal de parada
+            self.comm_parallel.send(None, dest=worker_rank, tag=TAG_STOP)
+    
         print(f"Mestre: Todas as tarefas concluídas.")
-        self.exec_ranking(results)
+        self.exec_ranking()
 
         print("Mestre: Finalizado.")
