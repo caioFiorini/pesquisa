@@ -98,9 +98,9 @@ def main():
     experiments = experiment_generator.generate_all_experiments(backup)
     
     parallel_manager = ParallelManager(
-        comm=comm,
-        size=size,
-        rank=rank,
+        comm_parallel=comm,
+        size_parallel=size,
+        rank_parallel=rank,
         experiments=experiments,
         class_name_test_file=class_name_test_file,
         individual_size=INDIVIDUAL_SIZE,
