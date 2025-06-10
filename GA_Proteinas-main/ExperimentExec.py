@@ -1,3 +1,4 @@
+import os
 import time
 import random
 import numpy as np
@@ -10,6 +11,7 @@ from algoritmo_Genetico import Algoritmo_Genetico
 from MultiObjectiveGeneticAlgorithm import MultiObjectiveGeneticAlgorithm
 
 HALL_OF_FAME_SIZE = 10
+EXPERIMENTO_PATH = os.path.abspath("./Experimentos")
     
 class ExperimentExec:
     def __init__(
@@ -27,6 +29,7 @@ class ExperimentExec:
         # Setup diretório
         diretorio = Diretorio(self.experiment_configuration.output_base_dir)
         path = f"Experimento_{self.experiment_configuration.experiment_count}"
+        diretorio.create_folder(EXPERIMENTO_PATH)
         diretorio.create_folder_in_folder(path)
         output_path = diretorio.constroi_caminho(diretorio.get_path(), path)
 
