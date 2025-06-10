@@ -513,12 +513,13 @@ ELITISMO = int(sys.argv[7])
 # Em termos mais simples, essa linha de código cria uma nova classe de aptidão chamada FitnessMulti que tem dois componentes. 
 # O primeiro componente é positivo e o segundo componente é negativo. A biblioteca Deap irá minimizar o segundo componente 
 # da aptidão, o que significa maximizar o primeiro componente da aptidão.
-creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0))
-
-# array.array -> é usado para criar um arranjo de tipos específicos.
-# no caso o Type code é i, logo ele cria um arranjo de inteiros
-# Ele cria um arranjo com os elementos do fitnes.
-creator.create("Individual", array.array, typecode='i', fitness=creator.FitnessMulti)
+if "FitnessMulti" not in creator.__dict__:
+    creator.create("FitnessMulti", base.Fitness, weights=(1.0, -1.0))
+if "Individual" not in creator.__dict__:
+    # array.array -> é usado para criar um arranjo de tipos específicos.
+    # no caso o Type code é i, logo ele cria um arranjo de inteiros
+    # Ele cria um arranjo com os elementos do fitnes.
+    creator.create("Individual", array.array, typecode='i', fitness=creator.FitnessMulti)
 
 # Attribute generator
 toolbox = base.Toolbox()

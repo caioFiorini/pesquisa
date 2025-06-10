@@ -102,14 +102,13 @@ class ExperimentExec:
         ga = MultiObjectiveGeneticAlgorithm(
             seed=self.experiment_configuration.seed,
             population=components["population"],
-            toolbox=components["toolbox"],
-            cross_rate=self.experiment_configuration.cross_rate,
-            mut_rate=self.experiment_configuration.mut_rate,
-            num_gen=self.experiment_configuration.num_gen,
-            pop_size=self.experiment_configuration.pop_size,
+            evolution_toolbox=components["toolbox"],
+            crossover_probability=self.experiment_configuration.cross_rate,
+            mutation_probability=self.experiment_configuration.mut_rate,
+            generation_count=self.experiment_configuration.num_gen,
+            population_size=self.experiment_configuration.pop_size,
             diretorio=components["diretorio"],
             stats=components["stats"],
-            hall_of_fame=components["hall_of_fame"],
             FILE_NAME=components["file_name"],
         )
 
