@@ -33,11 +33,11 @@ class ParallelManager:
     
     def run(self):
         """Starts the master or slave logic based on the rank."""
-        if self.size < 2:
+        if self.size_parallel < 2:
             print("Erro: Requer pelo menos 2 processos MPI.")
-            self.comm.Abort(1)
+            self.comm_parallel.Abort(1)
 
-        if self.rank == 0:
+        if self.rank_parallel == 0:
             self.master_parallel_loop()
         else:
             self.slave_parallel_loop()
