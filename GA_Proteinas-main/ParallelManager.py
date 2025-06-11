@@ -117,7 +117,7 @@ class ParallelManager:
 
         caminho_final = os.path.join(full_path, file_name_final)
 
-        with open(caminho_final, "w") as f:
+        with open(caminho_final, "w") as f: 
             for ind in individuals:
                 genotype = ind["genotype"]
                 fitness = tuple(ind["fitness"])
