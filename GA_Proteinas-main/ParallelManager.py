@@ -61,28 +61,25 @@ class ParallelManager:
         padrao = r"Individual\('i',\s*\[(.*?)\]\)\(np\.float64\((.*?)\),\s*(.*?)\)"
         individuos = []
 
-        for subpasta in os.listdir(experiments_folder):
-            caminho_subpasta = os.path.join(experiments_folder, subpasta)
-            if os.path.isdir(caminho_subpasta):
-                for nome_arquivo in os.listdir(caminho_subpasta):
-                    if "melhores" in nome_arquivo.lower() and nome_arquivo.endswith(".txt"):
-                        caminho_arquivo = os.path.join(caminho_subpasta, nome_arquivo)
+        for nome_arquivo in os.listdir(experiments_folder):
+            if "melhores" in nome_arquivo.lower() and nome_arquivo.endswith(".txt"):
+                caminho_arquivo = os.path.join(experiments_folder, nome_arquivo)
 
-                        with open(caminho_arquivo, 'r') as f:
-                            for linha in f:
-                                match = re.search(padrao, linha)
-                                if match:
-                                    bits = list(map(int, match.group(1).split(',')))
-                                    fit1 = float(match.group(2))
-                                    fit2 = float(match.group(3))
-                                    fitness = (fit1, fit2)
+                with open(caminho_arquivo, 'r') as f:
+                    for linha in f:
+                        match = re.search(padrao, linha)
+                        if match:
+                            bits = list(map(int, match.group(1).split(',')))
+                            fit1 = float(match.group(2))
+                            fit2 = float(match.group(3))
+                            fitness = (fit1, fit2)
 
-                                    ind = creator.Individual(bits)
-                                    ind.fitness.values = fitness
-                                    individuos.append(ind)
+                            ind = creator.Individual(bits)
+                            ind.fitness.values = fitness
+                            individuos.append(ind)
 
-                        print(f"[INFO] Leu {len(individuos)} indivíduos de '{nome_arquivo}'")
-                        return individuos  # Para o primeiro arquivo encontrado
+                print(f"[INFO] Leu {len(individuos)} indivíduos de '{nome_arquivo}'")
+                return individuos  # Para o primeiro arquivo encontrado
 
         print("[WARN] Nenhum arquivo com 'melhores' encontrado em:", experiments_folder)
         return []
