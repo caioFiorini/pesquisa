@@ -105,7 +105,6 @@ class ParallelManager:
         return reconstructed
     
     def save_best_individuals(self, individuals, experiment_config):
-
         file_name = f"seed_{experiment_config.seed}_pop_{experiment_config.pop_size}_gen_{experiment_config.num_gen}_cross_{experiment_config.cross_rate}_muta_{experiment_config.mut_rate}"
         file_name_final = f"Melhores_{file_name}.txt"
 
@@ -120,11 +119,12 @@ class ParallelManager:
 
         with open(caminho_final, "w") as f:
             for ind in individuals:
-                f.write(str(ind) + str(ind.fitness.values) + "\n")
+                genotype = ind["genotype"]
+                fitness = tuple(ind["fitness"])
+                f.write(f"Individual('i', {genotype})({fitness})\n")
 
         print(f"[Mestre] Arquivo '{file_name_final}' salvo em '{full_path}'")
-
-            
+        
     def slave_parallel_loop(self):
         while True:
             status = MPI.Status()
@@ -137,8 +137,9 @@ class ParallelManager:
                     print(f"[Slave {self.rank_parallel}] Executing experiment {task_data.experiment_count}")
                     executor = ExperimentExec(task_data, self.start_time)
                     executor.execute_experiment()
-
-                    melhores = self.read_best_individuals("./Experimentos")
+                    
+                    experiment_folder_path = os.path.join("./Experimentos", f"Experimento_{task_data.experiment_count}")
+                    melhores = self.read_best_individuals(experiment_folder_path)
                     serialized = self.serialize_individuals(melhores)
                     print(f"Escravo {self.rank_parallel}: Enviando resultado para tarefa {task_data}: {serialized}")
                     all_serialized.append({
@@ -184,7 +185,7 @@ class ParallelManager:
             print(f"O conteúdo retornado foi: ", serialized_results["result"])
 
             for serialized_ind in serialized_results["result"]:
-                best_individuals = self.deserialize_individuals(serialized_ind["data"])
+                best_individuals = self.deserialize_individuals(serialized_ind)
                 experiment_config = next(exp for exp in self.experiments if exp.experiment_count == serialized_ind["task_id"])
                 self.save_best_individuals(best_individuals, experiment_config)
 
