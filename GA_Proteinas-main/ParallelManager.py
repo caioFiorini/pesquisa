@@ -143,7 +143,6 @@ class ParallelManager:
                         "task_id": task_data.experiment_count,
                         "data": serialized[0] if serialized else {"genotype": [], "fitness": []}
                     })
-                    self.comm_parallel.send({"worker_rank": self.rank_parallel, "result": all_serialized}, dest=0, tag=TAG_RESULT)
 
                 # Envia todos os resultados de uma vez
                 self.comm_parallel.send({"worker_rank": self.rank_parallel, "result": all_serialized}, dest=0, tag=TAG_RESULT)
