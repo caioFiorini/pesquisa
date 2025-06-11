@@ -182,7 +182,7 @@ class ParallelManager:
             print(f"O conteúdo retornado foi: ", serialized_results["result"])
 
             for serialized_ind in serialized_results["result"]:
-                best_individuals = self.deserialize_individuals(serialized_ind)
+                best_individuals = self.deserialize_individuals(([serialized_ind["data"]])[0])
                 experiment_config = next(exp for exp in self.experiments if exp.experiment_count == serialized_ind["task_id"])
                 self.save_best_individuals(best_individuals, experiment_config)
 
