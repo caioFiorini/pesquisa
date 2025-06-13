@@ -5,7 +5,6 @@ from deap import creator
 from ExperimentEval import ExperimentEval
 from ExperimentExec import ExperimentExec
 
-
 # ====== Constantes de Tags para comunicação ======
 TAG_TASK = 1  # A mensagem contém uma tarefa
 TAG_RESULT = 2 # A mensagem contém um resultado
@@ -141,7 +140,7 @@ class ParallelManager:
                     print(f"Escravo {self.rank_parallel}: Enviando resultado para tarefa {task_data}: {serialized}")
                     all_serialized.append({
                         "task_id": task_data.experiment_count,
-                        "data": serialized[0] if serialized else {"genotype": [], "fitness": []}
+                        "data": serialized if serialized else {"genotype": [], "fitness": []}
                     })
 
                 # Envia todos os resultados de uma vez
@@ -182,7 +181,7 @@ class ParallelManager:
             print(f"O conteúdo retornado foi: ", serialized_results["result"])
 
             for serialized_ind in serialized_results["result"]:
-                best_individuals = self.deserialize_individuals(([serialized_ind["data"]])[0])
+                best_individuals = self.deserialize_individuals([serialized_ind["data"]])
                 experiment_config = next(exp for exp in self.experiments if exp.experiment_count == serialized_ind["task_id"])
                 self.save_best_individuals(best_individuals, experiment_config)
 
