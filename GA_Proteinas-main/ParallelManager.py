@@ -171,21 +171,40 @@ class ParallelManager:
         for i, worker_rank in enumerate(range(1, self.size_parallel)):
             print(f"Mestre: Enviando {len(task_chunks[i])} tarefas para escravo {worker_rank}")
             self.comm_parallel.send(task_chunks[i], dest=worker_rank, tag=TAG_TASK)
+            
+        # Lista para rastrear escravos que já enviaram resultados
+        received_from_workers = set()
 
         # Recebe os resultados de cada escravo
-        for _ in range(num_workers):
-            status = MPI.Status()
-            serialized_results = self.comm_parallel.recv(source=MPI.ANY_SOURCE, tag=TAG_RESULT, status=status)
-            worker_rank = status.Get_source()
-            print(f"Mestre: Recebeu resultado do escravo {worker_rank}")
-            print(f"O conteúdo retornado foi: ", serialized_results["result"])
+        while len(received_from_workers) < num_workers:
+            try:
+                status = MPI.Status()
+                serialized_results = self.comm_parallel.recv(source=MPI.ANY_SOURCE, tag=TAG_RESULT, status=status)
+                worker_rank = status.Get_source()
+                received_from_workers.add(worker_rank)
 
-            for serialized_ind in serialized_results["result"]:
-                best_individuals = self.deserialize_individuals([serialized_ind["data"]])
-                experiment_config = next(exp for exp in self.experiments if exp.experiment_count == serialized_ind["task_id"])
-                self.save_best_individuals(best_individuals, experiment_config)
+                print(f"Mestre: Recebeu resultado do escravo {worker_rank}")
+                print(f"O conteúdo retornado foi: ", serialized_results["result"])
 
-            # Envia sinal de parada
+                for serialized_ind_data in serialized_results["result"]:
+                    # serialized_ind_data é um dicionário com 'task_id' e 'data'
+                    # 'data' é a lista de dicionários de indivíduos serializados
+                    
+                    # Desserializa os indivíduos
+                    best_individuals = self.deserialize_individuals(serialized_ind_data["data"]) # CORREÇÃO AQUI
+                    
+                    # Encontra a configuração do experimento correspondente
+                    experiment_config = next(exp for exp in self.experiments if exp.experiment_count == serialized_ind_data["task_id"])
+                    
+                    # Salva os indivíduos desserializados
+                    self.save_best_individuals(best_individuals, experiment_config)
+
+            except Exception as e:
+                print(f"[ERRO] Mestre: Erro ao receber/processar resultado: {e}")
+                break # Para evitar loop infinito em caso de erro persistente
+
+        # Envia sinal de parada para todos os escravos, mesmo que alguns tenham falhado
+        for worker_rank in range(1, self.size_parallel):
             self.comm_parallel.send(None, dest=worker_rank, tag=TAG_STOP)
     
         print(f"Mestre: Todas as tarefas concluídas.")
