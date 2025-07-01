@@ -106,6 +106,8 @@ class ParallelManager:
 
         dir_base = experiment_config.output_base_dir
         experiment_folder = f"Experimento_{experiment_config.experiment_count}"
+        print("[DEBUG] Diretório base:", dir_base)
+        print("[DEBUG] Pasta do experimento:", experiment_folder)
         full_path = os.path.join(dir_base, experiment_folder)
 
         # Cria diretório se não existir
@@ -197,6 +199,7 @@ class ParallelManager:
                     experiment_config = next(exp for exp in self.experiments if exp.experiment_count == serialized_ind_data["task_id"])
                     
                     # Salva os indivíduos desserializados
+                    print("[Mestre] Salvando melhores indivíduos para experimento:", experiment_config.experiment_count)
                     self.save_best_individuals(best_individuals, experiment_config)
 
             except Exception as e:

@@ -16,10 +16,21 @@ class ExperimentEval:
         self.individual_size = individual_size
         
     def exec_final_ranking(self):
+        print("[DEBUG] Conteúdo de EXPERIMENTO_PATH_:", os.listdir(EXPERIMENTO_PATH_))
+        print("[DEBUG] Conteúdo de DIRETORIO_PATH:", os.listdir(DIRETORIO_PATH))
+        print("[DEBUG] Conteúdo de RESULTADOS_PATH:", os.listdir(RESULTADOS_PATH))
         rank = Rankeamento()
         arquivo = Arquivo()
         diretorio = Diretorio(DIRETORIO_PATH)
         diretorio.remove_arquivos(RESULTADOS_PATH)
+        
+        conteudo = os.listdir("./Experimentos")
+        if not conteudo:
+            print("[ERRO] Nenhum arquivo salvo em ./Experimentos. Não posso fazer ranking.")
+            return
+        
+        print("Experiment path:", EXPERIMENTO_PATH_)
+        print("\nResultados path:", RESULTADOS_PATH)
         rank.junta_arquivos(EXPERIMENTO_PATH_, RESULTADOS_PATH)
         colunas = rank.processa_arquivos_teste(EXPERIMENTO_PATH_, RESULTADOS_PATH, self.individual_size)
         colunas_para_filtrar = [item[0] for item in colunas]  

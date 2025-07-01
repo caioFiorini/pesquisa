@@ -4,7 +4,7 @@ from ExperimentConfig import ExperimentConfig
 from utils.ParamsExtracter import ParamsExtracter
 
 CLASSIFIER_PATH = os.path.abspath("Individuos")
-DIRETORIO_PATH = os.path.abspath(".outputs")
+DIRETORIO_PATH = os.path.abspath(".Experiments")
 
 class ExperimentsGen:
     """
