@@ -36,7 +36,7 @@ class ParallelManager:
     def run(self):
         """Starts the master or slave logic based on the rank."""
         if self.size_parallel < 2:
-            print("Erro: Requer pelo menos 2 processos MPI.")
+            print("Erro: Requires at least 2 MPI processes.")
             self.comm_parallel.Abort(1)
 
         if self.rank_parallel == 0:
@@ -46,7 +46,7 @@ class ParallelManager:
         
             
     def exec_ranking(self):
-        print("Mestre: Iniciando pós-processamento...")
+        print("Mestre: Starting post-processing...")
         experiment_evaluator = ExperimentEval(self.class_name_test_file, self.individual_size)
         experiment_evaluator.exec_final_ranking()
     
@@ -157,60 +157,89 @@ class ParallelManager:
         print(f"Escravo {self.rank_parallel}: Finalizado.")
     
     def master_parallel_loop(self):
-        """Função executada pelo processo mestre."""
-        num_workers = self.size_parallel - 1
-        tasks = self.experiments
+        """Master: agenda 1 tarefa por escravo e vai gravando os resultados assim que chegam."""
+        tasks = list(self.experiments)
         num_tasks = len(tasks)
-        print(f"[Master] Dividindo {num_tasks} tarefas entre {num_workers} workers")
+        num_workers = self.size_parallel - 1
 
-        # Divisão equilibrada de tarefas entre os escravos
-        task_chunks = [[] for _ in range(num_workers)]
-        for i, task in enumerate(tasks):
-            worker_index = i % num_workers
-            task_chunks[worker_index].append(task)
+        if num_workers <= 0 or num_tasks == 0:
+            print("[Master] Nada a fazer.")
+            return
 
-        # Envia todas as tarefas para cada escravo
-        for i, worker_rank in enumerate(range(1, self.size_parallel)):
-            print(f"Mestre: Enviando {len(task_chunks[i])} tarefas para escravo {worker_rank}")
-            self.comm_parallel.send(task_chunks[i], dest=worker_rank, tag=TAG_TASK)
-            
-        # Lista para rastrear escravos que já enviaram resultados
-        received_from_workers = set()
+        print(f"[Master] Dispatching {num_tasks} tasks across {num_workers} workers")
 
-        # Recebe os resultados de cada escravo
-        while len(received_from_workers) < num_workers:
-            try:
-                status = MPI.Status()
-                serialized_results = self.comm_parallel.recv(source=MPI.ANY_SOURCE, tag=TAG_RESULT, status=status)
-                worker_rank = status.Get_source()
-                received_from_workers.add(worker_rank)
+        # Fila de tarefas e mapa para saber qual worker está ocupado
+        next_task_idx = 0
+        active_workers = set()
 
-                print(f"Mestre: Recebeu resultado do escravo {worker_rank}")
-                print(f"O conteúdo retornado foi: ", serialized_results["result"])
-
-                for serialized_ind_data in serialized_results["result"]:
-                    # serialized_ind_data é um dicionário com 'task_id' e 'data'
-                    # 'data' é a lista de dicionários de indivíduos serializados
-                    
-                    # Desserializa os indivíduos
-                    best_individuals = self.deserialize_individuals(serialized_ind_data["data"]) # CORREÇÃO AQUI
-                    
-                    # Encontra a configuração do experimento correspondente
-                    experiment_config = next(exp for exp in self.experiments if exp.experiment_count == serialized_ind_data["task_id"])
-                    
-                    # Salva os indivíduos desserializados
-                    print("[Mestre] Salvando melhores indivíduos para experimento:", experiment_config.experiment_count)
-                    self.save_best_individuals(best_individuals, experiment_config)
-
-            except Exception as e:
-                print(f"[ERRO] Mestre: Erro ao receber/processar resultado: {e}")
-                break # Para evitar loop infinito em caso de erro persistente
-
-        # Envia sinal de parada para todos os escravos, mesmo que alguns tenham falhado
+        # 1) Dispara uma tarefa por worker (ou até acabarem as tarefas)
         for worker_rank in range(1, self.size_parallel):
-            self.comm_parallel.send(None, dest=worker_rank, tag=TAG_STOP)
-    
-        print(f"Mestre: Todas as tarefas concluídas.")
-        self.exec_ranking()
+            if next_task_idx < num_tasks:
+                task = tasks[next_task_idx]
+                next_task_idx += 1
+                print(f"[Master] Sending 1 task (exp {task.experiment_count}) to slave {worker_rank}")
+                # O escravo espera uma LISTA de tarefas — mandamos [task]
+                self.comm_parallel.send([task], dest=worker_rank, tag=TAG_TASK)
+                active_workers.add(worker_rank)
 
-        print("Mestre: Finalizado.")
+        # 2) Recebe resultados e, a cada retorno, grava e envia próxima tarefa
+        completed = 0
+        while completed < num_tasks and active_workers:
+            status = MPI.Status()
+            try:
+                payload = self.comm_parallel.recv(source=MPI.ANY_SOURCE, tag=TAG_RESULT, status=status)
+            except Exception as e:
+                print(f"[ERRO][Master] Falha recebendo resultado: {e}")
+                break
+
+            worker_rank = status.Get_source()
+            print(f"[Master] Received result from slave {worker_rank}")
+
+            # payload esperado: {"worker_rank": <int>, "result": [ {task_id, data}, ... ] }
+            results_list = payload.get("result", [])
+            if isinstance(results_list, dict):
+                # defesa: alguns testes podem ter retornado dict em vez de lista
+                results_list = [results_list]
+
+            for serialized_ind_data in results_list:
+                task_id = serialized_ind_data.get("task_id")
+                data = serialized_ind_data.get("data", [])
+
+                # normaliza caso 'data' venha como dict vazio {"genotype":[],"fitness":[]}
+                if isinstance(data, dict):
+                    # trata como vazio
+                    data = []
+
+                # encontra a config do experimento
+                try:
+                    experiment_config = next(exp for exp in self.experiments if exp.experiment_count == task_id)
+                except StopIteration:
+                    print(f"[WARN][Master] Experiment config not found for task_id={task_id}. Ignorando.")
+                    continue
+
+                print(f"[Master] Writing best individuals for experiment {experiment_config.experiment_count}")
+                # IMPORTANTE: não desserializar aqui — save_best_individuals espera dicionários serializados
+                self.save_best_individuals(data, experiment_config)
+
+                completed += 1
+
+            # Depois de processar o retorno, se houver mais tarefas, manda a próxima para ESTE worker
+            if next_task_idx < num_tasks:
+                next_task = tasks[next_task_idx]
+                next_task_idx += 1
+                print(f"[Master] Sending next task (exp {next_task.experiment_count}) to slave {worker_rank}")
+                self.comm_parallel.send([next_task], dest=worker_rank, tag=TAG_TASK)
+            else:
+                # Sem mais tarefas: sinaliza STOP para este worker e tira da lista de ativos
+                print(f"[Master] No more tasks. Sending STOP to slave {worker_rank}")
+                self.comm_parallel.send(None, dest=worker_rank, tag=TAG_STOP)
+                active_workers.discard(worker_rank)
+
+        # Se por algum motivo sobrou worker ativo (ex.: erro no loop), manda STOP
+        for worker_rank in list(active_workers):
+            print(f"[Master] Finalizing: sending STOP to slave {worker_rank}")
+            self.comm_parallel.send(None, dest=worker_rank, tag=TAG_STOP)
+
+        print(f"[Master] {completed}/{num_tasks} tasks processed.")
+        self.exec_ranking()
+        print("[Master] Finished.")

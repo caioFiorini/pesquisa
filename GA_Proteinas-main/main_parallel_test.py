@@ -17,7 +17,7 @@ def main():
     comm = MPI.COMM_WORLD
     rank = comm.Get_rank()
     size = comm.Get_size()
-    processor_name = MPI.Get_processor_name()  # Obtém o nome do processador
+    processor_name = MPI.Get_processor_name()  # Obtains processor name
     
     if size < 3:
         print("Erro: Este script requer pelo menos 3 processos MPI (1 mestre, 2+ escravos).")
