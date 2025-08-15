@@ -45,7 +45,7 @@ class ParallelManager:
             self.master_parallel_loop()
         else:
             print(f"[Slave {self.rank_parallel}] Starting slave loop.")
-            # self.slave_parallel_loop()
+            self.slave_parallel_loop()
         
             
     def exec_ranking(self):
