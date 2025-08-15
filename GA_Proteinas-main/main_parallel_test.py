@@ -102,6 +102,7 @@ def main():
         size_parallel=size,
         rank_parallel=rank,
         experiments=experiments,
+        name_test_file=name_test_file,
         class_name_test_file=class_name_test_file,
         individual_size=INDIVIDUAL_SIZE,
         start_time=start_time

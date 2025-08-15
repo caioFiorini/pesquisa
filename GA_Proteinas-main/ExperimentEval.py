@@ -2,6 +2,7 @@ import os
 from Arquivo import Arquivo
 from diretorio import Diretorio
 from rankeamento import Rankeamento
+from encontra_melhor import Encontra_melhor
 from valida import valida_experimento
 
 DIRETORIO_PATH = os.path.abspath(".outputs")
@@ -10,8 +11,10 @@ RESULTADOS_PATH = os.path.abspath("./Resultados_teste")
 
 class ExperimentEval:
     def __init__(self,
+                 name_test_file,
                  class_name_test_file,
                  individual_size):
+        self.name_test_file = name_test_file
         self.class_name_test_file = class_name_test_file
         self.individual_size = individual_size
         
@@ -21,6 +24,8 @@ class ExperimentEval:
         print("[DEBUG] Conteúdo de RESULTADOS_PATH:", os.listdir(RESULTADOS_PATH))
         rank = Rankeamento()
         arquivo = Arquivo()
+        arquivo.le_arquivo(self.nome_arquivo_teste)    
+        arquivo.set_nome_classe_arquivo_teste(self.class_name_test_file)
         diretorio = Diretorio(DIRETORIO_PATH)
         diretorio.remove_arquivos(RESULTADOS_PATH)
         
@@ -38,3 +43,11 @@ class ExperimentEval:
         validacao = valida_experimento()
         dataset = arquivo.retorna_dataset()
         validacao.valida_sem_salvar_modelo(dataset, self.class_name_test_file, colunas_tratadas)
+        melhor_individuo = Encontra_melhor()
+        lista_individuos = melhor_individuo.encontra_melhores_individuos(RESULTADOS_PATH)
+        resultados = melhor_individuo.avalia_individuos(arquivo, lista_individuos, self.class_name_test_file)
+        resultados.sort(key=lambda x: x['f1_score'], reverse=True)
+        print("\nMelhor indivíduo encontrado:")
+        print(f"F1-score: {resultados[0]['f1_score']:.4f}")
+        print(f"Qtd atributos: {resultados[0]['qtd_atributos']}")
+        print(f"Atributos selecionados: {resultados[0]['nomes_colunas']}")
