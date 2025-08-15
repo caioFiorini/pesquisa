@@ -24,7 +24,7 @@ class ExperimentEval:
         print("[DEBUG] Conteúdo de RESULTADOS_PATH:", os.listdir(RESULTADOS_PATH))
         rank = Rankeamento()
         arquivo = Arquivo()
-        arquivo.le_arquivo(self.nome_arquivo_teste)    
+        arquivo.le_arquivo(self.name_test_file)    
         arquivo.set_nome_classe_arquivo_teste(self.class_name_test_file)
         diretorio = Diretorio(DIRETORIO_PATH)
         diretorio.remove_arquivos(RESULTADOS_PATH)
