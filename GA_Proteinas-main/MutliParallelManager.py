@@ -1,6 +1,6 @@
 import os
 import re
-from mpi_context import MPI
+from MpiContext import MPI
 from deap import creator
 from ExperimentEval import ExperimentEval
 from ExperimentExec import ExperimentExec
