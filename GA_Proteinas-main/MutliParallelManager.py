@@ -134,17 +134,17 @@ class MultiParallelManager:
         ctx = mp.get_context("spawn")
 
         # quantos processos locais? (padrão: todos os núcleos)
-        local_cores = int(os.environ.get("LOCAL_CORES", os.cpu_count()))
+        local_cores = 2
 
         def compute_one(task_data):
-            # Executa seu experimento como já fazia
             executor = ExperimentExec(task_data, self.start_time)
             executor.execute_experiment()
-
-            # Lê e serializa "melhores" deste experimento
-            experiment_folder_path = os.path.join(EXPERIMENTO_PATH, f"Experimento_{task_data.experiment_count}")
+            
+            experiment_folder_path = os.path.join("./Experimentos", f"Experimento_{task_data.experiment_count}")
             melhores = self.read_best_individuals(experiment_folder_path)
             serialized = self.serialize_individuals(melhores)
+
+            print(f"Escravo {self.rank_parallel}: Enviando resultado para tarefa {task_data}: {serialized}")
             return {
                 "task_id": task_data.experiment_count,
                 "data": serialized if serialized else {"genotype": [], "fitness": []}
@@ -183,6 +183,7 @@ class MultiParallelManager:
                     except Exception as e:
                         payload = {"task_id": task_id, "data": {"genotype": [], "fitness": []}, "error": str(e)}
                     # envia UM resultado por mensagem (streaming)
+                    print("Payload being sent: ", payload)
                     self.comm_parallel.isend({"worker_rank": self.rank_parallel, "result": [payload]}, dest=0, tag=TAG_RESULT)
 
                 # 2.b) drenar novas tarefas se o master topar (checa sem bloquear)
