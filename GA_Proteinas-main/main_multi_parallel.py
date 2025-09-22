@@ -4,7 +4,7 @@ import numpy as np
 
 from MpiContext import MPIContext
 MPI = MPIContext.ensure_mpi()   # garante MPI.Init() aqui
-from MpiContext import MPI as MPI_ALIAS
+from MpiContext import MPI
 
 from Arquivo import Arquivo
 from diretorio import Diretorio
@@ -118,5 +118,4 @@ if __name__ == "__main__":
     try:
         main()
     finally:
-        # finalize MPI cleanly
         MPI.Finalize()

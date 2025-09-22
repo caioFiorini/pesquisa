@@ -1,6 +1,7 @@
 import os
 import re
 from deap import creator
+from SerializationUtils import SerializationUtils
 from ExperimentEval import ExperimentEval
 from ExperimentExec import ExperimentExec
 import os, time
@@ -14,6 +15,45 @@ TAG_STOP = 0   # Não há mais tarefas (sinal de parada)
 
 DIRETORIO_PATH = os.path.abspath(".outputs")
 EXPERIMENTO_PATH = os.path.abspath("./Experimentos")
+
+    
+def compute_one_module(task_data_serialized, start_time, exper_path, mpi_rank=None):
+    """
+    task_data_serialized: estrutura simples (por ex., dict) suficiente para reconstruir a config.
+    start_time: float
+    exper_path: path para Experimentos (para leitura/escrita)
+    """
+    # reconstruir/usar o objeto de configuração se task_data_serialized for dict-like
+    # aqui assumimos que task_data_serialized é o mesmo objeto que você recebia (se já for serializável)
+    from ExperimentExec import ExperimentExec  # import aqui evita problemas top-level em spawn
+    import traceback
+    
+    serializer = SerializationUtils()
+
+    task_cfg = task_data_serialized
+    
+    if mpi_rank is not None:
+        print(f"[Child worker spawned on MPI rank {mpi_rank}] pid={os.getpid()}")
+
+    try:
+        executor = ExperimentExec(task_cfg, start_time)
+        executor.execute_experiment()
+    except Exception as e:
+        pid = os.getpid()
+        log = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}", f"error_pid_{pid}.log")
+        os.makedirs(os.path.dirname(log), exist_ok=True)
+        with open(log, "a") as lf:
+            lf.write("Exception in child:\n")
+            lf.write(traceback.format_exc())
+        return {"task_id": task_cfg.experiment_count, "data": {"genotype": [], "fitness": []}, "error": str(e)}
+
+    # Ler e serializar melhores (use caminho absoluto para evitar confusão)
+    experiment_folder_path = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}")
+    melhores = serializer.read_best_individuals(mpi_rank, experiment_folder_path)
+    serialized = serializer.serialize_individuals(melhores)
+
+    return {"task_id": task_cfg.experiment_count, "data": serialized if serialized else {"genotype": [], "fitness": []}}
+
 class MultiParallelManager:    
     def __init__(
         self,
@@ -48,61 +88,10 @@ class MultiParallelManager:
             print(f"[Slave {self.rank_parallel}] Starting slave loop.")
             self.slave_parallel_loop()
         
-            
     def exec_ranking(self):
         print("Mestre: Starting post-processing...")
         experiment_evaluator = ExperimentEval(self.name_test_file, self.class_name_test_file, self.individual_size)
         experiment_evaluator.exec_final_ranking()
-    
-
-    def read_best_individuals(self, experiments_folder):
-        """
-        Lê os arquivos que contenham 'melhores' no nome dentro da pasta experiments_folder,
-        reconstrói os indivíduos com genótipo e fitness.
-        """
-        print(f"[DEBUG][Rank {self.rank_parallel}] Pasta atual: {os.getcwd()}")
-        padrao = r"Individual\('i',\s*\[(.*?)\]\)\(np\.float64\((.*?)\),\s*(.*?)\)"
-        individuos = []
-
-        for nome_arquivo in os.listdir(experiments_folder):
-            if "melhores" in nome_arquivo.lower() and nome_arquivo.endswith(".txt"):
-                caminho_arquivo = os.path.join(experiments_folder, nome_arquivo)
-
-                with open(caminho_arquivo, 'r') as f:
-                    for linha in f:
-                        match = re.search(padrao, linha)
-                        if match:
-                            bits = list(map(int, match.group(1).split(',')))
-                            fit1 = float(match.group(2))
-                            fit2 = float(match.group(3))
-                            fitness = (fit1, fit2)
-
-                            ind = creator.Individual(bits)
-                            ind.fitness.values = fitness
-                            individuos.append(ind)
-
-                print(f"[INFO] Leu {len(individuos)} indivíduos de '{nome_arquivo}'")
-                return individuos  # Para o primeiro arquivo encontrado
-
-        print("[WARN] Nenhum arquivo com 'melhores' encontrado em:", experiments_folder)
-        return []
-
-    def serialize_individuals(self, individuals):
-        serialized = []
-        for ind in individuals:
-            serialized.append({
-                "genotype": list(ind),  # O vetor binário
-                "fitness": list(ind.fitness.values)
-            })
-        return serialized
-    
-    def deserialize_individuals(self, serialized_individuals):
-        reconstructed = []
-        for data in serialized_individuals:
-            ind = creator.Individual(data["genotype"])
-            ind.fitness.values = tuple(data["fitness"])
-            reconstructed.append(ind)
-        return reconstructed
     
     def save_best_individuals(self, individuals, experiment_config):
         file_name = f"seed_{experiment_config.seed}_pop_{experiment_config.pop_size}_gen_{experiment_config.num_gen}_cross_{experiment_config.cross_rate}_muta_{experiment_config.mut_rate}"
@@ -126,41 +115,6 @@ class MultiParallelManager:
                 f.write(f"Individual('i', {genotype})({fitness})\n")
 
         print(f"[Mestre] Arquivo '{file_name_final}' salvo em '{full_path}'")
-    
-    def compute_one_module(self, task_data_serialized, start_time, exper_path, mpi_rank=None):
-        """
-        task_data_serialized: estrutura simples (por ex., dict) suficiente para reconstruir a config.
-        start_time: float
-        exper_path: path para Experimentos (para leitura/escrita)
-        """
-        # reconstruir/usar o objeto de configuração se task_data_serialized for dict-like
-        # aqui assumimos que task_data_serialized é o mesmo objeto que você recebia (se já for serializável)
-        from ExperimentExec import ExperimentExec  # import aqui evita problemas top-level em spawn
-        import traceback
-
-        task_cfg = task_data_serialized
-        
-        if mpi_rank is not None:
-            print(f"[Child worker spawned on MPI rank {mpi_rank}] pid={os.getpid()}")
-
-        # Run experiment (este processo filho NÃO deve usar MPI)
-        try:
-            executor = ExperimentExec(task_cfg, start_time)
-            executor.execute_experiment()
-        except Exception as e:
-            pid = os.getpid()
-            log = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}", f"error_pid_{pid}.log")
-            os.makedirs(os.path.dirname(log), exist_ok=True)
-            with open(log, "a") as lf:
-                lf.write("Exception in child:\n")
-                lf.write(traceback.format_exc())
-            return {"task_id": task_cfg.experiment_count, "data": {"genotype": [], "fitness": []}, "error": str(e)}
-
-        # Ler e serializar melhores (use caminho absoluto para evitar confusão)
-        experiment_folder_path = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}")
-        melhores = self.read_best_individuals(experiment_folder_path)
-        serialized = self.serialize_individuals(melhores)
-        return {"task_id": task_cfg.experiment_count, "data": serialized if serialized else {"genotype": [], "fitness": []}}
 
     def slave_parallel_loop(self):
         from MpiContext import MPI
@@ -184,7 +138,7 @@ class MultiParallelManager:
                 return
 
             for t in task_list:
-                fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH)
+                fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                 pending_futures[fut] = t.experiment_count
 
             while pending_futures or not stop_flag:
