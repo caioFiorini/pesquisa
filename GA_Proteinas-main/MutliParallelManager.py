@@ -1,10 +1,8 @@
 import os
-import re
-from deap import creator
 from SerializationUtils import SerializationUtils
 from ExperimentEval import ExperimentEval
 from ExperimentExec import ExperimentExec
-import os, time
+import os
 import multiprocessing as mp
 from concurrent.futures import ProcessPoolExecutor, FIRST_COMPLETED
 
@@ -16,42 +14,45 @@ TAG_STOP = 0   # Não há mais tarefas (sinal de parada)
 DIRETORIO_PATH = os.path.abspath(".outputs")
 EXPERIMENTO_PATH = os.path.abspath("./Experimentos")
 
-    
 def compute_one_module(task_data_serialized, start_time, exper_path, mpi_rank=None):
-    """
-    task_data_serialized: estrutura simples (por ex., dict) suficiente para reconstruir a config.
-    start_time: float
-    exper_path: path para Experimentos (para leitura/escrita)
-    """
-    # reconstruir/usar o objeto de configuração se task_data_serialized for dict-like
-    # aqui assumimos que task_data_serialized é o mesmo objeto que você recebia (se já for serializável)
-    from ExperimentExec import ExperimentExec  # import aqui evita problemas top-level em spawn
+    import os
     import traceback
-    
+    from ExperimentExec import ExperimentExec
     serializer = SerializationUtils()
 
     task_cfg = task_data_serialized
-    
-    if mpi_rank is not None:
-        print(f"[Child worker spawned on MPI rank {mpi_rank}] pid={os.getpid()}")
+
+    worker_info = f"[Worker local | MPI rank {mpi_rank} | pid {os.getpid()} | exper {task_cfg.experiment_count}]"
+
+    print(f"{worker_info} Iniciando experimento...")
 
     try:
         executor = ExperimentExec(task_cfg, start_time)
+        
+        # Log a cada passo do experimento, se o seu executor tiver etapas
+        for step, step_name in enumerate(executor.get_steps()):  # exemplo fictício
+            print(f"{worker_info} Step {step}: {step_name} iniciando")
+            executor.run_step(step)
+            print(f"{worker_info} Step {step}: {step_name} finalizado")
+
+        # Se não houver steps detalhados, apenas log no começo/fim
         executor.execute_experiment()
+
     except Exception as e:
-        pid = os.getpid()
-        log = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}", f"error_pid_{pid}.log")
-        os.makedirs(os.path.dirname(log), exist_ok=True)
-        with open(log, "a") as lf:
+        log_file = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}", f"error_pid_{os.getpid()}.log")
+        os.makedirs(os.path.dirname(log_file), exist_ok=True)
+        with open(log_file, "a") as lf:
             lf.write("Exception in child:\n")
             lf.write(traceback.format_exc())
+        print(f"{worker_info} ERRO: {e}")
         return {"task_id": task_cfg.experiment_count, "data": {"genotype": [], "fitness": []}, "error": str(e)}
 
-    # Ler e serializar melhores (use caminho absoluto para evitar confusão)
+    # Ler melhores indivíduos
     experiment_folder_path = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}")
-    melhores = serializer.read_best_individuals(mpi_rank, experiment_folder_path)
+    melhores = serializer.read_best_individuals(experiment_folder_path)
     serialized = serializer.serialize_individuals(melhores)
 
+    print(f"{worker_info} Experimento finalizado")
     return {"task_id": task_cfg.experiment_count, "data": serialized if serialized else {"genotype": [], "fitness": []}}
 
 class MultiParallelManager:    
@@ -140,6 +141,7 @@ class MultiParallelManager:
             for t in task_list:
                 fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                 pending_futures[fut] = t.experiment_count
+                print(f"[Slave {self.rank_parallel}] Tarefa {t.experiment_count} enviada para o pool")
 
             while pending_futures or not stop_flag:
                 # checa futuros prontos e envia resultado para master
