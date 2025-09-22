@@ -120,7 +120,7 @@ class MultiParallelManager:
     def slave_parallel_loop(self):
         from MpiContext import MPI
         ctx = mp.get_context("spawn")
-        local_cores = 10
+        local_cores = 2
 
         pending_futures = {}   # future -> task_id
         stop_flag = False
@@ -187,7 +187,7 @@ class MultiParallelManager:
             return
 
         # Config simples: lote inicial por worker (padrão: cores do nó)
-        CHUNK_INICIAL = int(os.environ.get("LOCAL_CORES", os.cpu_count()))
+        CHUNK_INICIAL = 2
         next_task_idx = 0
         completed = 0
         active_workers = set(range(1, self.size_parallel))
