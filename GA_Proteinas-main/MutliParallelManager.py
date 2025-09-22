@@ -37,7 +37,6 @@ class MultiParallelManager:
         self.start_time = start_time
     
     def run(self):
-        from MpiContext import MPI
         """Starts the master or slave logic based on the rank."""
         if self.size_parallel < 2:
             print("Erro: Requires at least 2 MPI processes.")
@@ -164,6 +163,7 @@ class MultiParallelManager:
         return {"task_id": task_cfg.experiment_count, "data": serialized if serialized else {"genotype": [], "fitness": []}}
 
     def slave_parallel_loop(self):
+        from MpiContext import MPI
         ctx = mp.get_context("spawn")
         local_cores = 10
 
@@ -218,6 +218,7 @@ class MultiParallelManager:
         print(f"[Slave {self.rank_parallel}] Finalizado.")
     
     def master_parallel_loop(self):
+        from MpiContext import MPI
         """Master: agenda 1 tarefa por escravo e vai gravando os resultados assim que chegam."""
         tasks = list(self.experiments)
         num_tasks = len(tasks)
