@@ -16,19 +16,19 @@ EXPERIMENTO_PATH = os.path.abspath("./Experimentos")
 def compute_one_module(task_data_serialized, start_time, exper_path, mpi_rank=None):
     import traceback
     from ExperimentExec import ExperimentExec
-    serializer = SerializationUtils()
-    task_cfg = task_data_serialized
-    logger = setup_logger(task_cfg.experiment_count, os.getpid())
 
-    logger.info(f"{worker_info} Iniciando experimento...")
+    task_cfg = task_data_serialized
     worker_info = f"[Worker local | MPI rank {mpi_rank} | pid {os.getpid()} | exper {task_cfg.experiment_count}]"
 
-    print(f"{worker_info} Iniciando experimento...")
+    # Configura logger
+    logger = setup_logger(task_cfg.experiment_count, os.getpid())
+    logger.info(f"{worker_info} Iniciando experimento...")
+    print(f"{worker_info} Iniciando experimento...", flush=True)
 
     try:
         executor = ExperimentExec(task_cfg, start_time)
         executor.execute_experiment()
-        logger.info("Experimento finalizado com sucesso")
+        logger.info(f"{worker_info} Experimento finalizado com sucesso")
 
     except Exception as e:
         log_file = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}", f"error_pid_{os.getpid()}.log")
@@ -36,32 +36,34 @@ def compute_one_module(task_data_serialized, start_time, exper_path, mpi_rank=No
         with open(log_file, "a") as lf:
             lf.write("Exception in child:\n")
             lf.write(traceback.format_exc())
-        print(f"{worker_info} ERRO: {e}")
+        print(f"{worker_info} ERRO: {e}", flush=True)
         logger.error(f"Erro: {e}", exc_info=True)
         return {"task_id": task_cfg.experiment_count, "data": {"genotype": [], "fitness": []}, "error": str(e)}
 
     # Ler melhores indivíduos
+    serializer = SerializationUtils()
     experiment_folder_path = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}")
     melhores = serializer.read_best_individuals(experiment_folder_path)
     serialized = serializer.serialize_individuals(melhores)
 
-    print(f"{worker_info} Experimento finalizado")
+    print(f"{worker_info} Experimento finalizado", flush=True)
     return {"task_id": task_cfg.experiment_count, "data": serialized if serialized else {"genotype": [], "fitness": []}}
 
 def setup_logger(experiment_count, pid):
     log_file = f"./logs/experiment_{experiment_count}_pid_{pid}.log"
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
-    
+
     logger = logging.getLogger(f"Exp{experiment_count}_PID{pid}")
     logger.setLevel(logging.DEBUG)
-    
+
     if not logger.hasHandlers():
         fh = logging.FileHandler(log_file)
         formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
         fh.setFormatter(formatter)
         logger.addHandler(fh)
-    
+
     return logger
+
 class MultiParallelManager:    
     def __init__(
         self,
@@ -125,55 +127,54 @@ class MultiParallelManager:
         print(f"[Mestre] Arquivo '{file_name_final}' salvo em '{full_path}'")
 
     def slave_parallel_loop(self):
+        # Import MPI local para evitar problemas com spawn
         from MpiContext import MPI
-        ctx = mp.get_context("fork")
-        local_cores = 2
 
-        pending_futures = {}   # future -> task_id
+        ctx = mp.get_context("spawn")  # spawn evita deadlocks
+        local_cores = 2
+        pending_futures = {}
         stop_flag = False
 
         status = MPI.Status()
         print(f"[Slave {self.rank_parallel}] starting pool with {local_cores} workers", flush=True)
-        
+
         with ProcessPoolExecutor(max_workers=local_cores, mp_context=ctx) as pool:
-            # recebe primeiro lote de tarefas do master (via MPI)
+            # Recebe primeiro lote de tarefas do master
             task_list = self.comm_parallel.recv(source=0, tag=MPI.ANY_TAG, status=status)
             tag = status.Get_tag()
-            if tag == TAG_STOP:
+            if tag == 0:
                 print(f"[Slave {self.rank_parallel}] STOP before start.", flush=True)
                 return
-            if tag != TAG_TASK:
+            if tag != 1:
                 print(f"[Slave {self.rank_parallel}] unexpected tag {tag}; exiting.", flush=True)
                 return
 
             for t in task_list:
-                print(f"[Slave] sending task t: {t} to pool", flush=True)
                 fut = pool.submit(compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                 pending_futures[fut] = t.experiment_count
-                print(f"[Slave {self.rank_parallel}] Tarefa {t.experiment_count} enviada para o pool | Pending: {len(pending_futures)}", flush=True)
+                print(f"[Slave {self.rank_parallel}] Tarefa {t.experiment_count} enviada | Pending: {len(pending_futures)}", flush=True)
 
             for f in as_completed(pending_futures):
                 task_id = pending_futures[f]
-                payload = f.result()  # **isso bloqueia até a função terminar**
-                self.comm_parallel.isend({"worker_rank": self.rank_parallel,
-                                        "result": payload}, dest=0, tag=TAG_RESULT)
+                payload = f.result()
+                # Envia resultado para master
+                self.comm_parallel.isend({"worker_rank": self.rank_parallel, "result": payload}, dest=0, tag=2)
 
-                # checa novas tarefas (via MPI) sem bloquear
+                # Checa novas tarefas sem bloquear
                 while self.comm_parallel.Iprobe(source=0, tag=MPI.ANY_TAG, status=status):
                     incoming = self.comm_parallel.recv(source=0, tag=MPI.ANY_TAG, status=status)
                     itag = status.Get_tag()
-                    if itag == TAG_TASK and incoming:
+                    if itag == 1 and incoming:
                         for t in incoming:
                             fut = pool.submit(compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                             pending_futures[fut] = t.experiment_count
                             print(f"[Slave {self.rank_parallel}] Nova tarefa {t.experiment_count} enviada | Pending: {len(pending_futures)}", flush=True)
-                    elif itag == TAG_STOP:
+                    elif itag == 0:
                         stop_flag = True
                         print(f"[Slave {self.rank_parallel}] Recebeu STOP sinal.", flush=True)
 
         print(f"[Slave {self.rank_parallel}] Finalizado.", flush=True)
 
-    
     def master_parallel_loop(self):
         from MpiContext import MPI
         """Master: agenda 1 tarefa por escravo e vai gravando os resultados assim que chegam."""
