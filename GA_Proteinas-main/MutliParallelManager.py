@@ -3,7 +3,7 @@ import logging
 from SerializationUtils import SerializationUtils
 from ExperimentEval import ExperimentEval
 import multiprocessing as mp
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # ====== Constantes de Tags para comunicação ======
 TAG_TASK = 1  # A mensagem contém uma tarefa
@@ -151,20 +151,11 @@ class MultiParallelManager:
                 pending_futures[fut] = t.experiment_count
                 print(f"[Slave {self.rank_parallel}] Tarefa {t.experiment_count} enviada para o pool | Pending: {len(pending_futures)}", flush=True)
 
-            while pending_futures or not stop_flag:
-                # checa futuros prontos e envia resultado para master
-                done_set = [f for f in list(pending_futures) if f.done()]
-                for f in done_set:
-                    task_id = pending_futures.pop(f)
-                    try:
-                        payload = f.result()
-                    except Exception as e:
-                        payload = {"task_id": task_id, "data": {"genotype": [], "fitness": []}, "error": str(e)}
-
-                    print(f"[Slave {self.rank_parallel}] Tarefa {task_id} concluída | Pending: {len(pending_futures)}", flush=True)
-
-                    self.comm_parallel.isend({"worker_rank": self.rank_parallel,
-                                            "result": payload}, dest=0, tag=TAG_RESULT)
+            for f in as_completed(pending_futures):
+                task_id = pending_futures[f]
+                payload = f.result()  # **isso bloqueia até a função terminar**
+                self.comm_parallel.isend({"worker_rank": self.rank_parallel,
+                                        "result": payload}, dest=0, tag=TAG_RESULT)
 
                 # checa novas tarefas (via MPI) sem bloquear
                 while self.comm_parallel.Iprobe(source=0, tag=MPI.ANY_TAG, status=status):
