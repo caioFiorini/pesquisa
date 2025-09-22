@@ -157,7 +157,7 @@ class MultiParallelManager:
                 return
 
             for t in task_list:
-                fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
+                fut = pool.submit(compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                 pending_futures[fut] = t.experiment_count
                 print(f"[Slave {self.rank_parallel}] Tarefa {t.experiment_count} enviada para o pool | Pending: {len(pending_futures)}", flush=True)
 
@@ -182,7 +182,7 @@ class MultiParallelManager:
                     itag = status.Get_tag()
                     if itag == TAG_TASK and incoming:
                         for t in incoming:
-                            fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
+                            fut = pool.submit(compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                             pending_futures[fut] = t.experiment_count
                             print(f"[Slave {self.rank_parallel}] Nova tarefa {t.experiment_count} enviada | Pending: {len(pending_futures)}", flush=True)
                     elif itag == TAG_STOP:
