@@ -3,7 +3,7 @@ import logging
 from SerializationUtils import SerializationUtils
 from ExperimentEval import ExperimentEval
 import multiprocessing as mp
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 
 # ====== Constantes de Tags para comunicação ======
 TAG_TASK = 1  # A mensagem contém uma tarefa
@@ -136,7 +136,7 @@ class MultiParallelManager:
 
     def slave_parallel_loop(self):
         from MpiContext import MPI
-        ctx = mp.get_context("spawn")
+        ctx = mp.get_context("fork")
         local_cores = 2
 
         pending_futures = {}   # future -> task_id
@@ -145,7 +145,7 @@ class MultiParallelManager:
         status = MPI.Status()
         print(f"[Slave {self.rank_parallel}] starting pool with {local_cores} workers", flush=True)
         
-        with ProcessPoolExecutor(max_workers=local_cores, mp_context=ctx) as pool:
+        with ThreadPoolExecutor(max_workers=local_cores, mp_context=ctx) as pool:
             # recebe primeiro lote de tarefas do master (via MPI)
             task_list = self.comm_parallel.recv(source=0, tag=MPI.ANY_TAG, status=status)
             tag = status.Get_tag()
