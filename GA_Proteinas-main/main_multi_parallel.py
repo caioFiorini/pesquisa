@@ -1,9 +1,7 @@
 import os
 import time
 import numpy as np
-import mpi4py
-mpi4py.rc.initialize = False 
-from mpi4py import MPI
+from MpiContext import MPIContext
 from Arquivo import Arquivo
 from diretorio import Diretorio
 from MOGAToolbox import MOGAToolbox as mt
@@ -113,14 +111,6 @@ def main():
     parallel_manager.run()
 
 if __name__ == "__main__":
-    # inicializa MPI explicitamente (pai/rank atual)
-    MPI.Init_thread()
-    try:
-        # seu código atual que cria ParallelManager e chama .run()
-        main()   # exemplo
-    finally:
-        # finalize de maneira segura
-        try:
-            MPI.Finalize()
-        except Exception:
-            pass
+    MPI = MPIContext.ensure_mpi()
+    main()
+    MPI.Finalize()
