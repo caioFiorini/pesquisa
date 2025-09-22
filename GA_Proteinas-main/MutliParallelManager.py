@@ -128,29 +128,30 @@ class MultiParallelManager:
                 f.write(f"Individual('i', {genotype})({fitness})\n")
 
         print(f"[Mestre] Arquivo '{file_name_final}' salvo em '{full_path}'")
+    
+    def _compute_one(self, task_data):
+        executor = ExperimentExec(task_data, self.start_time)
+        executor.execute_experiment()
+
+        experiment_folder_path = os.path.join(EXPERIMENTO_PATH,
+                                              f"Experimento_{task_data.experiment_count}")
+        melhores = self.read_best_individuals(experiment_folder_path)
+        serialized = self.serialize_individuals(melhores)
+        return {
+            "task_id": task_data.experiment_count,
+            "data": serialized if serialized else {"genotype": [], "fitness": []}
+        }
+        
+    def compute_one_wrapper(args):
+        """Função picklável chamada dentro do ProcessPoolExecutor."""
+        self_obj, task_data = args
+        return self_obj._compute_one(task_data)
+
         
     def slave_parallel_loop(self):
-        # garante 'spawn' (mais seguro com MPI + multiprocessing)
         ctx = mp.get_context("spawn")
+        local_cores = int(os.environ.get("LOCAL_CORES", os.cpu_count()))
 
-        # quantos processos locais? (padrão: todos os núcleos)
-        local_cores = 2
-
-        def compute_one(task_data):
-            executor = ExperimentExec(task_data, self.start_time)
-            executor.execute_experiment()
-            
-            experiment_folder_path = os.path.join("./Experimentos", f"Experimento_{task_data.experiment_count}")
-            melhores = self.read_best_individuals(experiment_folder_path)
-            serialized = self.serialize_individuals(melhores)
-
-            print(f"Escravo {self.rank_parallel}: Enviando resultado para tarefa {task_data}: {serialized}")
-            return {
-                "task_id": task_data.experiment_count,
-                "data": serialized if serialized else {"genotype": [], "fitness": []}
-            }
-
-        # estado local
         pending_futures = {}   # future -> task_id
         stop_flag = False
 
@@ -169,7 +170,7 @@ class MultiParallelManager:
 
             # submete o primeiro lote
             for t in task_list:
-                fut = pool.submit(compute_one, t)
+                fut = pool.submit(self.compute_one_wrapper, (self, t))
                 pending_futures[fut] = t.experiment_count
 
             # 2) loop principal: enviar resultados assim que prontos e aceitar novos trabalhos
@@ -183,8 +184,8 @@ class MultiParallelManager:
                     except Exception as e:
                         payload = {"task_id": task_id, "data": {"genotype": [], "fitness": []}, "error": str(e)}
                     # envia UM resultado por mensagem (streaming)
-                    print("Payload being sent: ", payload)
-                    self.comm_parallel.isend({"worker_rank": self.rank_parallel, "result": [payload]}, dest=0, tag=TAG_RESULT)
+                    self.comm_parallel.isend({"worker_rank": self.rank_parallel,
+                                            "result": payload}, dest=0, tag=TAG_RESULT)
 
                 # 2.b) drenar novas tarefas se o master topar (checa sem bloquear)
                 st = MPI.Status()
@@ -193,16 +194,12 @@ class MultiParallelManager:
                     itag = st.Get_tag()
                     if itag == TAG_TASK and incoming:
                         for t in incoming:
-                            fut = pool.submit(compute_one, t)
+                            fut = pool.submit(compute_one_wrapper, (self, t))
                             pending_futures[fut] = t.experiment_count
                     elif itag == TAG_STOP:
-                        # Só vamos sair quando pending_futures esvaziar
                         stop_flag = True
                     else:
-                        # ignora qualquer outra tag
                         pass
-
-                time.sleep(0.001)  # cooperativo leve
 
         print(f"[Slave {self.rank_parallel}] Finalizado.")
     
