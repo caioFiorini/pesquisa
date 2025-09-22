@@ -170,10 +170,10 @@ class MultiParallelManager:
         pending_futures = {}   # future -> task_id
         stop_flag = False
 
+        status = MPI.Status()
         print(f"[Slave {self.rank_parallel}] starting pool with {local_cores} workers")
         with ProcessPoolExecutor(max_workers=local_cores, mp_context=ctx) as pool:
-            # 1) receber primeiro lote (bloqueante, simples)
-            status = MPI.Status()
+            # recebe primeiro lote de tarefas do master (via MPI)
             task_list = self.comm_parallel.recv(source=0, tag=MPI.ANY_TAG, status=status)
             tag = status.Get_tag()
             if tag == TAG_STOP:
@@ -184,12 +184,11 @@ class MultiParallelManager:
                 return
 
             for t in task_list:
-                fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
+                fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH)
                 pending_futures[fut] = t.experiment_count
 
-            # 2) loop principal: enviar resultados assim que prontos e aceitar novos trabalhos
             while pending_futures or not stop_flag:
-                # 2.a) enviar resultados prontos (não bloqueia)
+                # checa futuros prontos e envia resultado para master
                 done_set = [f for f in list(pending_futures) if f.done()]
                 for f in done_set:
                     task_id = pending_futures.pop(f)
@@ -197,25 +196,22 @@ class MultiParallelManager:
                         payload = f.result()
                     except Exception as e:
                         payload = {"task_id": task_id, "data": {"genotype": [], "fitness": []}, "error": str(e)}
-                    # envia UM resultado por mensagem (streaming)
                     self.comm_parallel.isend({"worker_rank": self.rank_parallel,
                                             "result": payload}, dest=0, tag=TAG_RESULT)
 
-                # 2.b) drenar novas tarefas se o master topar (checa sem bloquear)
-                st = MPI.Status()
-                while self.comm_parallel.Iprobe(source=0, tag=MPI.ANY_TAG, status=st):
-                    incoming = self.comm_parallel.recv(source=0, tag=MPI.ANY_TAG, status=st)
-                    itag = st.Get_tag()
+                # checa novas tarefas (via MPI) sem bloquear
+                while self.comm_parallel.Iprobe(source=0, tag=MPI.ANY_TAG, status=status):
+                    incoming = self.comm_parallel.recv(source=0, tag=MPI.ANY_TAG, status=status)
+                    itag = status.Get_tag()
                     if itag == TAG_TASK and incoming:
                         for t in incoming:
                             fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH)
                             pending_futures[fut] = t.experiment_count
                     elif itag == TAG_STOP:
                         stop_flag = True
-                    else:
-                        pass
 
         print(f"[Slave {self.rank_parallel}] Finalizado.")
+
     
     def master_parallel_loop(self):
         from MpiContext import MPI
