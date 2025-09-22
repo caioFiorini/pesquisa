@@ -162,7 +162,7 @@ class MultiParallelManager:
 
     def slave_parallel_loop(self):
         ctx = mp.get_context("spawn")
-        local_cores = int(os.environ.get("LOCAL_CORES", os.cpu_count()))
+        local_cores = 10
 
         pending_futures = {}   # future -> task_id
         stop_flag = False
@@ -180,10 +180,8 @@ class MultiParallelManager:
                 print(f"[Slave {self.rank_parallel}] unexpected tag {tag}; exiting.")
                 return
 
-            # submete o primeiro lote
             for t in task_list:
                 fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH)
-                pending_futures[fut] = t.experiment_count
                 pending_futures[fut] = t.experiment_count
 
             # 2) loop principal: enviar resultados assim que prontos e aceitar novos trabalhos

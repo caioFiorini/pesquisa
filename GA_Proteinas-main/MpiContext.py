@@ -5,5 +5,5 @@ from mpi4py import MPI
 class MPIContext:
     def ensure_mpi():
         if not MPI.Is_initialized():
-            MPI.Init_thread()
+            MPI.Init()
         return MPI
