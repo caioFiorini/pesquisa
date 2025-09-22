@@ -15,12 +15,6 @@ TAG_STOP = 0   # Não há mais tarefas (sinal de parada)
 
 DIRETORIO_PATH = os.path.abspath(".outputs")
 EXPERIMENTO_PATH = os.path.abspath("./Experimentos")
-    
-def compute_one_wrapper(args):
-    """Função picklável chamada dentro do ProcessPoolExecutor."""
-    self_obj, task_data = args
-    return self_obj._compute_one(task_data)
-    
 class MultiParallelManager:    
     def __init__(
         self,
@@ -134,18 +128,37 @@ class MultiParallelManager:
 
         print(f"[Mestre] Arquivo '{file_name_final}' salvo em '{full_path}'")
     
-    def _compute_one(self, task_data):
-        executor = ExperimentExec(task_data, self.start_time)
-        executor.execute_experiment()
+    def compute_one_module(self, task_data_serialized, start_time, exper_path):
+        """
+        task_data_serialized: estrutura simples (por ex., dict) suficiente para reconstruir a config.
+        start_time: float
+        exper_path: path para Experimentos (para leitura/escrita)
+        """
+        # reconstruir/usar o objeto de configuração se task_data_serialized for dict-like
+        # aqui assumimos que task_data_serialized é o mesmo objeto que você recebia (se já for serializável)
+        from ExperimentExec import ExperimentExec  # import aqui evita problemas top-level em spawn
 
-        experiment_folder_path = os.path.join(EXPERIMENTO_PATH,
-                                              f"Experimento_{task_data.experiment_count}")
+        task_cfg = task_data_serialized
+
+        # Run experiment (este processo filho NÃO deve usar MPI)
+        try:
+            executor = ExperimentExec(task_cfg, start_time)
+            executor.execute_experiment()
+        except Exception as e:
+            import os, traceback
+            pid = os.getpid()
+            log = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}", f"error_pid_{pid}.log")
+            os.makedirs(os.path.dirname(log), exist_ok=True)
+            with open(log, "a") as lf:
+                lf.write("Exception in child:\n")
+                lf.write(traceback.format_exc())
+            return {"task_id": task_cfg.experiment_count, "data": {"genotype": [], "fitness": []}, "error": str(e)}
+
+        # Ler e serializar melhores (use caminho absoluto para evitar confusão)
+        experiment_folder_path = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}")
         melhores = self.read_best_individuals(experiment_folder_path)
         serialized = self.serialize_individuals(melhores)
-        return {
-            "task_id": task_data.experiment_count,
-            "data": serialized if serialized else {"genotype": [], "fitness": []}
-        }
+        return {"task_id": task_cfg.experiment_count, "data": serialized if serialized else {"genotype": [], "fitness": []}}
 
     def slave_parallel_loop(self):
         ctx = mp.get_context("spawn")
@@ -169,7 +182,8 @@ class MultiParallelManager:
 
             # submete o primeiro lote
             for t in task_list:
-                fut = pool.submit(compute_one_wrapper, (self, t))
+                fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH)
+                pending_futures[fut] = t.experiment_count
                 pending_futures[fut] = t.experiment_count
 
             # 2) loop principal: enviar resultados assim que prontos e aceitar novos trabalhos
@@ -193,7 +207,7 @@ class MultiParallelManager:
                     itag = st.Get_tag()
                     if itag == TAG_TASK and incoming:
                         for t in incoming:
-                            fut = pool.submit(compute_one_wrapper, (self, t))
+                            fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH)
                             pending_futures[fut] = t.experiment_count
                     elif itag == TAG_STOP:
                         stop_flag = True
