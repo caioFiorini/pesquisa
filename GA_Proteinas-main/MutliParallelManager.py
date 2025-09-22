@@ -126,22 +126,23 @@ class MultiParallelManager:
         stop_flag = False
 
         status = MPI.Status()
-        print(f"[Slave {self.rank_parallel}] starting pool with {local_cores} workers")
+        print(f"[Slave {self.rank_parallel}] starting pool with {local_cores} workers", flush=True)
+        
         with ProcessPoolExecutor(max_workers=local_cores, mp_context=ctx) as pool:
             # recebe primeiro lote de tarefas do master (via MPI)
             task_list = self.comm_parallel.recv(source=0, tag=MPI.ANY_TAG, status=status)
             tag = status.Get_tag()
             if tag == TAG_STOP:
-                print(f"[Slave {self.rank_parallel}] STOP before start.")
+                print(f"[Slave {self.rank_parallel}] STOP before start.", flush=True)
                 return
             if tag != TAG_TASK:
-                print(f"[Slave {self.rank_parallel}] unexpected tag {tag}; exiting.")
+                print(f"[Slave {self.rank_parallel}] unexpected tag {tag}; exiting.", flush=True)
                 return
 
             for t in task_list:
                 fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                 pending_futures[fut] = t.experiment_count
-                print(f"[Slave {self.rank_parallel}] Tarefa {t.experiment_count} enviada para o pool")
+                print(f"[Slave {self.rank_parallel}] Tarefa {t.experiment_count} enviada para o pool | Pending: {len(pending_futures)}", flush=True)
 
             while pending_futures or not stop_flag:
                 # checa futuros prontos e envia resultado para master
@@ -152,6 +153,9 @@ class MultiParallelManager:
                         payload = f.result()
                     except Exception as e:
                         payload = {"task_id": task_id, "data": {"genotype": [], "fitness": []}, "error": str(e)}
+
+                    print(f"[Slave {self.rank_parallel}] Tarefa {task_id} concluída | Pending: {len(pending_futures)}", flush=True)
+
                     self.comm_parallel.isend({"worker_rank": self.rank_parallel,
                                             "result": payload}, dest=0, tag=TAG_RESULT)
 
@@ -161,12 +165,14 @@ class MultiParallelManager:
                     itag = status.Get_tag()
                     if itag == TAG_TASK and incoming:
                         for t in incoming:
-                            fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH)
+                            fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                             pending_futures[fut] = t.experiment_count
+                            print(f"[Slave {self.rank_parallel}] Nova tarefa {t.experiment_count} enviada | Pending: {len(pending_futures)}", flush=True)
                     elif itag == TAG_STOP:
                         stop_flag = True
+                        print(f"[Slave {self.rank_parallel}] Recebeu STOP sinal.", flush=True)
 
-        print(f"[Slave {self.rank_parallel}] Finalizado.")
+        print(f"[Slave {self.rank_parallel}] Finalizado.", flush=True)
 
     
     def master_parallel_loop(self):
