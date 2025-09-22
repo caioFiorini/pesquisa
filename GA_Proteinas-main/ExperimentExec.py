@@ -2,6 +2,7 @@ import os
 import time
 import random
 import numpy as np
+from MpiContext import MPI
 from deap import tools
 from Arquivo import Arquivo
 from diretorio import Diretorio
