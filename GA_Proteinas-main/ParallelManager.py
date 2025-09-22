@@ -213,7 +213,6 @@ class ParallelManager:
                     # trata como vazio
                     data = []
 
-                # encontra a config do experimento
                 try:
                     experiment_config = next(exp for exp in self.experiments if exp.experiment_count == task_id)
                 except StopIteration:
