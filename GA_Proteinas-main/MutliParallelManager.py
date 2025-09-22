@@ -1,6 +1,5 @@
 import os
 import re
-from MpiContext import MPI
 from deap import creator
 from ExperimentEval import ExperimentEval
 from ExperimentExec import ExperimentExec
@@ -38,6 +37,7 @@ class MultiParallelManager:
         self.start_time = start_time
     
     def run(self):
+        from MpiContext import MPI
         """Starts the master or slave logic based on the rank."""
         if self.size_parallel < 2:
             print("Erro: Requires at least 2 MPI processes.")
@@ -128,7 +128,7 @@ class MultiParallelManager:
 
         print(f"[Mestre] Arquivo '{file_name_final}' salvo em '{full_path}'")
     
-    def compute_one_module(self, task_data_serialized, start_time, exper_path):
+    def compute_one_module(self, task_data_serialized, start_time, exper_path, mpi_rank=None):
         """
         task_data_serialized: estrutura simples (por ex., dict) suficiente para reconstruir a config.
         start_time: float
@@ -137,15 +137,18 @@ class MultiParallelManager:
         # reconstruir/usar o objeto de configuração se task_data_serialized for dict-like
         # aqui assumimos que task_data_serialized é o mesmo objeto que você recebia (se já for serializável)
         from ExperimentExec import ExperimentExec  # import aqui evita problemas top-level em spawn
+        import traceback
 
         task_cfg = task_data_serialized
+        
+        if mpi_rank is not None:
+            print(f"[Child worker spawned on MPI rank {mpi_rank}] pid={os.getpid()}")
 
         # Run experiment (este processo filho NÃO deve usar MPI)
         try:
             executor = ExperimentExec(task_cfg, start_time)
             executor.execute_experiment()
         except Exception as e:
-            import os, traceback
             pid = os.getpid()
             log = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}", f"error_pid_{pid}.log")
             os.makedirs(os.path.dirname(log), exist_ok=True)
@@ -181,7 +184,7 @@ class MultiParallelManager:
                 return
 
             for t in task_list:
-                fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH)
+                fut = pool.submit(self.compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                 pending_futures[fut] = t.experiment_count
 
             # 2) loop principal: enviar resultados assim que prontos e aceitar novos trabalhos

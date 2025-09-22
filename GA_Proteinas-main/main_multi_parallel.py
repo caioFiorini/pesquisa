@@ -1,7 +1,11 @@
 import os
 import time
 import numpy as np
+
 from MpiContext import MPIContext
+MPI = MPIContext.ensure_mpi()   # garante MPI.Init() aqui
+from MpiContext import MPI as MPI_ALIAS
+
 from Arquivo import Arquivo
 from diretorio import Diretorio
 from MOGAToolbox import MOGAToolbox as mt
@@ -111,6 +115,8 @@ def main():
     parallel_manager.run()
 
 if __name__ == "__main__":
-    MPI = MPIContext.ensure_mpi()
-    main()
-    MPI.Finalize()
+    try:
+        main()
+    finally:
+        # finalize MPI cleanly
+        MPI.Finalize()

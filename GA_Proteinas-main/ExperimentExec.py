@@ -2,7 +2,6 @@ import os
 import time
 import random
 import numpy as np
-from MpiContext import MPI
 from deap import tools
 from Arquivo import Arquivo
 from diretorio import Diretorio
@@ -101,9 +100,8 @@ class ExperimentExec:
         
         print("Starting algorithm...")
         print(f"[DEBUG][ExperimentExec] output_base_dir = {self.experiment_configuration.output_base_dir}")
-        print(f"[DEBUG][Rank {MPI.COMM_WORLD.Get_rank()}] cwd={os.getcwd()}")
-        print(f"[DEBUG][Rank {MPI.COMM_WORLD.Get_rank()}] output_base_dir={self.experiment_configuration.output_base_dir}")
-        print(f"[DEBUG][Rank {MPI.COMM_WORLD.Get_rank()}] EXPERIMENTO_PATH={EXPERIMENTO_PATH}")
+        print(f"[DEBUG] cwd={os.getcwd()}")
+
         ga = MultiObjectiveGeneticAlgorithm(
             seed=self.experiment_configuration.seed,
             population=components["population"],
