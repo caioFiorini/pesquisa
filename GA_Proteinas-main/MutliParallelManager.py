@@ -16,6 +16,11 @@ TAG_STOP = 0   # Não há mais tarefas (sinal de parada)
 DIRETORIO_PATH = os.path.abspath(".outputs")
 EXPERIMENTO_PATH = os.path.abspath("./Experimentos")
     
+def compute_one_wrapper(args):
+    """Função picklável chamada dentro do ProcessPoolExecutor."""
+    self_obj, task_data = args
+    return self_obj._compute_one(task_data)
+    
 class MultiParallelManager:    
     def __init__(
         self,
@@ -141,13 +146,7 @@ class MultiParallelManager:
             "task_id": task_data.experiment_count,
             "data": serialized if serialized else {"genotype": [], "fitness": []}
         }
-        
-    def compute_one_wrapper(args):
-        """Função picklável chamada dentro do ProcessPoolExecutor."""
-        self_obj, task_data = args
-        return self_obj._compute_one(task_data)
 
-        
     def slave_parallel_loop(self):
         ctx = mp.get_context("spawn")
         local_cores = int(os.environ.get("LOCAL_CORES", os.cpu_count()))
@@ -170,7 +169,7 @@ class MultiParallelManager:
 
             # submete o primeiro lote
             for t in task_list:
-                fut = pool.submit(self.compute_one_wrapper, (self, t))
+                fut = pool.submit(compute_one_wrapper, (self, t))
                 pending_futures[fut] = t.experiment_count
 
             # 2) loop principal: enviar resultados assim que prontos e aceitar novos trabalhos
