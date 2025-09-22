@@ -1,10 +1,9 @@
 import os
+import logging
 from SerializationUtils import SerializationUtils
 from ExperimentEval import ExperimentEval
-from ExperimentExec import ExperimentExec
-import os
 import multiprocessing as mp
-from concurrent.futures import ProcessPoolExecutor, FIRST_COMPLETED
+from concurrent.futures import ProcessPoolExecutor
 
 # ====== Constantes de Tags para comunicação ======
 TAG_TASK = 1  # A mensagem contém uma tarefa
@@ -15,12 +14,14 @@ DIRETORIO_PATH = os.path.abspath(".outputs")
 EXPERIMENTO_PATH = os.path.abspath("./Experimentos")
 
 def compute_one_module(task_data_serialized, start_time, exper_path, mpi_rank=None):
-    import os
     import traceback
     from ExperimentExec import ExperimentExec
     serializer = SerializationUtils()
-
     task_cfg = task_data_serialized
+    logger = setup_logger(task_cfg.experiment_count, os.getpid())
+
+    worker_info = f"[Worker local | MPI rank {mpi_rank} | pid {os.getpid()} | exper {task_cfg.experiment_count}]"
+    logger.info(f"{worker_info} Iniciando experimento...")
 
     worker_info = f"[Worker local | MPI rank {mpi_rank} | pid {os.getpid()} | exper {task_cfg.experiment_count}]"
 
@@ -31,12 +32,13 @@ def compute_one_module(task_data_serialized, start_time, exper_path, mpi_rank=No
         
         # Log a cada passo do experimento, se o seu executor tiver etapas
         for step, step_name in enumerate(executor.get_steps()):  # exemplo fictício
-            print(f"{worker_info} Step {step}: {step_name} iniciando")
+            logger.info(f"{worker_info} Step {step}: {step_name} iniciando")
             executor.run_step(step)
-            print(f"{worker_info} Step {step}: {step_name} finalizado")
+            logger.info(f"{worker_info} Step {step}: {step_name} finalizado")
 
         # Se não houver steps detalhados, apenas log no começo/fim
         executor.execute_experiment()
+        logger.info("Experimento finalizado com sucesso")
 
     except Exception as e:
         log_file = os.path.join(exper_path, f"Experimento_{task_cfg.experiment_count}", f"error_pid_{os.getpid()}.log")
@@ -45,6 +47,7 @@ def compute_one_module(task_data_serialized, start_time, exper_path, mpi_rank=No
             lf.write("Exception in child:\n")
             lf.write(traceback.format_exc())
         print(f"{worker_info} ERRO: {e}")
+        logger.error(f"Erro: {e}", exc_info=True)
         return {"task_id": task_cfg.experiment_count, "data": {"genotype": [], "fitness": []}, "error": str(e)}
 
     # Ler melhores indivíduos
@@ -55,6 +58,20 @@ def compute_one_module(task_data_serialized, start_time, exper_path, mpi_rank=No
     print(f"{worker_info} Experimento finalizado")
     return {"task_id": task_cfg.experiment_count, "data": serialized if serialized else {"genotype": [], "fitness": []}}
 
+def setup_logger(experiment_count, pid):
+    log_file = f"./logs/experiment_{experiment_count}_pid_{pid}.log"
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    
+    logger = logging.getLogger(f"Exp{experiment_count}_PID{pid}")
+    logger.setLevel(logging.DEBUG)
+    
+    if not logger.hasHandlers():
+        fh = logging.FileHandler(log_file)
+        formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
+    
+    return logger
 class MultiParallelManager:    
     def __init__(
         self,
