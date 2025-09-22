@@ -147,6 +147,7 @@ class MultiParallelManager:
                 return
 
             for t in task_list:
+                print(f"[Slave] sending task t: {t} to pool", flush=True)
                 fut = pool.submit(compute_one_module, t, self.start_time, EXPERIMENTO_PATH, self.rank_parallel)
                 pending_futures[fut] = t.experiment_count
                 print(f"[Slave {self.rank_parallel}] Tarefa {t.experiment_count} enviada para o pool | Pending: {len(pending_futures)}", flush=True)
