@@ -20,23 +20,13 @@ def compute_one_module(task_data_serialized, start_time, exper_path, mpi_rank=No
     task_cfg = task_data_serialized
     logger = setup_logger(task_cfg.experiment_count, os.getpid())
 
-    worker_info = f"[Worker local | MPI rank {mpi_rank} | pid {os.getpid()} | exper {task_cfg.experiment_count}]"
     logger.info(f"{worker_info} Iniciando experimento...")
-
     worker_info = f"[Worker local | MPI rank {mpi_rank} | pid {os.getpid()} | exper {task_cfg.experiment_count}]"
 
     print(f"{worker_info} Iniciando experimento...")
 
     try:
         executor = ExperimentExec(task_cfg, start_time)
-        
-        # Log a cada passo do experimento, se o seu executor tiver etapas
-        for step, step_name in enumerate(executor.get_steps()):  # exemplo fictício
-            logger.info(f"{worker_info} Step {step}: {step_name} iniciando")
-            executor.run_step(step)
-            logger.info(f"{worker_info} Step {step}: {step_name} finalizado")
-
-        # Se não houver steps detalhados, apenas log no começo/fim
         executor.execute_experiment()
         logger.info("Experimento finalizado com sucesso")
 
