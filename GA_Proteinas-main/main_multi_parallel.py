@@ -111,4 +111,14 @@ def main():
     parallel_manager.run()
 
 if __name__ == "__main__":
-    main()
+    # inicializa MPI explicitamente (pai/rank atual)
+    MPI.Init_thread()
+    try:
+        # seu código atual que cria ParallelManager e chama .run()
+        main()   # exemplo
+    finally:
+        # finalize de maneira segura
+        try:
+            MPI.Finalize()
+        except Exception:
+            pass
