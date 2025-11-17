@@ -1,4 +1,4 @@
-AVCBalanceado-AG.csv AVC
+dataset_balanceado_final.csv AVC
 1 backup_geracao.txt
 seed 2156 2 885463215
 Population 204 504 200
