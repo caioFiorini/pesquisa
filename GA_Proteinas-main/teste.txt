@@ -1,4 +1,4 @@
-BaseDepressao.csv Diagnostico_Depressao
+BaseHipertensao.csv diagnostico_hipertensao
 1 backup_geracao.txt
 seed 2156 2 885463215
 Population 204 504 200
