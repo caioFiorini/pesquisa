@@ -1,4 +1,4 @@
-BaseHipertensao.csv diagnostico_hipertensao
+Hipertensao-Hoje.csv Condicao
 1 backup_geracao.txt
 seed 2156 2 885463215
 Population 204 504 200
