@@ -1,0 +1,20 @@
+Quantidade de atributos: 19, F1_score: 0.9433986928104577
+Quantidade de atributos: 20, F1_score: 0.9433986928104577
+Quantidade de atributos: 21, F1_score: 0.9433986928104577
+Quantidade de atributos: 22, F1_score: 0.9433986928104577
+Quantidade de atributos: 23, F1_score: 0.9433986928104577
+Quantidade de atributos: 24, F1_score: 0.9433986928104577
+Quantidade de atributos: 25, F1_score: 0.9433986928104577
+Quantidade de atributos: 26, F1_score: 0.9433986928104577
+Encontrando melhores individuos...
+Avaliando melhores individuos...
+
+Melhor indivíduo encontrado:
+F1-score: 0.9434
+Qtd atributos: 1
+Atributos selecionados: ['Unnamed: 0']
+[Master] Finished.
+
+real	15m57.251s
+user	2m32.165s
+sys	13m24.086s
