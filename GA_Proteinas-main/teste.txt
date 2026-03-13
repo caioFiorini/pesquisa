@@ -1,4 +1,4 @@
-SBBD_PNS_HiperCardio_Gustavo_Completo_4.csv Condicao
+US_balanceado.csv FEM456
 1 backup_geracao.txt
 seed 2156 2 885463215
 Population 204 504 200
